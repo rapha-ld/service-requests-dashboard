@@ -1,5 +1,5 @@
 
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { cn } from "@/lib/utils";
 
 interface SmallMultipleProps {
@@ -11,6 +11,9 @@ interface SmallMultipleProps {
 }
 
 export const SmallMultiple = ({ title, data, color, unit, className }: SmallMultipleProps) => {
+  // Calculate average value
+  const average = data.reduce((sum, item) => sum + item.value, 0) / data.length;
+  
   return (
     <div className={cn("bg-aqi-card p-4 rounded-lg shadow-sm animate-fade-in", className)}>
       <h3 className="text-sm font-medium text-aqi-text mb-2">{title}</h3>
@@ -36,6 +39,18 @@ export const SmallMultiple = ({ title, data, color, unit, className }: SmallMult
                 borderRadius: '4px',
                 boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                 fontSize: '12px'
+              }}
+            />
+            <ReferenceLine 
+              y={average}
+              stroke={color}
+              strokeDasharray="3 3"
+              strokeOpacity={0.5}
+              label={{
+                value: `Avg: ${average.toFixed(1)}${unit}`,
+                fill: color,
+                fontSize: 10,
+                position: 'insideTopRight'
               }}
             />
             <Line
