@@ -71,6 +71,7 @@ export const SmallMultiple = ({ title, data, color, unit, className, viewType, m
               dataKey="value"
               fill={color}
               fillOpacity={0.8}
+              radius={[1, 1, 0, 0]}
             />
             {viewType === 'net-new' && (
               <ReferenceLine 
