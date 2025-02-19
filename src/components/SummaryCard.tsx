@@ -1,6 +1,7 @@
 
 import { cn } from "@/lib/utils";
 import { ArrowDown, ArrowUp } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface SummaryCardProps {
   title: string;
@@ -8,13 +9,10 @@ interface SummaryCardProps {
   unit: string;
   status: 'good' | 'moderate' | 'poor';
   className?: string;
+  percentChange: number;
 }
 
-export const SummaryCard = ({ title, value, unit, status, className }: SummaryCardProps) => {
-  // Mock previous period value - in real app, this would come from props
-  const previousValue = value * (1 + (Math.random() * 0.4 - 0.2)); // Random ±20% difference
-  const percentChange = ((value - previousValue) / previousValue) * 100;
-  
+export const SummaryCard = ({ title, value, unit, status, className, percentChange }: SummaryCardProps) => {
   return (
     <div className={cn(
       "bg-aqi-card p-4 rounded-lg shadow-sm animate-slide-up transition-all duration-200",
@@ -25,17 +23,26 @@ export const SummaryCard = ({ title, value, unit, status, className }: SummaryCa
         <span className="text-2xl font-semibold text-[#23252A]">
           {value}
         </span>
-        <div className={cn(
-          "flex items-center text-sm",
-          percentChange >= 0 ? "text-green-500" : "text-red-500"
-        )}>
-          {percentChange >= 0 ? (
-            <ArrowUp className="h-4 w-4" />
-          ) : (
-            <ArrowDown className="h-4 w-4" />
-          )}
-          <span>{Math.abs(percentChange).toFixed(1)}%</span>
-        </div>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className={cn(
+                "flex items-center text-sm",
+                percentChange >= 0 ? "text-green-500" : "text-red-500"
+              )}>
+                {percentChange >= 0 ? (
+                  <ArrowUp className="h-4 w-4" />
+                ) : (
+                  <ArrowDown className="h-4 w-4" />
+                )}
+                <span>{Math.abs(percentChange).toFixed(1)}%</span>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Change from previous period</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </div>
   );

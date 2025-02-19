@@ -31,6 +31,13 @@ const getTotalValue = (data: Array<{ day: string; value: number }>) => {
   return total;
 };
 
+const generatePercentChange = (value: number) => {
+  // Generate a consistent random percentage change for demonstration
+  // In a real app, this would be calculated from actual historical data
+  const seed = value.toString().split('').reduce((a, b) => a + parseInt(b), 0);
+  return -20 + (seed % 40); // Generates a value between -20 and +20
+};
+
 const months = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
@@ -76,37 +83,43 @@ const Dashboard = () => {
       id: 'development', 
       title: 'Development', 
       value: getTotalValue(serviceData.historical.development),
-      data: serviceData.historical.development
+      data: serviceData.historical.development,
+      percentChange: generatePercentChange(getTotalValue(serviceData.historical.development))
     },
     { 
       id: 'staging', 
       title: 'Staging', 
       value: getTotalValue(serviceData.historical.staging),
-      data: serviceData.historical.staging
+      data: serviceData.historical.staging,
+      percentChange: generatePercentChange(getTotalValue(serviceData.historical.staging))
     },
     { 
       id: 'preProduction', 
       title: 'Pre-Production', 
       value: getTotalValue(serviceData.historical.preProduction),
-      data: serviceData.historical.preProduction
+      data: serviceData.historical.preProduction,
+      percentChange: generatePercentChange(getTotalValue(serviceData.historical.preProduction))
     },
     { 
       id: 'production', 
       title: 'Production', 
       value: getTotalValue(serviceData.historical.production),
-      data: serviceData.historical.production
+      data: serviceData.historical.production,
+      percentChange: generatePercentChange(getTotalValue(serviceData.historical.production))
     },
     { 
       id: 'testing', 
       title: 'Testing', 
       value: getTotalValue(serviceData.historical.testing),
-      data: serviceData.historical.testing
+      data: serviceData.historical.testing,
+      percentChange: generatePercentChange(getTotalValue(serviceData.historical.testing))
     },
     { 
       id: 'qa', 
       title: 'QA', 
       value: getTotalValue(serviceData.historical.qa),
-      data: serviceData.historical.qa
+      data: serviceData.historical.qa,
+      percentChange: generatePercentChange(getTotalValue(serviceData.historical.qa))
     }
   ];
 
@@ -190,6 +203,7 @@ const Dashboard = () => {
               value={env.value}
               unit=""
               status={getRequestStatus(env.value)}
+              percentChange={env.percentChange}
             />
           ))}
         </div>
