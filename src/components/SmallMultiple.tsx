@@ -47,7 +47,7 @@ export const SmallMultiple = ({ title, data, color, unit, className }: SmallMult
                 boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                 fontSize: '12px'
               }}
-              formatter={() => ['', '']}
+              formatter={(value: number) => [`${value}${unit}`, '']}
               labelFormatter={(value) => formatTooltipDate(value)}
             />
             <ReferenceLine 
