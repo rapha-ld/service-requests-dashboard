@@ -3,50 +3,50 @@ import { useQuery } from "@tanstack/react-query";
 import { SmallMultiple } from "@/components/SmallMultiple";
 import { SummaryCard } from "@/components/SummaryCard";
 
-// Mock data generator
-const generateMockData = (baseValue: number, hours: number) => {
+// Mock data generator for service requests
+const generateMockServiceData = (baseValue: number, hours: number) => {
   return Array.from({ length: hours }, (_, i) => ({
     time: `${i}:00`,
-    value: baseValue + Math.random() * 10 - 5
+    value: Math.max(0, baseValue + Math.floor(Math.random() * 20 - 10))
   }));
 };
 
-const getAQIStatus = (value: number) => {
-  if (value <= 50) return 'good';
-  if (value <= 100) return 'moderate';
+const getRequestStatus = (value: number) => {
+  if (value <= 10) return 'good';
+  if (value <= 20) return 'moderate';
   return 'poor';
 };
 
 const Dashboard = () => {
   // Simulate data fetching with React Query
-  const { data: aqiData } = useQuery({
-    queryKey: ['aqi-data'],
+  const { data: serviceData } = useQuery({
+    queryKey: ['service-data'],
     queryFn: () => ({
       current: {
-        pm25: 35,
-        pm10: 65,
-        temperature: 22,
-        humidity: 45
+        development: 15,
+        staging: 8,
+        preProduction: 5,
+        production: 3
       },
       historical: {
-        pm25: generateMockData(35, 24),
-        pm10: generateMockData(65, 24),
-        temperature: generateMockData(22, 24),
-        humidity: generateMockData(45, 24)
+        development: generateMockServiceData(15, 24),
+        staging: generateMockServiceData(8, 24),
+        preProduction: generateMockServiceData(5, 24),
+        production: generateMockServiceData(3, 24)
       }
     }),
     initialData: {
       current: {
-        pm25: 35,
-        pm10: 65,
-        temperature: 22,
-        humidity: 45
+        development: 15,
+        staging: 8,
+        preProduction: 5,
+        production: 3
       },
       historical: {
-        pm25: generateMockData(35, 24),
-        pm10: generateMockData(65, 24),
-        temperature: generateMockData(22, 24),
-        humidity: generateMockData(45, 24)
+        development: generateMockServiceData(15, 24),
+        staging: generateMockServiceData(8, 24),
+        preProduction: generateMockServiceData(5, 24),
+        production: generateMockServiceData(3, 24)
       }
     }
   });
@@ -54,61 +54,61 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-aqi-background p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl font-semibold text-aqi-text mb-6">Air Quality Dashboard</h1>
+        <h1 className="text-2xl font-semibold text-aqi-text mb-6">Service Requests Dashboard</h1>
         
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <SummaryCard
-            title="PM2.5"
-            value={aqiData.current.pm25}
-            unit="µg/m³"
-            status={getAQIStatus(aqiData.current.pm25)}
+            title="Development"
+            value={serviceData.current.development}
+            unit="reqs/h"
+            status={getRequestStatus(serviceData.current.development)}
           />
           <SummaryCard
-            title="PM10"
-            value={aqiData.current.pm10}
-            unit="µg/m³"
-            status={getAQIStatus(aqiData.current.pm10)}
+            title="Staging"
+            value={serviceData.current.staging}
+            unit="reqs/h"
+            status={getRequestStatus(serviceData.current.staging)}
           />
           <SummaryCard
-            title="Temperature"
-            value={aqiData.current.temperature}
-            unit="°C"
-            status="good"
+            title="Pre-Production"
+            value={serviceData.current.preProduction}
+            unit="reqs/h"
+            status={getRequestStatus(serviceData.current.preProduction)}
           />
           <SummaryCard
-            title="Humidity"
-            value={aqiData.current.humidity}
-            unit="%"
-            status="moderate"
+            title="Production"
+            value={serviceData.current.production}
+            unit="reqs/h"
+            status={getRequestStatus(serviceData.current.production)}
           />
         </div>
 
         {/* Small Multiples */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <SmallMultiple
-            title="PM2.5 - 24 Hour Trend"
-            data={aqiData.historical.pm25}
-            color="#10B981"
-            unit="µg/m³"
+            title="Development Environment - 24 Hour Trend"
+            data={serviceData.historical.development}
+            color="#F97316"
+            unit="reqs/h"
           />
           <SmallMultiple
-            title="PM10 - 24 Hour Trend"
-            data={aqiData.historical.pm10}
-            color="#F59E0B"
-            unit="µg/m³"
-          />
-          <SmallMultiple
-            title="Temperature - 24 Hour Trend"
-            data={aqiData.historical.temperature}
-            color="#3B82F6"
-            unit="°C"
-          />
-          <SmallMultiple
-            title="Humidity - 24 Hour Trend"
-            data={aqiData.historical.humidity}
+            title="Staging Environment - 24 Hour Trend"
+            data={serviceData.historical.staging}
             color="#8B5CF6"
-            unit="%"
+            unit="reqs/h"
+          />
+          <SmallMultiple
+            title="Pre-Production Environment - 24 Hour Trend"
+            data={serviceData.historical.preProduction}
+            color="#0EA5E9"
+            unit="reqs/h"
+          />
+          <SmallMultiple
+            title="Production Environment - 24 Hour Trend"
+            data={serviceData.historical.production}
+            color="#10B981"
+            unit="reqs/h"
           />
         </div>
       </div>
