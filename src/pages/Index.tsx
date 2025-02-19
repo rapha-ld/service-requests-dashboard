@@ -2,7 +2,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { SmallMultiple } from "@/components/SmallMultiple";
 import { SummaryCard } from "@/components/SummaryCard";
-import { format } from "date-fns";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
@@ -112,6 +111,7 @@ const Dashboard = () => {
               size="icon"
               onClick={() => setIsSorted(!isSorted)}
               className="h-10"
+              title={isSorted ? "Show original order" : "Sort by total requests"}
             >
               <ArrowUpDown className="h-4 w-4" />
             </Button>
