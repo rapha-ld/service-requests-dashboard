@@ -10,9 +10,10 @@ interface SmallMultipleProps {
   unit: string;
   className?: string;
   viewType: 'net-new' | 'cumulative';
+  maxValue: number;
 }
 
-export const SmallMultiple = ({ title, data, color, unit, className, viewType }: SmallMultipleProps) => {
+export const SmallMultiple = ({ title, data, color, unit, className, viewType, maxValue }: SmallMultipleProps) => {
   // Calculate average value for net-new view
   const average = data.reduce((sum, item) => sum + item.value, 0) / data.length;
   
@@ -28,7 +29,6 @@ export const SmallMultiple = ({ title, data, color, unit, className, viewType }:
     : data;
   
   const formatTooltipDate = (day: string) => {
-    // Create a date object for the current year and the given day
     const date = new Date(new Date().getFullYear(), 0, parseInt(day));
     return format(date, 'MMM dd, yyyy');
   };
@@ -50,6 +50,7 @@ export const SmallMultiple = ({ title, data, color, unit, className, viewType }:
               tickLine={false}
               axisLine={false}
               unit={unit}
+              domain={[0, maxValue]}
             />
             <Tooltip
               contentStyle={{

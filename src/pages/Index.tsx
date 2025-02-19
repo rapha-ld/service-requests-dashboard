@@ -94,8 +94,6 @@ const Dashboard = () => {
     }
   ];
 
-  console.log('Before sorting:', environments.map(env => ({ id: env.id, value: env.value })));
-
   const handleSortClick = () => {
     setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc');
   };
@@ -104,7 +102,19 @@ const Dashboard = () => {
     sortDirection === 'desc' ? b.value - a.value : a.value - b.value
   );
 
-  console.log('After sorting:', sortedEnvironments.map(env => ({ id: env.id, value: env.value })));
+  // Calculate the maximum value across all environments
+  const getMaxValue = () => {
+    if (viewType === 'net-new') {
+      return Math.max(...environments.flatMap(env => env.data.map(d => d.value)));
+    } else {
+      // For cumulative view, calculate the maximum of running totals
+      return Math.max(...environments.map(env => 
+        env.data.reduce((sum, item) => sum + item.value, 0)
+      ));
+    }
+  };
+
+  const maxValue = getMaxValue();
 
   return (
     <div className="min-h-screen bg-aqi-background p-6">
@@ -177,6 +187,7 @@ const Dashboard = () => {
               color="#2AB4FF"
               unit="reqs/h"
               viewType={viewType}
+              maxValue={maxValue}
             />
           ))}
         </div>
