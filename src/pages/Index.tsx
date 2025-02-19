@@ -1,12 +1,12 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { SmallMultiple } from "@/components/SmallMultiple";
 import { SummaryCard } from "@/components/SummaryCard";
 import { format } from "date-fns";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { ArrowUpDown } from "lucide-react";
 import { useState } from "react";
 
-// Mock data generator for monthly service requests
 const generateMockMonthlyData = (baseValue: number, date: Date) => {
   const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
   return Array.from({ length: daysInMonth }, (_, i) => ({
@@ -21,7 +21,6 @@ const getRequestStatus = (value: number) => {
   return 'poor';
 };
 
-// Get the most recent value from historical data
 const getMostRecentValue = (data: Array<{ day: string; value: number }>) => {
   return data[data.length - 1]?.value || 0;
 };
@@ -33,10 +32,10 @@ const months = [
 
 const Dashboard = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+  const [isSorted, setIsSorted] = useState(false);
 
   const date = new Date(new Date().getFullYear(), selectedMonth);
 
-  // Simulate data fetching with React Query
   const { data: serviceData } = useQuery({
     queryKey: ['service-data', date.toISOString()],
     queryFn: () => {
@@ -77,83 +76,72 @@ const Dashboard = () => {
     }
   });
 
+  const environments = [
+    { id: 'development', title: 'Development', value: serviceData.current.development, data: serviceData.historical.development },
+    { id: 'staging', title: 'Staging', value: serviceData.current.staging, data: serviceData.historical.staging },
+    { id: 'preProduction', title: 'Pre-Production', value: serviceData.current.preProduction, data: serviceData.historical.preProduction },
+    { id: 'production', title: 'Production', value: serviceData.current.production, data: serviceData.historical.production }
+  ];
+
+  const sortedEnvironments = isSorted 
+    ? [...environments].sort((a, b) => b.value - a.value)
+    : environments;
+
   return (
     <div className="min-h-screen bg-aqi-background p-6">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-semibold text-aqi-text">Service Requests Dashboard</h1>
           
-          <Select
-            value={selectedMonth.toString()}
-            onValueChange={(value) => setSelectedMonth(parseInt(value))}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select month" />
-            </SelectTrigger>
-            <SelectContent>
-              {months.map((month, index) => (
-                <SelectItem key={index} value={index.toString()}>
-                  {month} {new Date().getFullYear()}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setIsSorted(!isSorted)}
+              className="h-10"
+            >
+              <ArrowUpDown className="h-4 w-4" />
+            </Button>
+            <Select
+              value={selectedMonth.toString()}
+              onValueChange={(value) => setSelectedMonth(parseInt(value))}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select month" />
+              </SelectTrigger>
+              <SelectContent>
+                {months.map((month, index) => (
+                  <SelectItem key={index} value={index.toString()}>
+                    {month} {new Date().getFullYear()}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         
-        {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <SummaryCard
-            title="Development"
-            value={serviceData.current.development}
-            unit="reqs/h"
-            status={getRequestStatus(serviceData.current.development)}
-          />
-          <SummaryCard
-            title="Staging"
-            value={serviceData.current.staging}
-            unit="reqs/h"
-            status={getRequestStatus(serviceData.current.staging)}
-          />
-          <SummaryCard
-            title="Pre-Production"
-            value={serviceData.current.preProduction}
-            unit="reqs/h"
-            status={getRequestStatus(serviceData.current.preProduction)}
-          />
-          <SummaryCard
-            title="Production"
-            value={serviceData.current.production}
-            unit="reqs/h"
-            status={getRequestStatus(serviceData.current.production)}
-          />
+          {sortedEnvironments.map(env => (
+            <SummaryCard
+              key={env.id}
+              title={env.title}
+              value={env.value}
+              unit="reqs/h"
+              status={getRequestStatus(env.value)}
+            />
+          ))}
         </div>
 
-        {/* Small Multiples */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <SmallMultiple
-            title="Development"
-            data={serviceData.historical.development}
-            color="#2AB4FF"
-            unit="reqs/h"
-          />
-          <SmallMultiple
-            title="Staging"
-            data={serviceData.historical.staging}
-            color="#2AB4FF"
-            unit="reqs/h"
-          />
-          <SmallMultiple
-            title="Pre-Production"
-            data={serviceData.historical.preProduction}
-            color="#2AB4FF"
-            unit="reqs/h"
-          />
-          <SmallMultiple
-            title="Production"
-            data={serviceData.historical.production}
-            color="#2AB4FF"
-            unit="reqs/h"
-          />
+          {sortedEnvironments.map(env => (
+            <SmallMultiple
+              key={env.id}
+              title={env.title}
+              data={env.data}
+              color="#2AB4FF"
+              unit="reqs/h"
+            />
+          ))}
         </div>
       </div>
     </div>
