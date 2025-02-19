@@ -3,10 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import { SmallMultiple } from "@/components/SmallMultiple";
 import { SummaryCard } from "@/components/SummaryCard";
 
-// Mock data generator for service requests
-const generateMockServiceData = (baseValue: number, hours: number) => {
-  return Array.from({ length: hours }, (_, i) => ({
-    time: `${i}:00`,
+// Mock data generator for monthly service requests
+const generateMockMonthlyData = (baseValue: number) => {
+  return Array.from({ length: 31 }, (_, i) => ({
+    day: `${i + 1}`,
     value: Math.max(0, baseValue + Math.floor(Math.random() * 20 - 10))
   }));
 };
@@ -29,10 +29,10 @@ const Dashboard = () => {
         production: 3
       },
       historical: {
-        development: generateMockServiceData(15, 24),
-        staging: generateMockServiceData(8, 24),
-        preProduction: generateMockServiceData(5, 24),
-        production: generateMockServiceData(3, 24)
+        development: generateMockMonthlyData(15),
+        staging: generateMockMonthlyData(8),
+        preProduction: generateMockMonthlyData(5),
+        production: generateMockMonthlyData(3)
       }
     }),
     initialData: {
@@ -43,10 +43,10 @@ const Dashboard = () => {
         production: 3
       },
       historical: {
-        development: generateMockServiceData(15, 24),
-        staging: generateMockServiceData(8, 24),
-        preProduction: generateMockServiceData(5, 24),
-        production: generateMockServiceData(3, 24)
+        development: generateMockMonthlyData(15),
+        staging: generateMockMonthlyData(8),
+        preProduction: generateMockMonthlyData(5),
+        production: generateMockMonthlyData(3)
       }
     }
   });

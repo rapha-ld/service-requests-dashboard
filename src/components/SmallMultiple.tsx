@@ -1,10 +1,10 @@
 
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { cn } from "@/lib/utils";
 
 interface SmallMultipleProps {
   title: string;
-  data: Array<{ time: string; value: number }>;
+  data: Array<{ day: string; value: number }>;
   color: string;
   unit: string;
   className?: string;
@@ -19,11 +19,11 @@ export const SmallMultiple = ({ title, data, color, unit, className }: SmallMult
       <h3 className="text-sm font-medium text-aqi-text mb-2">{title}</h3>
       <div className="h-32">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
+          <BarChart data={data} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
             <XAxis 
-              dataKey="time" 
+              dataKey="day" 
               tick={{ fontSize: 10 }}
-              interval="preserveStartEnd"
+              interval="preserveStart"
               tickLine={false}
             />
             <YAxis 
@@ -53,15 +53,12 @@ export const SmallMultiple = ({ title, data, color, unit, className }: SmallMult
                 position: 'insideTopRight'
               }}
             />
-            <Line
-              type="monotone"
+            <Bar
               dataKey="value"
-              stroke={color}
-              strokeWidth={2}
-              dot={false}
-              activeDot={{ r: 4 }}
+              fill={color}
+              fillOpacity={0.8}
             />
-          </LineChart>
+          </BarChart>
         </ResponsiveContainer>
       </div>
     </div>
