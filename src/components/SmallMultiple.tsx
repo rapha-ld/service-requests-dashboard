@@ -72,7 +72,7 @@ export const SmallMultiple = ({ title, data, color, unit, className, viewType, m
             {viewType === 'net-new' && (
               <ReferenceLine 
                 y={average}
-                stroke={color}
+                stroke="#545A62"
                 strokeDasharray="3 3"
                 strokeOpacity={0.5}
                 label={{
