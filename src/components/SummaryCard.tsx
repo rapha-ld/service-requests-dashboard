@@ -23,10 +23,9 @@ export const SummaryCard = ({ title, value, unit, status, className }: SummaryCa
     )}>
       <h3 className="text-sm font-medium text-aqi-muted">{title}</h3>
       <div className="mt-2 flex items-baseline">
-        <span className={cn("text-2xl font-semibold", statusColors[status])}>
+        <span className="text-2xl font-semibold text-[#23252A]">
           {value}
         </span>
-        <span className="ml-1 text-sm text-aqi-muted">{unit}</span>
       </div>
     </div>
   );
