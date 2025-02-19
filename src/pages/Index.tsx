@@ -68,35 +68,35 @@ const Dashboard = () => {
     { 
       id: 'development', 
       title: 'Development', 
-      value: getTotalValue(serviceData.historical.development), 
+      value: getTotalValue(serviceData.historical.development),
       data: serviceData.historical.development,
       total: getTotalValue(serviceData.historical.development)
     },
     { 
       id: 'staging', 
       title: 'Staging', 
-      value: getTotalValue(serviceData.historical.staging), 
+      value: getTotalValue(serviceData.historical.staging),
       data: serviceData.historical.staging,
       total: getTotalValue(serviceData.historical.staging)
     },
     { 
       id: 'preProduction', 
       title: 'Pre-Production', 
-      value: getTotalValue(serviceData.historical.preProduction), 
+      value: getTotalValue(serviceData.historical.preProduction),
       data: serviceData.historical.preProduction,
       total: getTotalValue(serviceData.historical.preProduction)
     },
     { 
       id: 'production', 
       title: 'Production', 
-      value: getTotalValue(serviceData.historical.production), 
+      value: getTotalValue(serviceData.historical.production),
       data: serviceData.historical.production,
       total: getTotalValue(serviceData.historical.production)
     }
   ];
 
   const sortedEnvironments = isSorted 
-    ? [...environments].sort((a, b) => b.total - a.total)
+    ? [...environments].sort((a, b) => b.value - a.value)
     : environments;
 
   return (
@@ -139,7 +139,7 @@ const Dashboard = () => {
               key={env.id}
               title={env.title}
               value={env.value}
-              unit=""
+              unit="requests"
               status={getRequestStatus(env.value)}
             />
           ))}
