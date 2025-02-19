@@ -1,8 +1,10 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { SmallMultiple } from "@/components/SmallMultiple";
 import { SummaryCard } from "@/components/SummaryCard";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Toggle } from "@/components/ui/toggle";
 import { ArrowUpDown } from "lucide-react";
 import { useState } from "react";
 
@@ -38,6 +40,7 @@ const months = [
 const Dashboard = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
+  const [viewType, setViewType] = useState<'net-new' | 'cumulative'>('net-new');
 
   const date = new Date(new Date().getFullYear(), selectedMonth);
 
@@ -111,6 +114,14 @@ const Dashboard = () => {
           <h1 className="text-2xl font-semibold text-aqi-text">Service Requests Dashboard</h1>
           
           <div className="flex gap-2">
+            <Toggle
+              pressed={viewType === 'cumulative'}
+              onPressedChange={(pressed) => setViewType(pressed ? 'cumulative' : 'net-new')}
+              aria-label="Toggle data view"
+              className="h-10"
+            >
+              {viewType === 'net-new' ? 'Net New' : 'Cumulative'}
+            </Toggle>
             <Button
               variant="outline"
               onClick={handleSortClick}
@@ -158,6 +169,7 @@ const Dashboard = () => {
               data={env.data}
               color="#2AB4FF"
               unit="reqs/h"
+              viewType={viewType}
             />
           ))}
         </div>

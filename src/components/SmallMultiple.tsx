@@ -9,11 +9,23 @@ interface SmallMultipleProps {
   color: string;
   unit: string;
   className?: string;
+  viewType: 'net-new' | 'cumulative';
 }
 
-export const SmallMultiple = ({ title, data, color, unit, className }: SmallMultipleProps) => {
-  // Calculate average value
+export const SmallMultiple = ({ title, data, color, unit, className, viewType }: SmallMultipleProps) => {
+  // Calculate average value for net-new view
   const average = data.reduce((sum, item) => sum + item.value, 0) / data.length;
+  
+  // Transform data for cumulative view
+  const transformedData = viewType === 'cumulative' 
+    ? data.reduce((acc, curr, index) => {
+        const previousValue = index > 0 ? acc[index - 1].value : 0;
+        return [...acc, {
+          day: curr.day,
+          value: previousValue + curr.value
+        }];
+      }, [] as Array<{ day: string; value: number }>)
+    : data;
   
   const formatTooltipDate = (day: string) => {
     // Create a date object for the current year and the given day
@@ -26,7 +38,7 @@ export const SmallMultiple = ({ title, data, color, unit, className }: SmallMult
       <h3 className="text-sm font-medium text-aqi-text mb-2">{title}</h3>
       <div className="h-32">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
+          <BarChart data={transformedData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
             <XAxis 
               dataKey="day" 
               tick={{ fontSize: 10 }}
@@ -52,18 +64,20 @@ export const SmallMultiple = ({ title, data, color, unit, className }: SmallMult
                 formatTooltipDate(props.payload.day)
               ]}
             />
-            <ReferenceLine 
-              y={average}
-              stroke={color}
-              strokeDasharray="3 3"
-              strokeOpacity={0.5}
-              label={{
-                value: `Avg: ${average.toFixed(1)}${unit}`,
-                fill: color,
-                fontSize: 10,
-                position: 'insideTopRight'
-              }}
-            />
+            {viewType === 'net-new' && (
+              <ReferenceLine 
+                y={average}
+                stroke={color}
+                strokeDasharray="3 3"
+                strokeOpacity={0.5}
+                label={{
+                  value: `Avg: ${average.toFixed(1)}${unit}`,
+                  fill: color,
+                  fontSize: 10,
+                  position: 'insideTopRight'
+                }}
+              />
+            )}
             <Bar
               dataKey="value"
               fill={color}
