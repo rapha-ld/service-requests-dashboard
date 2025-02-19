@@ -27,15 +27,12 @@ const getMostRecentValue = (data: Array<{ day: string; value: number }>) => {
 
 const getTotalValue = (data: Array<{ day: string; value: number }>) => {
   const total = data.reduce((sum, item) => sum + item.value, 0);
-  console.log('Total value calculated:', total);
   return total;
 };
 
-const generatePercentChange = (value: number) => {
-  // Generate a consistent random percentage change for demonstration
-  // In a real app, this would be calculated from actual historical data
-  const seed = value.toString().split('').reduce((a, b) => a + parseInt(b), 0);
-  return -20 + (seed % 40); // Generates a value between -20 and +20
+const calculatePercentChange = (currentValue: number, previousValue: number) => {
+  if (previousValue === 0) return 0;
+  return ((currentValue - previousValue) / previousValue) * 100;
 };
 
 const months = [
@@ -48,30 +45,49 @@ const Dashboard = () => {
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
   const [viewType, setViewType] = useState<'net-new' | 'cumulative'>('net-new');
 
-  const date = new Date(new Date().getFullYear(), selectedMonth);
+  const currentDate = new Date(new Date().getFullYear(), selectedMonth);
+  const previousDate = new Date(new Date().getFullYear(), selectedMonth - 1);
 
   const { data: serviceData } = useQuery({
-    queryKey: ['service-data', date.toISOString()],
+    queryKey: ['service-data', currentDate.toISOString()],
     queryFn: () => {
-      const historical = {
-        development: generateMockMonthlyData(15, date),
-        staging: generateMockMonthlyData(8, date),
-        preProduction: generateMockMonthlyData(5, date),
-        production: generateMockMonthlyData(3, date),
-        testing: generateMockMonthlyData(10, date),
-        qa: generateMockMonthlyData(7, date)
+      const current = {
+        development: generateMockMonthlyData(15, currentDate),
+        staging: generateMockMonthlyData(8, currentDate),
+        preProduction: generateMockMonthlyData(5, currentDate),
+        production: generateMockMonthlyData(3, currentDate),
+        testing: generateMockMonthlyData(10, currentDate),
+        qa: generateMockMonthlyData(7, currentDate)
+      };
+
+      const previous = {
+        development: generateMockMonthlyData(15, previousDate),
+        staging: generateMockMonthlyData(8, previousDate),
+        preProduction: generateMockMonthlyData(5, previousDate),
+        production: generateMockMonthlyData(3, previousDate),
+        testing: generateMockMonthlyData(10, previousDate),
+        qa: generateMockMonthlyData(7, previousDate)
       };
 
       return {
-        current: {
-          development: getMostRecentValue(historical.development),
-          staging: getMostRecentValue(historical.staging),
-          preProduction: getMostRecentValue(historical.preProduction),
-          production: getMostRecentValue(historical.production),
-          testing: getMostRecentValue(historical.testing),
-          qa: getMostRecentValue(historical.qa)
+        current,
+        previous,
+        currentTotals: {
+          development: getTotalValue(current.development),
+          staging: getTotalValue(current.staging),
+          preProduction: getTotalValue(current.preProduction),
+          production: getTotalValue(current.production),
+          testing: getTotalValue(current.testing),
+          qa: getTotalValue(current.qa)
         },
-        historical
+        previousTotals: {
+          development: getTotalValue(previous.development),
+          staging: getTotalValue(previous.staging),
+          preProduction: getTotalValue(previous.preProduction),
+          production: getTotalValue(previous.production),
+          testing: getTotalValue(previous.testing),
+          qa: getTotalValue(previous.qa)
+        }
       };
     }
   });
@@ -82,44 +98,62 @@ const Dashboard = () => {
     { 
       id: 'development', 
       title: 'Development', 
-      value: getTotalValue(serviceData.historical.development),
-      data: serviceData.historical.development,
-      percentChange: generatePercentChange(getTotalValue(serviceData.historical.development))
+      value: serviceData.currentTotals.development,
+      data: serviceData.current.development,
+      percentChange: calculatePercentChange(
+        serviceData.currentTotals.development,
+        serviceData.previousTotals.development
+      )
     },
     { 
       id: 'staging', 
       title: 'Staging', 
-      value: getTotalValue(serviceData.historical.staging),
-      data: serviceData.historical.staging,
-      percentChange: generatePercentChange(getTotalValue(serviceData.historical.staging))
+      value: serviceData.currentTotals.staging,
+      data: serviceData.current.staging,
+      percentChange: calculatePercentChange(
+        serviceData.currentTotals.staging,
+        serviceData.previousTotals.staging
+      )
     },
     { 
       id: 'preProduction', 
       title: 'Pre-Production', 
-      value: getTotalValue(serviceData.historical.preProduction),
-      data: serviceData.historical.preProduction,
-      percentChange: generatePercentChange(getTotalValue(serviceData.historical.preProduction))
+      value: serviceData.currentTotals.preProduction,
+      data: serviceData.current.preProduction,
+      percentChange: calculatePercentChange(
+        serviceData.currentTotals.preProduction,
+        serviceData.previousTotals.preProduction
+      )
     },
     { 
       id: 'production', 
       title: 'Production', 
-      value: getTotalValue(serviceData.historical.production),
-      data: serviceData.historical.production,
-      percentChange: generatePercentChange(getTotalValue(serviceData.historical.production))
+      value: serviceData.currentTotals.production,
+      data: serviceData.current.production,
+      percentChange: calculatePercentChange(
+        serviceData.currentTotals.production,
+        serviceData.previousTotals.production
+      )
     },
     { 
       id: 'testing', 
       title: 'Testing', 
-      value: getTotalValue(serviceData.historical.testing),
-      data: serviceData.historical.testing,
-      percentChange: generatePercentChange(getTotalValue(serviceData.historical.testing))
+      value: serviceData.currentTotals.testing,
+      data: serviceData.current.testing,
+      percentChange: calculatePercentChange(
+        serviceData.currentTotals.testing,
+        serviceData.previousTotals.testing
+      )
     },
     { 
       id: 'qa', 
       title: 'QA', 
-      value: getTotalValue(serviceData.historical.qa),
-      data: serviceData.historical.qa,
-      percentChange: generatePercentChange(getTotalValue(serviceData.historical.qa))
+      value: serviceData.currentTotals.qa,
+      data: serviceData.current.qa,
+      percentChange: calculatePercentChange(
+        serviceData.currentTotals.qa,
+        serviceData.previousTotals.qa
+      )
     }
   ];
 
@@ -131,12 +165,10 @@ const Dashboard = () => {
     sortDirection === 'desc' ? b.value - a.value : a.value - b.value
   );
 
-  // Calculate the maximum value across all environments
   const getMaxValue = () => {
     if (viewType === 'net-new') {
       return Math.max(...environments.flatMap(env => env.data.map(d => d.value)));
     } else {
-      // For cumulative view, calculate the maximum of running totals
       return Math.max(...environments.map(env => 
         env.data.reduce((sum, item) => sum + item.value, 0)
       ));
