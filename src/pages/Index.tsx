@@ -4,7 +4,6 @@ import { SmallMultiple } from "@/components/SmallMultiple";
 import { SummaryCard } from "@/components/SummaryCard";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Toggle } from "@/components/ui/toggle";
 import { ArrowUpDown } from "lucide-react";
 import { useState } from "react";
 
@@ -114,14 +113,22 @@ const Dashboard = () => {
           <h1 className="text-2xl font-semibold text-aqi-text">Service Requests Dashboard</h1>
           
           <div className="flex gap-2">
-            <Toggle
-              pressed={viewType === 'cumulative'}
-              onPressedChange={(pressed) => setViewType(pressed ? 'cumulative' : 'net-new')}
-              aria-label="Toggle data view"
-              className="h-10"
-            >
-              {viewType === 'net-new' ? 'Net New' : 'Cumulative'}
-            </Toggle>
+            <div className="flex">
+              <Button
+                variant={viewType === 'net-new' ? 'default' : 'outline'}
+                onClick={() => setViewType('net-new')}
+                className="rounded-r-none"
+              >
+                Net New
+              </Button>
+              <Button
+                variant={viewType === 'cumulative' ? 'default' : 'outline'}
+                onClick={() => setViewType('cumulative')}
+                className="rounded-l-none border-l-0"
+              >
+                Cumulative
+              </Button>
+            </div>
             <Button
               variant="outline"
               onClick={handleSortClick}
