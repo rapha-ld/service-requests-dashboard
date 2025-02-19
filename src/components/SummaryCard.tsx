@@ -18,7 +18,7 @@ export const SummaryCard = ({ title, value, unit, status, className }: SummaryCa
 
   return (
     <div className={cn(
-      "bg-aqi-card p-4 rounded-lg shadow-sm animate-slide-up",
+      "bg-aqi-card p-4 rounded-lg shadow-sm animate-slide-up transition-all duration-200",
       className
     )}>
       <h3 className="text-sm font-medium text-aqi-muted">{title}</h3>
