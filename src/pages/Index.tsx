@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { SmallMultiple } from "@/components/SmallMultiple";
 import { SummaryCard } from "@/components/SummaryCard";
@@ -23,6 +24,10 @@ const getRequestStatus = (value: number) => {
 
 const getMostRecentValue = (data: Array<{ day: string; value: number }>) => {
   return data[data.length - 1]?.value || 0;
+};
+
+const getTotalValue = (data: Array<{ day: string; value: number }>) => {
+  return data.reduce((sum, item) => sum + item.value, 0);
 };
 
 const months = [
@@ -77,14 +82,38 @@ const Dashboard = () => {
   });
 
   const environments = [
-    { id: 'development', title: 'Development', value: serviceData.current.development, data: serviceData.historical.development },
-    { id: 'staging', title: 'Staging', value: serviceData.current.staging, data: serviceData.historical.staging },
-    { id: 'preProduction', title: 'Pre-Production', value: serviceData.current.preProduction, data: serviceData.historical.preProduction },
-    { id: 'production', title: 'Production', value: serviceData.current.production, data: serviceData.historical.production }
+    { 
+      id: 'development', 
+      title: 'Development', 
+      value: serviceData.current.development, 
+      data: serviceData.historical.development,
+      total: getTotalValue(serviceData.historical.development)
+    },
+    { 
+      id: 'staging', 
+      title: 'Staging', 
+      value: serviceData.current.staging, 
+      data: serviceData.historical.staging,
+      total: getTotalValue(serviceData.historical.staging)
+    },
+    { 
+      id: 'preProduction', 
+      title: 'Pre-Production', 
+      value: serviceData.current.preProduction, 
+      data: serviceData.historical.preProduction,
+      total: getTotalValue(serviceData.historical.preProduction)
+    },
+    { 
+      id: 'production', 
+      title: 'Production', 
+      value: serviceData.current.production, 
+      data: serviceData.historical.production,
+      total: getTotalValue(serviceData.historical.production)
+    }
   ];
 
   const sortedEnvironments = isSorted 
-    ? [...environments].sort((a, b) => b.value - a.value)
+    ? [...environments].sort((a, b) => b.total - a.total)
     : environments;
 
   return (
