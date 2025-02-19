@@ -18,7 +18,7 @@ export const SmallMultiple = ({ title, data, color, unit, className }: SmallMult
   const formatTooltipDate = (day: string) => {
     // Create a date object for the current year and the given day
     const date = new Date(new Date().getFullYear(), 0, parseInt(day));
-    return format(date, 'MMM dd yyyy');
+    return format(date, 'MMM dd, yyyy');
   };
 
   return (
@@ -47,8 +47,10 @@ export const SmallMultiple = ({ title, data, color, unit, className }: SmallMult
                 boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                 fontSize: '12px'
               }}
-              formatter={() => ['', '']}
-              labelFormatter={(value) => formatTooltipDate(value)}
+              formatter={(value: number, name: string, props: any) => [
+                `${value}${unit}`,
+                formatTooltipDate(props.payload.day)
+              ]}
             />
             <ReferenceLine 
               y={average}
