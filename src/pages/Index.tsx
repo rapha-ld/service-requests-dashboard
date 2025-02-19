@@ -26,7 +26,9 @@ const getMostRecentValue = (data: Array<{ day: string; value: number }>) => {
 };
 
 const getTotalValue = (data: Array<{ day: string; value: number }>) => {
-  return data.reduce((sum, item) => sum + item.value, 0);
+  const total = data.reduce((sum, item) => sum + item.value, 0);
+  console.log('Total value calculated:', total); // Debug log
+  return total;
 };
 
 const months = [
@@ -69,35 +71,35 @@ const Dashboard = () => {
       id: 'development', 
       title: 'Development', 
       value: getTotalValue(serviceData.historical.development),
-      data: serviceData.historical.development,
-      total: getTotalValue(serviceData.historical.development)
+      data: serviceData.historical.development
     },
     { 
       id: 'staging', 
       title: 'Staging', 
       value: getTotalValue(serviceData.historical.staging),
-      data: serviceData.historical.staging,
-      total: getTotalValue(serviceData.historical.staging)
+      data: serviceData.historical.staging
     },
     { 
       id: 'preProduction', 
       title: 'Pre-Production', 
       value: getTotalValue(serviceData.historical.preProduction),
-      data: serviceData.historical.preProduction,
-      total: getTotalValue(serviceData.historical.preProduction)
+      data: serviceData.historical.preProduction
     },
     { 
       id: 'production', 
       title: 'Production', 
       value: getTotalValue(serviceData.historical.production),
-      data: serviceData.historical.production,
-      total: getTotalValue(serviceData.historical.production)
+      data: serviceData.historical.production
     }
   ];
+
+  console.log('Before sorting:', environments.map(env => ({ id: env.id, value: env.value }))); // Debug log
 
   const sortedEnvironments = isSorted 
     ? [...environments].sort((a, b) => b.value - a.value)
     : environments;
+
+  console.log('After sorting:', sortedEnvironments.map(env => ({ id: env.id, value: env.value }))); // Debug log
 
   return (
     <div className="min-h-screen bg-aqi-background p-6">
