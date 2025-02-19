@@ -48,7 +48,7 @@ export const SmallMultiple = ({ title, data, color, unit, className }: SmallMult
                 fontSize: '12px'
               }}
               formatter={(value: number, name: string, props: any) => [
-                `${value}${unit}`,
+                `${value}`,
                 formatTooltipDate(props.payload.day)
               ]}
             />
