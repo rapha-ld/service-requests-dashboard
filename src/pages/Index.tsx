@@ -27,7 +27,7 @@ const getMostRecentValue = (data: Array<{ day: string; value: number }>) => {
 
 const getTotalValue = (data: Array<{ day: string; value: number }>) => {
   const total = data.reduce((sum, item) => sum + item.value, 0);
-  console.log('Total value calculated:', total); // Debug log
+  console.log('Total value calculated:', total);
   return total;
 };
 
@@ -38,7 +38,7 @@ const months = [
 
 const Dashboard = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
-  const [isSorted, setIsSorted] = useState(false);
+  const [sortDirection, setSortDirection] = useState<'none' | 'asc' | 'desc'>('none');
 
   const date = new Date(new Date().getFullYear(), selectedMonth);
 
@@ -93,13 +93,29 @@ const Dashboard = () => {
     }
   ];
 
-  console.log('Before sorting:', environments.map(env => ({ id: env.id, value: env.value }))); // Debug log
+  console.log('Before sorting:', environments.map(env => ({ id: env.id, value: env.value })));
 
-  const sortedEnvironments = isSorted 
-    ? [...environments].sort((a, b) => b.value - a.value)
-    : environments;
+  const handleSortClick = () => {
+    const nextSortDirection = {
+      none: 'desc',
+      desc: 'asc',
+      asc: 'none'
+    }[sortDirection];
+    setSortDirection(nextSortDirection);
+  };
 
-  console.log('After sorting:', sortedEnvironments.map(env => ({ id: env.id, value: env.value }))); // Debug log
+  const sortedEnvironments = (() => {
+    switch (sortDirection) {
+      case 'desc':
+        return [...environments].sort((a, b) => b.value - a.value);
+      case 'asc':
+        return [...environments].sort((a, b) => a.value - b.value);
+      default:
+        return environments;
+    }
+  })();
+
+  console.log('After sorting:', sortedEnvironments.map(env => ({ id: env.id, value: env.value })));
 
   return (
     <div className="min-h-screen bg-aqi-background p-6">
@@ -111,11 +127,14 @@ const Dashboard = () => {
             <Button
               variant="outline"
               size="icon"
-              onClick={() => setIsSorted(!isSorted)}
+              onClick={handleSortClick}
               className="h-10"
-              title={isSorted ? "Show original order" : "Sort by total requests"}
+              title={
+                sortDirection === 'none' ? "Sort by total requests" :
+                sortDirection === 'desc' ? "Sort ascending" : "Show original order"
+              }
             >
-              <ArrowUpDown className="h-4 w-4" />
+              <ArrowUpDown className={`h-4 w-4 ${sortDirection !== 'none' ? 'text-primary' : ''}`} />
             </Button>
             <Select
               value={selectedMonth.toString()}
