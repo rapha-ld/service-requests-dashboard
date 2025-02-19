@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { SmallMultiple } from "@/components/SmallMultiple";
 import { SummaryCard } from "@/components/SummaryCard";
@@ -38,7 +37,7 @@ const months = [
 
 const Dashboard = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
-  const [sortDirection, setSortDirection] = useState<'none' | 'asc' | 'desc'>('none');
+  const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
 
   const date = new Date(new Date().getFullYear(), selectedMonth);
 
@@ -96,24 +95,12 @@ const Dashboard = () => {
   console.log('Before sorting:', environments.map(env => ({ id: env.id, value: env.value })));
 
   const handleSortClick = () => {
-    const nextSortDirection = {
-      none: 'desc',
-      desc: 'asc',
-      asc: 'none'
-    }[sortDirection] as 'none' | 'asc' | 'desc';
-    setSortDirection(nextSortDirection);
+    setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc');
   };
 
-  const sortedEnvironments = (() => {
-    switch (sortDirection) {
-      case 'desc':
-        return [...environments].sort((a, b) => b.value - a.value);
-      case 'asc':
-        return [...environments].sort((a, b) => a.value - b.value);
-      default:
-        return environments;
-    }
-  })();
+  const sortedEnvironments = environments.sort((a, b) => 
+    sortDirection === 'desc' ? b.value - a.value : a.value - b.value
+  );
 
   console.log('After sorting:', sortedEnvironments.map(env => ({ id: env.id, value: env.value })));
 
@@ -128,12 +115,9 @@ const Dashboard = () => {
               variant="outline"
               onClick={handleSortClick}
               className="h-10"
-              title={
-                sortDirection === 'none' ? "Sort by total requests" :
-                sortDirection === 'desc' ? "Sort ascending" : "Show original order"
-              }
+              title={sortDirection === 'desc' ? "Sort ascending" : "Sort descending"}
             >
-              <ArrowUpDown className={`h-4 w-4 ${sortDirection !== 'none' ? 'text-primary' : ''}`} />
+              <ArrowUpDown className={`h-4 w-4 text-primary`} />
               Sort
             </Button>
             <Select
