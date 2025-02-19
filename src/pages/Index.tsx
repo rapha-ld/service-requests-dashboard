@@ -139,7 +139,7 @@ const Dashboard = () => {
               key={env.id}
               title={env.title}
               value={env.value}
-              unit="total reqs"
+              unit=""
               status={getRequestStatus(env.value)}
             />
           ))}
