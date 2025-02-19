@@ -99,6 +99,21 @@ const Dashboard = () => {
                 selected={date}
                 onSelect={(newDate) => newDate && setDate(newDate)}
                 initialFocus
+                fromMonth={new Date(2020, 0)}
+                toMonth={new Date(2025, 11)}
+                numberOfMonths={1}
+                fixedWeeks
+                ISOWeek={false}
+                captionLayout="dropdown"
+                showOutsideDays={false}
+                disabled={(date) => date > new Date() || date < new Date(2020, 0)}
+                modifiers={{
+                  // This makes every day in the month "selected" when clicked,
+                  // creating the visual effect of selecting the whole month
+                  selected: (date) => 
+                    date.getMonth() === date.getMonth() &&
+                    date.getFullYear() === date.getFullYear()
+                }}
               />
             </PopoverContent>
           </Popover>
