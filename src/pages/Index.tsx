@@ -87,25 +87,25 @@ const Dashboard = () => {
         {/* Small Multiples */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <SmallMultiple
-            title="Development Environment - 24 Hour Trend"
+            title="Development"
             data={serviceData.historical.development}
             color="#F97316"
             unit="reqs/h"
           />
           <SmallMultiple
-            title="Staging Environment - 24 Hour Trend"
+            title="Staging"
             data={serviceData.historical.staging}
             color="#8B5CF6"
             unit="reqs/h"
           />
           <SmallMultiple
-            title="Pre-Production Environment - 24 Hour Trend"
+            title="Pre-Production"
             data={serviceData.historical.preProduction}
             color="#0EA5E9"
             unit="reqs/h"
           />
           <SmallMultiple
-            title="Production Environment - 24 Hour Trend"
+            title="Production"
             data={serviceData.historical.production}
             color="#10B981"
             unit="reqs/h"
