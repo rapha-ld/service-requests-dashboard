@@ -1,6 +1,7 @@
 
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { cn } from "@/lib/utils";
+import { format } from 'date-fns';
 
 interface SmallMultipleProps {
   title: string;
@@ -14,6 +15,12 @@ export const SmallMultiple = ({ title, data, color, unit, className }: SmallMult
   // Calculate average value
   const average = data.reduce((sum, item) => sum + item.value, 0) / data.length;
   
+  const formatTooltipDate = (day: string) => {
+    // Create a date object for the current year and the given day
+    const date = new Date(new Date().getFullYear(), 0, parseInt(day));
+    return format(date, 'MMM dd, yyyy');
+  };
+
   return (
     <div className={cn("bg-aqi-card p-4 rounded-lg shadow-sm animate-fade-in", className)}>
       <h3 className="text-sm font-medium text-aqi-text mb-2">{title}</h3>
@@ -40,6 +47,10 @@ export const SmallMultiple = ({ title, data, color, unit, className }: SmallMult
                 boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                 fontSize: '12px'
               }}
+              formatter={(value: number, name: string, props: any) => [
+                `${value}${unit}`,
+                formatTooltipDate(props.payload.day)
+              ]}
             />
             <ReferenceLine 
               y={average}
