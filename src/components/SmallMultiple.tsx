@@ -47,10 +47,8 @@ export const SmallMultiple = ({ title, data, color, unit, className }: SmallMult
                 boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                 fontSize: '12px'
               }}
-              formatter={(value: number, name: string, props: any) => [
-                '',
-                formatTooltipDate(props.payload.day)
-              ]}
+              formatter={() => ['', '']}
+              labelFormatter={(value) => formatTooltipDate(value)}
             />
             <ReferenceLine 
               y={average}
@@ -75,4 +73,3 @@ export const SmallMultiple = ({ title, data, color, unit, className }: SmallMult
     </div>
   );
 };
-
