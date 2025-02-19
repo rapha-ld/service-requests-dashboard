@@ -49,7 +49,6 @@ export const SmallMultiple = ({ title, data, color, unit, className, viewType, m
               tick={{ fontSize: 10 }}
               tickLine={false}
               axisLine={false}
-              unit={unit}
               domain={[0, maxValue]}
             />
             <Tooltip
@@ -61,7 +60,7 @@ export const SmallMultiple = ({ title, data, color, unit, className, viewType, m
                 fontSize: '12px'
               }}
               formatter={(value: number, name: string, props: any) => [
-                `${value}`,
+                `${value}${unit}`,
                 formatTooltipDate(props.payload.day)
               ]}
             />
