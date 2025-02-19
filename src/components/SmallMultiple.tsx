@@ -64,6 +64,11 @@ export const SmallMultiple = ({ title, data, color, unit, className, viewType, m
                 formatTooltipDate(props.payload.day)
               ]}
             />
+            <Bar
+              dataKey="value"
+              fill={color}
+              fillOpacity={0.8}
+            />
             {viewType === 'net-new' && (
               <ReferenceLine 
                 y={average}
@@ -74,15 +79,11 @@ export const SmallMultiple = ({ title, data, color, unit, className, viewType, m
                   value: `Avg: ${average.toFixed(1)}${unit}`,
                   fill: '#23252A',
                   fontSize: 10,
-                  position: 'insideTopRight'
+                  position: 'insideTopRight',
+                  style: { zIndex: 10 }
                 }}
               />
             )}
-            <Bar
-              dataKey="value"
-              fill={color}
-              fillOpacity={0.8}
-            />
           </BarChart>
         </ResponsiveContainer>
       </div>
