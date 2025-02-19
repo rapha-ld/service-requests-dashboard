@@ -17,37 +17,50 @@ const getRequestStatus = (value: number) => {
   return 'poor';
 };
 
+// Get the most recent value from historical data
+const getMostRecentValue = (data: Array<{ day: string; value: number }>) => {
+  return data[data.length - 1]?.value || 0;
+};
+
 const Dashboard = () => {
   // Simulate data fetching with React Query
   const { data: serviceData } = useQuery({
     queryKey: ['service-data'],
-    queryFn: () => ({
-      current: {
-        development: 15,
-        staging: 8,
-        preProduction: 5,
-        production: 3
-      },
-      historical: {
+    queryFn: () => {
+      const historical = {
         development: generateMockMonthlyData(15),
         staging: generateMockMonthlyData(8),
         preProduction: generateMockMonthlyData(5),
         production: generateMockMonthlyData(3)
-      }
-    }),
-    initialData: {
-      current: {
-        development: 15,
-        staging: 8,
-        preProduction: 5,
-        production: 3
-      },
-      historical: {
+      };
+
+      return {
+        current: {
+          development: getMostRecentValue(historical.development),
+          staging: getMostRecentValue(historical.staging),
+          preProduction: getMostRecentValue(historical.preProduction),
+          production: getMostRecentValue(historical.production)
+        },
+        historical
+      };
+    },
+    initialData: () => {
+      const historical = {
         development: generateMockMonthlyData(15),
         staging: generateMockMonthlyData(8),
         preProduction: generateMockMonthlyData(5),
         production: generateMockMonthlyData(3)
-      }
+      };
+
+      return {
+        current: {
+          development: getMostRecentValue(historical.development),
+          staging: getMostRecentValue(historical.staging),
+          preProduction: getMostRecentValue(historical.preProduction),
+          production: getMostRecentValue(historical.production)
+        },
+        historical
+      };
     }
   });
 
