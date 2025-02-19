@@ -16,8 +16,8 @@ const generateMockMonthlyData = (baseValue: number, date: Date) => {
 };
 
 const getRequestStatus = (value: number) => {
-  if (value <= 10) return 'good';
-  if (value <= 20) return 'moderate';
+  if (value <= 200) return 'good';
+  if (value <= 400) return 'moderate';
   return 'poor';
 };
 
@@ -68,28 +68,28 @@ const Dashboard = () => {
     { 
       id: 'development', 
       title: 'Development', 
-      value: serviceData.current.development, 
+      value: getTotalValue(serviceData.historical.development), 
       data: serviceData.historical.development,
       total: getTotalValue(serviceData.historical.development)
     },
     { 
       id: 'staging', 
       title: 'Staging', 
-      value: serviceData.current.staging, 
+      value: getTotalValue(serviceData.historical.staging), 
       data: serviceData.historical.staging,
       total: getTotalValue(serviceData.historical.staging)
     },
     { 
       id: 'preProduction', 
       title: 'Pre-Production', 
-      value: serviceData.current.preProduction, 
+      value: getTotalValue(serviceData.historical.preProduction), 
       data: serviceData.historical.preProduction,
       total: getTotalValue(serviceData.historical.preProduction)
     },
     { 
       id: 'production', 
       title: 'Production', 
-      value: serviceData.current.production, 
+      value: getTotalValue(serviceData.historical.production), 
       data: serviceData.historical.production,
       total: getTotalValue(serviceData.historical.production)
     }
@@ -139,7 +139,7 @@ const Dashboard = () => {
               key={env.id}
               title={env.title}
               value={env.value}
-              unit="reqs/h"
+              unit="total reqs"
               status={getRequestStatus(env.value)}
             />
           ))}
