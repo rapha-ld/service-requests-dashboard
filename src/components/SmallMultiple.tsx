@@ -18,7 +18,7 @@ export const SmallMultiple = ({ title, data, color, unit, className }: SmallMult
   const formatTooltipDate = (day: string) => {
     // Create a date object for the current year and the given day
     const date = new Date(new Date().getFullYear(), 0, parseInt(day));
-    return format(date, 'MMM dd, yyyy');
+    return format(date, 'MMM dd yyyy');
   };
 
   return (
@@ -75,3 +75,4 @@ export const SmallMultiple = ({ title, data, color, unit, className }: SmallMult
     </div>
   );
 };
+
