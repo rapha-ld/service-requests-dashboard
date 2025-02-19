@@ -52,7 +52,7 @@ export const SmallMultiple = ({ title, data, color, unit, className, viewType, m
       <h3 className="text-sm font-medium text-aqi-text mb-2">{title}</h3>
       <div className="h-32">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={transformedData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
+          <BarChart data={transformedData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
             <XAxis 
               dataKey="day" 
               tick={{ fontSize: 10 }}
@@ -64,6 +64,7 @@ export const SmallMultiple = ({ title, data, color, unit, className, viewType, m
               tickLine={false}
               axisLine={false}
               domain={[0, maxValue]}
+              width={25}
             />
             <Tooltip content={<CustomTooltip />} />
             <Bar
