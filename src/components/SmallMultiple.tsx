@@ -72,7 +72,7 @@ export const SmallMultiple = ({ title, data, color, unit, className, viewType, m
                 strokeOpacity={0.5}
                 label={{
                   value: `Avg: ${average.toFixed(1)}${unit}`,
-                  fill: color,
+                  fill: '#23252A',
                   fontSize: 10,
                   position: 'insideTopRight'
                 }}
