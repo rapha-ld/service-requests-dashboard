@@ -80,7 +80,8 @@ export const SmallMultiple = ({ title, data, color, unit, className, viewType, m
                   fill: '#23252A',
                   fontSize: 10,
                   position: 'insideTopRight',
-                  style: { zIndex: 10 }
+                  style: { zIndex: 10 },
+                  dy: -10  // Move the label 10 pixels up from its default position
                 }}
               />
             )}
