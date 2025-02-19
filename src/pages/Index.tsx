@@ -2,10 +2,18 @@
 import { useQuery } from "@tanstack/react-query";
 import { SmallMultiple } from "@/components/SmallMultiple";
 import { SummaryCard } from "@/components/SummaryCard";
+import { format } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { CalendarIcon } from "lucide-react";
+import { useState } from "react";
 
 // Mock data generator for monthly service requests
-const generateMockMonthlyData = (baseValue: number) => {
-  return Array.from({ length: 31 }, (_, i) => ({
+const generateMockMonthlyData = (baseValue: number, date: Date) => {
+  const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  return Array.from({ length: daysInMonth }, (_, i) => ({
     day: `${i + 1}`,
     value: Math.max(0, baseValue + Math.floor(Math.random() * 20 - 10))
   }));
@@ -23,15 +31,17 @@ const getMostRecentValue = (data: Array<{ day: string; value: number }>) => {
 };
 
 const Dashboard = () => {
+  const [date, setDate] = useState<Date>(new Date());
+
   // Simulate data fetching with React Query
   const { data: serviceData } = useQuery({
-    queryKey: ['service-data'],
+    queryKey: ['service-data', date.toISOString()],
     queryFn: () => {
       const historical = {
-        development: generateMockMonthlyData(15),
-        staging: generateMockMonthlyData(8),
-        preProduction: generateMockMonthlyData(5),
-        production: generateMockMonthlyData(3)
+        development: generateMockMonthlyData(15, date),
+        staging: generateMockMonthlyData(8, date),
+        preProduction: generateMockMonthlyData(5, date),
+        production: generateMockMonthlyData(3, date)
       };
 
       return {
@@ -46,10 +56,10 @@ const Dashboard = () => {
     },
     initialData: () => {
       const historical = {
-        development: generateMockMonthlyData(15),
-        staging: generateMockMonthlyData(8),
-        preProduction: generateMockMonthlyData(5),
-        production: generateMockMonthlyData(3)
+        development: generateMockMonthlyData(15, date),
+        staging: generateMockMonthlyData(8, date),
+        preProduction: generateMockMonthlyData(5, date),
+        production: generateMockMonthlyData(3, date)
       };
 
       return {
@@ -67,7 +77,32 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-aqi-background p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl font-semibold text-aqi-text mb-6">Service Requests Dashboard</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-semibold text-aqi-text">Service Requests Dashboard</h1>
+          
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "justify-start text-left font-normal",
+                  !date && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {date ? format(date, 'MMMM yyyy') : <span>Pick a month</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={date}
+                onSelect={(newDate) => newDate && setDate(newDate)}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
         
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
