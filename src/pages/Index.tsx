@@ -60,26 +60,10 @@ const Dashboard = () => {
         },
         historical
       };
-    },
-    initialData: () => {
-      const historical = {
-        development: generateMockMonthlyData(15, date),
-        staging: generateMockMonthlyData(8, date),
-        preProduction: generateMockMonthlyData(5, date),
-        production: generateMockMonthlyData(3, date)
-      };
-
-      return {
-        current: {
-          development: getMostRecentValue(historical.development),
-          staging: getMostRecentValue(historical.staging),
-          preProduction: getMostRecentValue(historical.preProduction),
-          production: getMostRecentValue(historical.production)
-        },
-        historical
-      };
     }
   });
+
+  if (!serviceData) return null;
 
   const environments = [
     { 
