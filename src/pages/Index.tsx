@@ -100,7 +100,7 @@ const Dashboard = () => {
       none: 'desc',
       desc: 'asc',
       asc: 'none'
-    }[sortDirection];
+    }[sortDirection] as 'none' | 'asc' | 'desc';
     setSortDirection(nextSortDirection);
   };
 
@@ -126,7 +126,6 @@ const Dashboard = () => {
           <div className="flex gap-2">
             <Button
               variant="outline"
-              size="icon"
               onClick={handleSortClick}
               className="h-10"
               title={
@@ -135,6 +134,7 @@ const Dashboard = () => {
               }
             >
               <ArrowUpDown className={`h-4 w-4 ${sortDirection !== 'none' ? 'text-primary' : ''}`} />
+              Sort
             </Button>
             <Select
               value={selectedMonth.toString()}
