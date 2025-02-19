@@ -50,7 +50,9 @@ const Dashboard = () => {
         development: generateMockMonthlyData(15, date),
         staging: generateMockMonthlyData(8, date),
         preProduction: generateMockMonthlyData(5, date),
-        production: generateMockMonthlyData(3, date)
+        production: generateMockMonthlyData(3, date),
+        testing: generateMockMonthlyData(10, date),
+        qa: generateMockMonthlyData(7, date)
       };
 
       return {
@@ -58,7 +60,9 @@ const Dashboard = () => {
           development: getMostRecentValue(historical.development),
           staging: getMostRecentValue(historical.staging),
           preProduction: getMostRecentValue(historical.preProduction),
-          production: getMostRecentValue(historical.production)
+          production: getMostRecentValue(historical.production),
+          testing: getMostRecentValue(historical.testing),
+          qa: getMostRecentValue(historical.qa)
         },
         historical
       };
@@ -91,6 +95,18 @@ const Dashboard = () => {
       title: 'Production', 
       value: getTotalValue(serviceData.historical.production),
       data: serviceData.historical.production
+    },
+    { 
+      id: 'testing', 
+      title: 'Testing', 
+      value: getTotalValue(serviceData.historical.testing),
+      data: serviceData.historical.testing
+    },
+    { 
+      id: 'qa', 
+      title: 'QA', 
+      value: getTotalValue(serviceData.historical.qa),
+      data: serviceData.historical.qa
     }
   ];
 
@@ -120,7 +136,7 @@ const Dashboard = () => {
     <div className="min-h-screen bg-aqi-background p-6">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-semibold text-aqi-text">Service Requests Dashboard</h1>
+          <h1 className="text-2xl font-semibold text-aqi-text">Service Requests</h1>
           
           <div className="flex gap-2">
             <div className="flex">
@@ -166,26 +182,26 @@ const Dashboard = () => {
           </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
           {sortedEnvironments.map(env => (
             <SummaryCard
               key={env.id}
               title={env.title}
               value={env.value}
-              unit="requests"
+              unit=""
               status={getRequestStatus(env.value)}
             />
           ))}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {sortedEnvironments.map(env => (
             <SmallMultiple
               key={env.id}
               title={env.title}
               data={env.data}
               color="#2AB4FF"
-              unit="reqs/h"
+              unit="reqs"
               viewType={viewType}
               maxValue={maxValue}
             />
