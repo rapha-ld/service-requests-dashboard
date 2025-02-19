@@ -89,25 +89,25 @@ const Dashboard = () => {
           <SmallMultiple
             title="Development"
             data={serviceData.historical.development}
-            color="#8E9196"
+            color="#2AB4FF"
             unit="reqs/h"
           />
           <SmallMultiple
             title="Staging"
             data={serviceData.historical.staging}
-            color="#8E9196"
+            color="#2AB4FF"
             unit="reqs/h"
           />
           <SmallMultiple
             title="Pre-Production"
             data={serviceData.historical.preProduction}
-            color="#8E9196"
+            color="#2AB4FF"
             unit="reqs/h"
           />
           <SmallMultiple
             title="Production"
             data={serviceData.historical.production}
-            color="#8E9196"
+            color="#2AB4FF"
             unit="reqs/h"
           />
         </div>
