@@ -14,10 +14,8 @@ interface SmallMultipleProps {
 }
 
 export const SmallMultiple = ({ title, data, color, unit, className, viewType, maxValue }: SmallMultipleProps) => {
-  // Calculate average value for net-new view
   const average = data.reduce((sum, item) => sum + item.value, 0) / data.length;
   
-  // Transform data for cumulative view
   const transformedData = viewType === 'cumulative' 
     ? data.reduce((acc, curr, index) => {
         const previousValue = index > 0 ? acc[index - 1].value : 0;
@@ -31,6 +29,22 @@ export const SmallMultiple = ({ title, data, color, unit, className, viewType, m
   const formatTooltipDate = (day: string) => {
     const date = new Date(new Date().getFullYear(), 0, parseInt(day));
     return format(date, 'MMM dd, yyyy');
+  };
+
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-2 border rounded shadow-sm">
+          <p className="text-sm font-medium">
+            {payload[0].value}{unit}
+          </p>
+          <p className="text-xs text-gray-500">
+            {formatTooltipDate(label)}
+          </p>
+        </div>
+      );
+    }
+    return null;
   };
 
   return (
@@ -51,19 +65,7 @@ export const SmallMultiple = ({ title, data, color, unit, className, viewType, m
               axisLine={false}
               domain={[0, maxValue]}
             />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                fontSize: '12px'
-              }}
-              formatter={(value: number, name: string, props: any) => [
-                `${value}${unit}`,
-                formatTooltipDate(props.payload.day)
-              ]}
-            />
+            <Tooltip content={<CustomTooltip />} />
             <Bar
               dataKey="value"
               fill={color}
@@ -81,7 +83,7 @@ export const SmallMultiple = ({ title, data, color, unit, className, viewType, m
                   fontSize: 10,
                   position: 'insideTopRight',
                   style: { zIndex: 10 },
-                  dy: -15  // Increased from -10 to -15 to move the label higher
+                  dy: -15
                 }}
               />
             )}
