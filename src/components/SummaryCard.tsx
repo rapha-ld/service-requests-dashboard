@@ -15,12 +15,13 @@ interface SummaryCardProps {
 export const SummaryCard = ({ title, value, unit, status, className, percentChange }: SummaryCardProps) => {
   return (
     <div className={cn(
-      "bg-aqi-card p-4 rounded-lg shadow-sm animate-slide-up transition-all duration-200",
+      "bg-card p-4 rounded-lg shadow-sm animate-slide-up transition-all duration-200",
+      "dark:bg-secondary dark:border dark:border-border",
       className
     )}>
-      <h3 className="text-sm font-medium text-aqi-muted">{title}</h3>
+      <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
       <div className="mt-2 flex items-baseline gap-2">
-        <span className="text-2xl font-semibold text-[#23252A]">
+        <span className="text-2xl font-semibold text-foreground">
           {value}
         </span>
         <TooltipProvider>
