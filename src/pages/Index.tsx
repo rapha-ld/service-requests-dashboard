@@ -3,10 +3,9 @@ import { SmallMultiple } from "@/components/SmallMultiple";
 import { SummaryCard } from "@/components/SummaryCard";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown, BarChart3, LineChart, Download } from "lucide-react";
-import { useState, useRef } from "react";
+import { ArrowUpDown, BarChart3, LineChart } from "lucide-react";
+import { useState } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { toast } from "@/components/ui/use-toast";
 
 const generateMockMonthlyData = (baseValue: number, date: Date) => {
   const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -42,7 +41,6 @@ const months = [
 ];
 
 const Dashboard = () => {
-  const dashboardRef = useRef<HTMLDivElement>(null);
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
   const [viewType, setViewType] = useState<'net-new' | 'cumulative'>('net-new');
@@ -185,85 +183,13 @@ const Dashboard = () => {
     value: environments.reduce((sum, env) => sum + env.data[index].value, 0)
   }));
 
-  const handleGlobalExport = async () => {
-    try {
-      if (!dashboardRef.current) return;
-
-      const svgElements = dashboardRef.current.querySelectorAll('svg');
-      const svgArray = Array.from(svgElements);
-
-      const containerSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      const containerWidth = dashboardRef.current.offsetWidth;
-      const containerHeight = dashboardRef.current.offsetHeight;
-      containerSvg.setAttribute('width', containerWidth.toString());
-      containerSvg.setAttribute('height', containerHeight.toString());
-      containerSvg.setAttribute('viewBox', `0 0 ${containerWidth} ${containerHeight}`);
-      
-      svgArray.forEach((svg, index) => {
-        const rect = svg.getBoundingClientRect();
-        const dashboardRect = dashboardRef.current!.getBoundingClientRect();
-        const relativePosition = {
-          x: rect.left - dashboardRect.left,
-          y: rect.top - dashboardRect.top
-        };
-
-        const svgClone = svg.cloneNode(true) as SVGElement;
-        const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        group.setAttribute('transform', `translate(${relativePosition.x}, ${relativePosition.y})`);
-        
-        while (svgClone.firstChild) {
-          group.appendChild(svgClone.firstChild);
-        }
-        
-        containerSvg.appendChild(group);
-      });
-
-      const background = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-      background.setAttribute('width', '100%');
-      background.setAttribute('height', '100%');
-      background.setAttribute('fill', 'white');
-      containerSvg.insertBefore(background, containerSvg.firstChild);
-
-      const svgString = new XMLSerializer().serializeToString(containerSvg);
-      const blob = new Blob([svgString], { type: 'image/svg+xml' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'dashboard-export.svg';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-
-      toast({
-        title: "Dashboard exported",
-        description: "The dashboard has been downloaded as an SVG file.",
-      });
-    } catch (error) {
-      console.error('Error exporting dashboard:', error);
-      toast({
-        title: "Export failed",
-        description: "There was an error exporting the dashboard.",
-        variant: "destructive",
-      });
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-background p-6" ref={dashboardRef}>
+    <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-semibold text-foreground">Service Requests</h1>
           
           <div className="flex gap-2 items-center">
-            <Button
-              variant="outline"
-              onClick={handleGlobalExport}
-              className="gap-2"
-            >
-              <Download className="h-4 w-4" />
-              Export All
-            </Button>
             <ThemeToggle />
             <div className="flex">
               <Button
