@@ -1,5 +1,5 @@
 
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { cn } from "@/lib/utils";
 import { format } from 'date-fns';
 
@@ -34,11 +34,11 @@ export const SmallMultiple = ({ title, data, color, unit, className, viewType, m
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-white p-2 border rounded shadow-sm">
+        <div className="bg-card dark:bg-card/80 p-2 border rounded shadow-sm">
           <p className="text-sm font-medium">
             {payload[0].value}{unit}
           </p>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-muted-foreground">
             {formatTooltipDate(label)}
           </p>
         </div>
@@ -48,16 +48,24 @@ export const SmallMultiple = ({ title, data, color, unit, className, viewType, m
   };
 
   return (
-    <div className={cn("bg-aqi-card p-4 rounded-lg shadow-sm animate-fade-in", className)}>
-      <h3 className="text-sm font-medium text-aqi-text mb-2">{title}</h3>
+    <div className={cn("bg-card dark:bg-card/80 p-4 rounded-lg shadow-sm animate-fade-in", className)}>
+      <h3 className="text-sm font-medium text-foreground mb-2">{title}</h3>
       <div className="h-32">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={transformedData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
+          <AreaChart data={transformedData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
+            <defs>
+              <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#30459B" stopOpacity={1} />
+                <stop offset="100%" stopColor="#30459B" stopOpacity={0.3} />
+              </linearGradient>
+            </defs>
             <XAxis 
               dataKey="day" 
               tick={{ fontSize: 10 }}
               interval="preserveStart"
               tickLine={false}
+              stroke="currentColor"
+              className="text-muted-foreground"
             />
             <YAxis 
               tick={{ fontSize: 10 }}
@@ -65,23 +73,26 @@ export const SmallMultiple = ({ title, data, color, unit, className, viewType, m
               axisLine={false}
               domain={[0, maxValue]}
               width={25}
+              stroke="currentColor"
+              className="text-muted-foreground"
             />
             <Tooltip content={<CustomTooltip />} />
-            <Bar
+            <Area
+              type="monotone"
               dataKey="value"
-              fill={color}
-              fillOpacity={0.8}
-              radius={[1, 1, 0, 0]}
+              stroke="#30459B"
+              fill="url(#colorGradient)"
+              strokeWidth={2}
             />
             {viewType === 'net-new' && (
               <ReferenceLine 
                 y={average}
-                stroke="#545A62"
+                stroke="currentColor"
                 strokeDasharray="3 3"
                 strokeOpacity={0.5}
                 label={{
                   value: `Avg: ${average.toFixed(1)}${unit}`,
-                  fill: '#23252A',
+                  fill: 'currentColor',
                   fontSize: 10,
                   position: 'insideTopRight',
                   style: { zIndex: 10 },
@@ -89,7 +100,7 @@ export const SmallMultiple = ({ title, data, color, unit, className, viewType, m
                 }}
               />
             )}
-          </BarChart>
+          </AreaChart>
         </ResponsiveContainer>
       </div>
     </div>

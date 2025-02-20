@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { SmallMultiple } from "@/components/SmallMultiple";
 import { SummaryCard } from "@/components/SummaryCard";
@@ -6,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 import { useState } from "react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const generateMockMonthlyData = (baseValue: number, date: Date) => {
   const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -177,19 +177,19 @@ const Dashboard = () => {
 
   const maxValue = getMaxValue();
 
-  // Calculate the combined data for all environments
   const allEnvironmentsData = serviceData.current.development.map((item, index) => ({
     day: item.day,
     value: environments.reduce((sum, env) => sum + env.data[index].value, 0)
   }));
 
   return (
-    <div className="min-h-screen bg-aqi-background p-6">
+    <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-semibold text-aqi-text">Service Requests</h1>
+          <h1 className="text-2xl font-semibold text-foreground">Service Requests</h1>
           
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
+            <ThemeToggle />
             <div className="flex">
               <Button
                 variant={viewType === 'net-new' ? 'default' : 'outline'}
@@ -212,7 +212,7 @@ const Dashboard = () => {
               className="h-10"
               title={sortDirection === 'desc' ? "Sort ascending" : "Sort descending"}
             >
-              <ArrowUpDown className={`h-4 w-4 text-primary`} />
+              <ArrowUpDown className="h-4 w-4 text-primary" />
               Sort
             </Button>
             <Select
