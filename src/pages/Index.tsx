@@ -3,7 +3,7 @@ import { SmallMultiple } from "@/components/SmallMultiple";
 import { SummaryCard } from "@/components/SummaryCard";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, BarChart3, LineChart } from "lucide-react";
 import { useState } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -44,6 +44,7 @@ const Dashboard = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
   const [viewType, setViewType] = useState<'net-new' | 'cumulative'>('net-new');
+  const [chartType, setChartType] = useState<'area' | 'bar'>('area');
 
   const currentDate = new Date(new Date().getFullYear(), selectedMonth);
   const previousDate = new Date(new Date().getFullYear(), selectedMonth - 1);
@@ -206,6 +207,24 @@ const Dashboard = () => {
                 Cumulative
               </Button>
             </div>
+            <div className="flex">
+              <Button
+                variant={chartType === 'area' ? 'default' : 'outline'}
+                onClick={() => setChartType('area')}
+                className="rounded-r-none"
+              >
+                <LineChart className="h-4 w-4 mr-2" />
+                Area
+              </Button>
+              <Button
+                variant={chartType === 'bar' ? 'default' : 'outline'}
+                onClick={() => setChartType('bar')}
+                className="rounded-l-none border-l-0"
+              >
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Bar
+              </Button>
+            </div>
             <Button
               variant="outline"
               onClick={handleSortClick}
@@ -261,6 +280,7 @@ const Dashboard = () => {
                 }, [] as number[]))
               : Math.max(...allEnvironmentsData.map(d => d.value))
             }
+            chartType={chartType}
             className="w-full"
           />
         </div>
@@ -275,6 +295,7 @@ const Dashboard = () => {
               unit="reqs"
               viewType={viewType}
               maxValue={maxValue}
+              chartType={chartType}
             />
           ))}
         </div>
