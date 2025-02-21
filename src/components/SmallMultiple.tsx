@@ -33,6 +33,8 @@ export const SmallMultiple = ({ title, data, color, unit, className, viewType, m
     : data;
   
   const formatTooltipDate = (day: string) => {
+    // If day is already in MMM format (for last 12 months), return as is
+    if (isNaN(parseInt(day))) return day;
     const date = new Date(new Date().getFullYear(), 0, parseInt(day));
     return format(date, 'MMM dd, yyyy');
   };

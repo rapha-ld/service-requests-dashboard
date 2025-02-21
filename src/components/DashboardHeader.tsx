@@ -103,7 +103,7 @@ export const DashboardHeader = ({
           onClick={() => onTimeRangeChange('month-to-date')}
           className="rounded-r-none"
         >
-          Month to Date
+          Month-to-date
         </Button>
         <Button
           variant={timeRange === 'last-12-months' ? 'default' : 'outline'}
@@ -135,3 +135,4 @@ export const DashboardHeader = ({
     </div>
   );
 };
+

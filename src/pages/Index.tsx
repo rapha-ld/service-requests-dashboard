@@ -6,6 +6,7 @@ import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
 import { getMockData } from "@/utils/mockDataGenerator";
 import { getTotalValue, calculatePercentChange } from "@/utils/dataTransformers";
+import { format, subMonths } from "date-fns";
 
 type GroupingType = 'environment' | 'relayId' | 'userAgent';
 type TimeRangeType = 'month-to-date' | 'last-12-months';
@@ -26,6 +27,29 @@ const Dashboard = () => {
     queryFn: () => {
       const current = getMockData(grouping);
       const previous = getMockData(grouping);
+
+      // Transform data for last 12 months
+      if (timeRange === 'last-12-months') {
+        const last12MonthsData = Object.fromEntries(
+          Object.entries(current).map(([key, data]) => [
+            key,
+            Array.from({ length: 12 }, (_, i) => ({
+              day: format(subMonths(new Date(), i), 'MMM'),
+              value: Math.floor(Math.random() * 1000)
+            })).reverse()
+          ])
+        );
+        return {
+          current: last12MonthsData,
+          previous,
+          currentTotals: Object.fromEntries(
+            Object.entries(last12MonthsData).map(([key, data]) => [key, getTotalValue(data)])
+          ),
+          previousTotals: Object.fromEntries(
+            Object.entries(previous).map(([key, data]) => [key, getTotalValue(data)])
+          )
+        };
+      }
 
       return {
         current,
@@ -64,14 +88,16 @@ const Dashboard = () => {
       ));
 
   const allEnvironmentsData = Object.values(serviceData.current)[0].map((_, index) => ({
-    day: (index + 1).toString(),
+    day: timeRange === 'last-12-months' 
+      ? Object.values(serviceData.current)[0][index].day
+      : (index + 1).toString(),
     value: Object.values(serviceData.current).reduce((sum, data) => sum + data[index].value, 0)
   }));
 
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl font-semibold text-foreground mb-6">Service Requests</h1>
+        <h1 className="text-2xl font-semibold text-foreground mb-6 text-left pl-0">Service Requests</h1>
         
         <DashboardHeader
           grouping={grouping}
@@ -104,3 +130,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
