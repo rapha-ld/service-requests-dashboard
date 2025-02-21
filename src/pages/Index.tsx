@@ -8,6 +8,7 @@ import { getMockData } from "@/utils/mockDataGenerator";
 import { getTotalValue, calculatePercentChange } from "@/utils/dataTransformers";
 
 type GroupingType = 'environment' | 'relayId' | 'userAgent';
+type TimeRangeType = 'month-to-date' | 'last-12-months';
 
 const Dashboard = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
@@ -15,12 +16,13 @@ const Dashboard = () => {
   const [viewType, setViewType] = useState<'net-new' | 'cumulative'>('net-new');
   const [chartType, setChartType] = useState<'area' | 'bar'>('area');
   const [grouping, setGrouping] = useState<GroupingType>('environment');
+  const [timeRange, setTimeRange] = useState<TimeRangeType>('month-to-date');
 
   const currentDate = new Date(new Date().getFullYear(), selectedMonth);
   const previousDate = new Date(new Date().getFullYear(), selectedMonth - 1);
 
   const { data: serviceData } = useQuery({
-    queryKey: ['service-data', currentDate.toISOString(), grouping],
+    queryKey: ['service-data', currentDate.toISOString(), grouping, timeRange],
     queryFn: () => {
       const current = getMockData(grouping);
       const previous = getMockData(grouping);
@@ -82,6 +84,8 @@ const Dashboard = () => {
           onChartTypeChange={setChartType}
           onSortDirectionChange={() => setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc')}
           onMonthChange={(value) => setSelectedMonth(parseInt(value))}
+          timeRange={timeRange}
+          onTimeRangeChange={setTimeRange}
         />
         
         <DashboardSummary groups={sortedGroups} />

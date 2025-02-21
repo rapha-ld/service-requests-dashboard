@@ -15,6 +15,8 @@ interface DashboardHeaderProps {
   onChartTypeChange: (value: 'area' | 'bar') => void;
   onSortDirectionChange: () => void;
   onMonthChange: (value: string) => void;
+  timeRange: 'month-to-date' | 'last-12-months';
+  onTimeRangeChange: (value: 'month-to-date' | 'last-12-months') => void;
 }
 
 const months = [
@@ -33,6 +35,8 @@ export const DashboardHeader = ({
   onChartTypeChange,
   onSortDirectionChange,
   onMonthChange,
+  timeRange,
+  onTimeRangeChange,
 }: DashboardHeaderProps) => {
   return (
     <div className="flex gap-2 items-center mb-6">
@@ -50,7 +54,6 @@ export const DashboardHeader = ({
         </SelectContent>
       </Select>
       
-      <ThemeToggle />
       <div className="flex">
         <Button
           variant={viewType === 'net-new' ? 'default' : 'outline'}
@@ -94,22 +97,41 @@ export const DashboardHeader = ({
         <ArrowUpDown className="h-4 w-4 text-primary" />
         Sort
       </Button>
-      <Select
-        value={selectedMonth.toString()}
-        onValueChange={onMonthChange}
-      >
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Select month" />
-        </SelectTrigger>
-        <SelectContent>
-          {months.map((month, index) => (
-            <SelectItem key={index} value={index.toString()}>
-              {month} {new Date().getFullYear()}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <div className="flex">
+        <Button
+          variant={timeRange === 'month-to-date' ? 'default' : 'outline'}
+          onClick={() => onTimeRangeChange('month-to-date')}
+          className="rounded-r-none"
+        >
+          Month to Date
+        </Button>
+        <Button
+          variant={timeRange === 'last-12-months' ? 'default' : 'outline'}
+          onClick={() => onTimeRangeChange('last-12-months')}
+          className="rounded-l-none border-l-0"
+        >
+          Last 12 Months
+        </Button>
+      </div>
+      {timeRange === 'month-to-date' && (
+        <Select
+          value={selectedMonth.toString()}
+          onValueChange={onMonthChange}
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select month" />
+          </SelectTrigger>
+          <SelectContent>
+            {months.map((month, index) => (
+              <SelectItem key={index} value={index.toString()}>
+                {month} {new Date().getFullYear()}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
+      <div className="flex-grow" />
+      <ThemeToggle />
     </div>
   );
 };
-
