@@ -1,5 +1,8 @@
 
 import { SmallMultiple } from "@/components/SmallMultiple";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { LayoutGrid, LayoutList } from "lucide-react";
 
 interface ChartGroup {
   id: string;
@@ -37,6 +40,8 @@ export const DashboardCharts = ({
   maxValue,
   grouping,
 }: DashboardChartsProps) => {
+  const [layoutMode, setLayoutMode] = useState<'compact' | 'expanded'>('compact');
+
   return (
     <>
       <div className="mb-6">
@@ -59,8 +64,34 @@ export const DashboardCharts = ({
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {sortedGroups.map(group => (
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-semibold text-foreground">Individual Charts</h3>
+        <div className="flex gap-2">
+          <Button
+            variant={layoutMode === 'compact' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setLayoutMode('compact')}
+            title="3 charts per row"
+          >
+            <LayoutGrid className="h-4 w-4" />
+          </Button>
+          <Button
+            variant={layoutMode === 'expanded' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setLayoutMode('expanded')}
+            title="6 charts per row"
+          >
+            <LayoutList className="h-4 w-4 rotate-90" />
+          </Button>
+        </div>
+      </div>
+
+      <div className={`grid grid-cols-1 gap-4 ${
+        layoutMode === 'compact' 
+          ? 'md:grid-cols-2 lg:grid-cols-3' 
+          : 'md:grid-cols-3 lg:grid-cols-6'
+      }`}>
+        {sortedGroups.slice(0, 12).map(group => (
           <SmallMultiple
             key={group.id}
             title={group.title}
