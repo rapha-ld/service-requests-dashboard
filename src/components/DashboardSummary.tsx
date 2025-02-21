@@ -13,7 +13,7 @@ interface DashboardSummaryProps {
 export const DashboardSummary = ({ groups }: DashboardSummaryProps) => {
   return (
     <>
-      <h3 className="text-lg font-semibold text-foreground mb-4 text-left">Top 6</h3>
+      <h3 className="text-sm font-semibold text-muted-foreground mb-4 text-left">Top 6</h3>
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
         {groups.slice(0, 6).map(group => (
           <SummaryCard

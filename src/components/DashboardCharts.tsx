@@ -64,8 +64,7 @@ export const DashboardCharts = ({
         />
       </div>
 
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold text-foreground">Individual Charts</h3>
+      <div className="flex justify-end items-center mb-4">
         <div className="flex gap-2">
           <Button
             variant={layoutMode === 'compact' ? 'default' : 'outline'}
@@ -91,7 +90,7 @@ export const DashboardCharts = ({
           ? 'md:grid-cols-2 lg:grid-cols-3' 
           : 'md:grid-cols-3 lg:grid-cols-6'
       }`}>
-        {sortedGroups.slice(0, 12).map(group => (
+        {sortedGroups.map(group => (
           <SmallMultiple
             key={group.id}
             title={group.title}
