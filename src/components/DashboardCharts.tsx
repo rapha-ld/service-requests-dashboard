@@ -70,7 +70,7 @@ export const DashboardCharts = ({
             variant={layoutMode === 'compact' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setLayoutMode('compact')}
-            title="4 charts per row"
+            title="3 charts per row"
           >
             <LayoutGrid className="h-4 w-4" />
           </Button>
@@ -87,10 +87,10 @@ export const DashboardCharts = ({
 
       <div className={`grid grid-cols-1 gap-4 ${
         layoutMode === 'compact' 
-          ? 'md:grid-cols-2 lg:grid-cols-4' 
+          ? 'md:grid-cols-2 lg:grid-cols-3' 
           : 'md:grid-cols-3 lg:grid-cols-6'
       }`}>
-        {sortedGroups.slice(0, 12).map(group => (
+        {sortedGroups.map(group => (
           <SmallMultiple
             key={group.id}
             title={group.title}
