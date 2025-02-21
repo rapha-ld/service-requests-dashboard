@@ -92,6 +92,7 @@ const Dashboard = () => {
           viewType={viewType}
           chartType={chartType}
           maxValue={maxValue}
+          grouping={grouping}
         />
       </div>
     </div>
@@ -99,4 +100,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-

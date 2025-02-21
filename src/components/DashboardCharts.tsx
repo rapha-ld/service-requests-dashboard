@@ -13,7 +13,21 @@ interface DashboardChartsProps {
   viewType: 'net-new' | 'cumulative';
   chartType: 'area' | 'bar';
   maxValue: number;
+  grouping: 'environment' | 'relayId' | 'userAgent';
 }
+
+const getTotalTitle = (grouping: string): string => {
+  switch (grouping) {
+    case 'environment':
+      return 'All Environments';
+    case 'relayId':
+      return 'All Relay IDs';
+    case 'userAgent':
+      return 'All User Agents';
+    default:
+      return 'All Environments';
+  }
+};
 
 export const DashboardCharts = ({
   allEnvironmentsData,
@@ -21,12 +35,13 @@ export const DashboardCharts = ({
   viewType,
   chartType,
   maxValue,
+  grouping,
 }: DashboardChartsProps) => {
   return (
     <>
       <div className="mb-6">
         <SmallMultiple
-          title="All Environments"
+          title={getTotalTitle(grouping)}
           data={allEnvironmentsData}
           color="#2AB4FF"
           unit="reqs"
@@ -61,4 +76,3 @@ export const DashboardCharts = ({
     </>
   );
 };
-
