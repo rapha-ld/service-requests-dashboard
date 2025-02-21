@@ -152,7 +152,7 @@ export const SmallMultiple = ({ title, data, color, unit, className, viewType, m
               <Bar
                 dataKey="value"
                 fill="#30459B"
-                radius={[1, 1, 0, 0]}
+                radius={[0.5, 0.5, 0, 0]}
               />
             )}
             {viewType === 'net-new' && (
