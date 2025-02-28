@@ -2,6 +2,7 @@
 import { cn } from "@/lib/utils";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Progress } from "@/components/ui/progress";
 
 interface SummaryCardProps {
   title: string;
@@ -9,10 +10,21 @@ interface SummaryCardProps {
   unit: string;
   status: 'good' | 'moderate' | 'poor';
   className?: string;
-  percentChange: number;
+  percentChange?: number;
+  limit?: number;
+  percentUsed?: number;
 }
 
-export const SummaryCard = ({ title, value, unit, status, className, percentChange }: SummaryCardProps) => {
+export const SummaryCard = ({ 
+  title, 
+  value, 
+  unit, 
+  status, 
+  className, 
+  percentChange, 
+  limit,
+  percentUsed 
+}: SummaryCardProps) => {
   return (
     <div className={cn(
       "bg-card p-4 rounded-lg shadow-sm animate-slide-up transition-all duration-200 text-left",
@@ -24,27 +36,39 @@ export const SummaryCard = ({ title, value, unit, status, className, percentChan
         <span className="text-2xl font-semibold text-foreground">
           {value}
         </span>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className={cn(
-                "flex items-center text-sm",
-                percentChange >= 0 ? "text-green-500" : "text-red-500"
-              )}>
-                {percentChange >= 0 ? (
-                  <ArrowUp className="h-4 w-4" />
-                ) : (
-                  <ArrowDown className="h-4 w-4" />
-                )}
-                <span>{Math.abs(percentChange).toFixed(1)}%</span>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Change from previous period</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        {percentChange !== undefined && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className={cn(
+                  "flex items-center text-sm",
+                  percentChange >= 0 ? "text-green-500" : "text-red-500"
+                )}>
+                  {percentChange >= 0 ? (
+                    <ArrowUp className="h-4 w-4" />
+                  ) : (
+                    <ArrowDown className="h-4 w-4" />
+                  )}
+                  <span>{Math.abs(percentChange).toFixed(1)}%</span>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Change from previous period</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
       </div>
+      
+      {(percentUsed !== undefined && limit !== undefined) && (
+        <div className="mt-3">
+          <div className="flex justify-between text-xs text-muted-foreground mb-1">
+            <span>{value} {unit}</span>
+            <span>{limit} {unit}</span>
+          </div>
+          <Progress value={percentUsed} className="h-2" />
+        </div>
+      )}
     </div>
   );
 };
