@@ -1,8 +1,8 @@
-
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { cn } from "@/lib/utils";
 import { Button } from './ui/button';
 import { useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { CustomTooltip } from './charts/CustomTooltip';
 import { formatYAxisTick } from './charts/formatters';
 import { transformData, calculateAverage } from './charts/dataTransformers';
@@ -19,6 +19,24 @@ interface SmallMultipleProps {
   chartType: 'area' | 'bar';
   showThreshold?: boolean;
 }
+
+const getTitleRoute = (title: string): string => {
+  const normalizedTitle = title.toLowerCase();
+  
+  if (normalizedTitle.includes('client') || normalizedTitle.includes('mau')) {
+    return '/client-mau';
+  } else if (normalizedTitle.includes('experiment')) {
+    return '/experiments';
+  } else if (normalizedTitle.includes('data export')) {
+    return '/data-export';
+  } else if (normalizedTitle.includes('server')) {
+    return '/server';
+  } else if (normalizedTitle.includes('service')) {
+    return '/';
+  }
+  
+  return '/overview';
+};
 
 export const SmallMultiple = ({ 
   title, 
@@ -42,6 +60,8 @@ export const SmallMultiple = ({
 
   const ChartComponent = chartType === 'area' ? AreaChart : BarChart;
   const DataComponent = chartType === 'area' ? Area : Bar;
+  
+  const detailsRoute = getTitleRoute(title);
 
   return (
     <div className={cn("bg-card dark:bg-card/80 p-4 rounded-lg shadow-sm animate-fade-in", className)}>
@@ -51,9 +71,9 @@ export const SmallMultiple = ({
           variant="outline"
           size="sm"
           className="h-7 px-2 text-xs"
-          onClick={handleExport}
+          asChild
         >
-          Details
+          <Link to={detailsRoute}>View details</Link>
         </Button>
       </div>
       <div className="h-48">
