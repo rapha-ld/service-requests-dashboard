@@ -1,6 +1,7 @@
 
 import React from "react";
 import { SummaryCard } from "@/components/SummaryCard";
+import { Button } from "@/components/ui/button";
 
 const Overview = () => {
   // Mock data for the cards
@@ -31,11 +32,16 @@ const Overview = () => {
     },
     {
       title: "Data Export Events",
-      value: 97500,
+      value: 100000,
       unit: "",
       limit: 100000,
-      percentUsed: 97.5, // 97500/100000 * 100
-      status: "poor" as const
+      percentUsed: 100, // 100000/100000 * 100
+      status: "poor" as const,
+      action: (
+        <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
+          Upgrade Plan
+        </Button>
+      )
     }
   ];
 
@@ -55,6 +61,7 @@ const Overview = () => {
               status={metric.status}
               limit={metric.limit}
               percentUsed={metric.percentUsed}
+              action={metric.action}
             />
           ))}
         </div>

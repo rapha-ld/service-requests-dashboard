@@ -13,6 +13,7 @@ interface SummaryCardProps {
   percentChange?: number;
   limit?: number;
   percentUsed?: number;
+  action?: React.ReactNode;
 }
 
 export const SummaryCard = ({ 
@@ -23,10 +24,16 @@ export const SummaryCard = ({
   className, 
   percentChange, 
   limit,
-  percentUsed 
+  percentUsed,
+  action
 }: SummaryCardProps) => {
   // Determine if the progress bar should show the danger color (maxed out)
   const isMaxedOut = percentUsed !== undefined && percentUsed >= 95;
+
+  // Format numbers with comma separators
+  const formatNumber = (num: number): string => {
+    return num.toLocaleString('en-US');
+  };
 
   return (
     <div className={cn(
@@ -34,10 +41,13 @@ export const SummaryCard = ({
       "dark:bg-secondary dark:border dark:border-border",
       className
     )}>
-      <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
+      <div className="flex justify-between items-start">
+        <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
+        {action && <div>{action}</div>}
+      </div>
       <div className="mt-2 flex items-baseline gap-2">
         <span className="text-2xl font-semibold text-foreground">
-          {value}
+          {formatNumber(value)}
         </span>
         {percentChange !== undefined && (
           <TooltipProvider>
@@ -66,7 +76,7 @@ export const SummaryCard = ({
       {(percentUsed !== undefined && limit !== undefined) && (
         <div className="mt-3">
           <div className="flex justify-end text-xs text-muted-foreground mb-1">
-            <span>max: {limit}</span>
+            <span>max: {formatNumber(limit)}</span>
           </div>
           <Progress 
             value={percentUsed} 
