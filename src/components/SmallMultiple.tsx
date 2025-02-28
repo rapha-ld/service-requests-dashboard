@@ -16,9 +16,10 @@ interface SmallMultipleProps {
   viewType: 'net-new' | 'cumulative';
   maxValue: number;
   chartType: 'area' | 'bar';
+  showThreshold?: boolean;
 }
 
-export const SmallMultiple = ({ title, data, color, unit, className, viewType, maxValue, chartType }: SmallMultipleProps) => {
+export const SmallMultiple = ({ title, data, color, unit, className, viewType, maxValue, chartType, showThreshold = false }: SmallMultipleProps) => {
   const chartRef = useRef<any>(null);
   const average = data.reduce((sum, item) => sum + item.value, 0) / data.length;
   
@@ -33,10 +34,17 @@ export const SmallMultiple = ({ title, data, color, unit, className, viewType, m
     : data;
   
   const formatTooltipDate = (day: string) => {
-    // If day is already in MMM format (for last 12 months), return as is
-    if (isNaN(parseInt(day))) return day;
-    const date = new Date(new Date().getFullYear(), 0, parseInt(day));
-    return format(date, 'MMM dd, yyyy');
+    // Check if day is already in a formatted date pattern like "Jan 24"
+    if (day.includes(' ')) return day;
+    
+    // If day is a number (legacy format), convert it
+    if (!isNaN(parseInt(day))) {
+      const date = new Date(new Date().getFullYear(), 0, parseInt(day));
+      return format(date, 'MMM dd, yyyy');
+    }
+    
+    // Return as is if it's already in a date format we can't process
+    return day;
   };
 
   const CustomTooltip = ({ active, payload, label }: any) => {
@@ -44,7 +52,7 @@ export const SmallMultiple = ({ title, data, color, unit, className, viewType, m
       return (
         <div className="bg-card dark:bg-card/80 p-2 border rounded shadow-sm">
           <p className="text-sm font-medium">
-            {payload[0].value}{unit}
+            {payload[0].value.toLocaleString()}{unit}
           </p>
           <p className="text-xs text-muted-foreground">
             {formatTooltipDate(label)}
@@ -173,10 +181,23 @@ export const SmallMultiple = ({ title, data, color, unit, className, viewType, m
                 }}
               />
             )}
+            {showThreshold && (
+              <ReferenceLine 
+                y={maxValue}
+                stroke="#DB2251"
+                strokeWidth={1.5}
+                label={{
+                  value: `Limit: ${maxValue.toLocaleString()}${unit}`,
+                  fill: '#DB2251',
+                  fontSize: 10,
+                  position: 'insideTopRight',
+                  style: { zIndex: 10 },
+                }}
+              />
+            )}
           </ChartComponent>
         </ResponsiveContainer>
       </div>
     </div>
   );
 };
-

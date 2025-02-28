@@ -47,21 +47,69 @@ const Overview = () => {
     }
   ];
 
-  // Mock chart data for each metric
-  const generateChartData = (finalValue: number) => {
-    // Generate 30 days of data points leading up to the final value
+  // Generate more varied, non-linear chart data for each metric
+  const generateChartData = (finalValue: number, growthPattern: 'steady' | 'exponential' | 'stepwise') => {
     const data = [];
     const daysInMonth = 30;
     
-    // For cumulative data, we'll create a gradual increase
-    const baseValue = finalValue * 0.7; // Start at 70% of final value
-    const dailyIncrease = (finalValue - baseValue) / daysInMonth;
+    // Start date: January 24, 2024
+    const startDate = new Date(2024, 0, 24);
+    // End date: February 22, 2024 (approx. 30 days)
+    const endDate = new Date(2024, 1, 22);
+    
+    // Calculate different growth patterns
+    let baseValue = finalValue * 0.3; // Start at 30% of final value
     
     for (let i = 0; i < daysInMonth; i++) {
-      const dayValue = Math.round(baseValue + (dailyIncrease * i));
+      const currentDate = new Date(startDate);
+      currentDate.setDate(startDate.getDate() + i);
+      
+      // Don't go beyond end date
+      if (currentDate > endDate) break;
+      
+      let dayValue;
+      
+      switch (growthPattern) {
+        case 'exponential':
+          // Exponential growth: slower at first, faster at the end
+          const expFactor = Math.pow(finalValue / baseValue, 1 / daysInMonth);
+          dayValue = Math.round(baseValue * Math.pow(expFactor, i));
+          break;
+        
+        case 'stepwise':
+          // Stepwise growth: periods of stability followed by sudden jumps
+          const steps = 4;
+          const stepsCompleted = Math.floor(i / (daysInMonth / steps));
+          const stepProgress = (stepsCompleted / steps);
+          dayValue = Math.round(baseValue + (finalValue - baseValue) * stepProgress);
+          
+          // Add random fluctuation within each step
+          if (i % (daysInMonth / steps) === 0 && i > 0) {
+            dayValue = Math.round(dayValue * 1.1); // Jump at step boundaries
+          }
+          break;
+        
+        case 'steady':
+        default:
+          // Steady growth with some random fluctuation
+          const progress = i / daysInMonth;
+          const steadyValue = baseValue + (finalValue - baseValue) * progress;
+          const fluctuation = 1 + (Math.random() * 0.1 - 0.05); // Random ±5%
+          dayValue = Math.round(steadyValue * fluctuation);
+          break;
+      }
+      
+      // Format date as "MMM DD" (e.g., "Jan 24")
+      const formattedDate = currentDate.toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric' 
+      });
+      
       data.push({
-        day: (i + 1).toString(), // Day 1-30
-        value: i === daysInMonth - 1 ? finalValue : dayValue
+        day: formattedDate,
+        value: i === daysInMonth - 1 || currentDate.getTime() === endDate.getTime() 
+               ? finalValue 
+               : dayValue
       });
     }
     
@@ -69,9 +117,9 @@ const Overview = () => {
   };
 
   const chartData = {
-    clientMAU: generateChartData(metricsData[1].value),
-    experimentEvents: generateChartData(metricsData[2].value),
-    dataExportEvents: generateChartData(metricsData[3].value)
+    clientMAU: generateChartData(metricsData[1].value, 'steady'),
+    experimentEvents: generateChartData(metricsData[2].value, 'exponential'),
+    dataExportEvents: generateChartData(metricsData[3].value, 'stepwise')
   };
 
   return (
@@ -115,6 +163,7 @@ const Overview = () => {
               viewType="cumulative"
               maxValue={metricsData[1].limit}
               chartType="area"
+              showThreshold={true}
             />
             <SmallMultiple
               title="Experiment Events"
@@ -124,6 +173,7 @@ const Overview = () => {
               viewType="cumulative"
               maxValue={metricsData[2].limit}
               chartType="area"
+              showThreshold={true}
             />
             <SmallMultiple
               title="Data Export Events"
@@ -133,6 +183,7 @@ const Overview = () => {
               viewType="cumulative"
               maxValue={metricsData[3].limit}
               chartType="area"
+              showThreshold={true}
             />
           </div>
         </div>
