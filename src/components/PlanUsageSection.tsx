@@ -22,13 +22,15 @@ export const PlanUsageSection: React.FC<PlanUsageSectionProps> = ({ metricsData 
   return (
     <>
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-sm font-semibold text-muted-foreground text-left">Plan Usage</h3>
-        <Link 
-          to="/upgrade" 
-          className="text-sm text-primary hover:underline"
-        >
-          Upgrade plan
-        </Link>
+        <div className="flex items-center gap-2">
+          <h3 className="text-sm font-semibold text-muted-foreground text-left">Plan Usage</h3>
+          <Link 
+            to="/upgrade" 
+            className="text-xs text-primary hover:underline"
+          >
+            Upgrade plan
+          </Link>
+        </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
