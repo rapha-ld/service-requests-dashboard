@@ -1,11 +1,13 @@
 
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { cn } from "@/lib/utils";
-import { format } from 'date-fns';
 import { Download } from 'lucide-react';
 import { Button } from './ui/button';
 import { useRef } from 'react';
-import { toast } from './ui/use-toast';
+import { CustomTooltip } from './charts/CustomTooltip';
+import { formatYAxisTick } from './charts/formatters';
+import { transformData, calculateAverage } from './charts/dataTransformers';
+import { exportChartAsSVG } from './charts/exportChart';
 
 interface SmallMultipleProps {
   title: string;
@@ -19,100 +21,24 @@ interface SmallMultipleProps {
   showThreshold?: boolean;
 }
 
-export const SmallMultiple = ({ title, data, color, unit, className, viewType, maxValue, chartType, showThreshold = false }: SmallMultipleProps) => {
+export const SmallMultiple = ({ 
+  title, 
+  data, 
+  color, 
+  unit, 
+  className, 
+  viewType, 
+  maxValue, 
+  chartType, 
+  showThreshold = false 
+}: SmallMultipleProps) => {
   const chartRef = useRef<any>(null);
   
-  const nonNullValues = data.filter(item => item.value !== null).map(item => item.value as number);
-  const average = nonNullValues.length > 0 
-    ? nonNullValues.reduce((sum, value) => sum + value, 0) / nonNullValues.length 
-    : 0;
+  const average = calculateAverage(data);
+  const transformedData = transformData(data, viewType);
   
-  const transformedData = viewType === 'cumulative' 
-    ? data.reduce((acc, curr, index) => {
-        if (curr.value === null) {
-          return [...acc, {
-            day: curr.day,
-            value: null
-          }];
-        }
-        
-        const previousItem = index > 0 ? acc[index - 1] : null;
-        const previousValue = previousItem && previousItem.value !== null ? previousItem.value : 0;
-        
-        return [...acc, {
-          day: curr.day,
-          value: previousValue + (curr.value as number)
-        }];
-      }, [] as Array<{ day: string; value: number | null }>)
-    : data;
-  
-  const formatTooltipDate = (day: string) => {
-    if (day.includes(' ')) return day;
-    
-    if (!isNaN(parseInt(day))) {
-      const date = new Date(new Date().getFullYear(), 0, parseInt(day));
-      return format(date, 'MMM dd, yyyy');
-    }
-    
-    return day;
-  };
-
-  // Custom formatter for Y-axis labels to prevent truncation
-  const formatYAxisTick = (value: number) => {
-    if (value >= 1000000) {
-      return `${(value / 1000000).toFixed(1)}M`;
-    } else if (value >= 1000) {
-      return `${(value / 1000).toFixed(0)}K`;
-    }
-    return value.toString();
-  };
-
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-card dark:bg-card/80 p-2 border rounded shadow-sm">
-          <p className="text-sm font-medium">
-            {payload[0].value.toLocaleString()}{unit}
-          </p>
-          <p className="text-xs text-muted-foreground">
-            {formatTooltipDate(label)}
-          </p>
-        </div>
-      );
-    }
-    return null;
-  };
-
   const handleExport = () => {
-    try {
-      if (!chartRef.current) return;
-
-      const svgElement = chartRef.current.container.children[0];
-      const svgClone = svgElement.cloneNode(true) as SVGElement;
-      svgClone.style.backgroundColor = 'white';
-      const svgString = new XMLSerializer().serializeToString(svgClone);
-      const blob = new Blob([svgString], { type: 'image/svg+xml' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${title.toLowerCase().replace(/\s+/g, '-')}-chart.svg`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-
-      toast({
-        title: "Chart exported",
-        description: "The chart has been downloaded as an SVG file.",
-      });
-    } catch (error) {
-      console.error('Error exporting chart:', error);
-      toast({
-        title: "Export failed",
-        description: "There was an error exporting the chart.",
-        variant: "destructive",
-      });
-    }
+    exportChartAsSVG(chartRef, title);
   };
 
   const ChartComponent = chartType === 'area' ? AreaChart : BarChart;
@@ -159,7 +85,7 @@ export const SmallMultiple = ({ title, data, color, unit, className, viewType, m
               className="text-muted-foreground"
               tickFormatter={formatYAxisTick}
             />
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip content={<CustomTooltip unit={unit} />} />
             {chartType === 'area' ? (
               <Area
                 type="monotone"
