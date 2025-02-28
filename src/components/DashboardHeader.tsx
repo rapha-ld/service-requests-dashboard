@@ -2,7 +2,6 @@
 import { ArrowUpDown, BarChart3, LineChart } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface DashboardHeaderProps {
   grouping: 'environment' | 'relayId' | 'userAgent';
@@ -131,8 +130,6 @@ export const DashboardHeader = ({
         </Select>
       )}
       <div className="flex-grow" />
-      <ThemeToggle />
     </div>
   );
 };
-
