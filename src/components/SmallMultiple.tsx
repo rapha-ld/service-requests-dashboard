@@ -58,7 +58,7 @@ export const SmallMultiple = ({
           <Download className="h-4 w-4" />
         </Button>
       </div>
-      <div className="h-32">
+      <div className="h-48">
         <ResponsiveContainer width="100%" height="100%">
           <ChartComponent ref={chartRef} data={transformedData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
             <defs>
