@@ -2,6 +2,8 @@
 import React from "react";
 import { SummaryCard } from "@/components/SummaryCard";
 import { Button } from "@/components/ui/button";
+import { SmallMultiple } from "@/components/SmallMultiple";
+import { Link } from "react-router-dom";
 
 const Overview = () => {
   // Mock data for the cards
@@ -45,12 +47,48 @@ const Overview = () => {
     }
   ];
 
+  // Mock chart data for each metric
+  const generateChartData = (finalValue: number) => {
+    // Generate 30 days of data points leading up to the final value
+    const data = [];
+    const daysInMonth = 30;
+    
+    // For cumulative data, we'll create a gradual increase
+    const baseValue = finalValue * 0.7; // Start at 70% of final value
+    const dailyIncrease = (finalValue - baseValue) / daysInMonth;
+    
+    for (let i = 0; i < daysInMonth; i++) {
+      const dayValue = Math.round(baseValue + (dailyIncrease * i));
+      data.push({
+        day: (i + 1).toString(), // Day 1-30
+        value: i === daysInMonth - 1 ? finalValue : dayValue
+      });
+    }
+    
+    return data;
+  };
+
+  const chartData = {
+    clientMAU: generateChartData(metricsData[1].value),
+    experimentEvents: generateChartData(metricsData[2].value),
+    dataExportEvents: generateChartData(metricsData[3].value)
+  };
+
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-2xl font-semibold text-foreground mb-6">Overview</h1>
         
-        <h3 className="text-sm font-semibold text-muted-foreground mb-4 text-left">Account Usage</h3>
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-sm font-semibold text-muted-foreground text-left">Plan Usage</h3>
+          <Link 
+            to="/upgrade" 
+            className="text-sm text-primary hover:underline"
+          >
+            Upgrade plan
+          </Link>
+        </div>
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           {metricsData.map((metric, index) => (
             <SummaryCard
@@ -64,6 +102,39 @@ const Overview = () => {
               action={metric.action}
             />
           ))}
+        </div>
+        
+        <div className="mt-8 mb-4">
+          <h3 className="text-sm font-semibold text-muted-foreground mb-4 text-left">Usage Trends</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <SmallMultiple
+              title="Client MAU"
+              data={chartData.clientMAU}
+              color="#394497"
+              unit=" users"
+              viewType="cumulative"
+              maxValue={metricsData[1].limit}
+              chartType="area"
+            />
+            <SmallMultiple
+              title="Experiment Events"
+              data={chartData.experimentEvents}
+              color="#394497"
+              unit=""
+              viewType="cumulative"
+              maxValue={metricsData[2].limit}
+              chartType="area"
+            />
+            <SmallMultiple
+              title="Data Export Events"
+              data={chartData.dataExportEvents}
+              color="#394497"
+              unit=""
+              viewType="cumulative"
+              maxValue={metricsData[3].limit}
+              chartType="area"
+            />
+          </div>
         </div>
         
         <div className="mt-8">
