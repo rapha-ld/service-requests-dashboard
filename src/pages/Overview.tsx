@@ -70,34 +70,39 @@ const Overview = () => {
       
       let dayValue;
       
-      switch (growthPattern) {
-        case 'exponential':
-          // Exponential growth: slower at first, faster at the end
-          const expFactor = Math.pow(finalValue / baseValue, 1 / daysWithData);
-          dayValue = Math.round(baseValue * Math.pow(expFactor, i));
-          break;
-        
-        case 'stepwise':
-          // Stepwise growth: periods of stability followed by sudden jumps
-          const steps = 4;
-          const stepsCompleted = Math.floor(i / (daysWithData / steps));
-          const stepProgress = (stepsCompleted / steps);
-          dayValue = Math.round(baseValue + (finalValue - baseValue) * stepProgress);
+      // For the last day (Feb 22), ensure we use the exact final value
+      if (i === daysWithData - 1) {
+        dayValue = finalValue;
+      } else {
+        switch (growthPattern) {
+          case 'exponential':
+            // Exponential growth: slower at first, faster at the end
+            const expFactor = Math.pow(finalValue / baseValue, 1 / daysWithData);
+            dayValue = Math.round(baseValue * Math.pow(expFactor, i));
+            break;
           
-          // Add random fluctuation within each step
-          if (i % (daysWithData / steps) === 0 && i > 0) {
-            dayValue = Math.round(dayValue * 1.1); // Jump at step boundaries
-          }
-          break;
-        
-        case 'steady':
-        default:
-          // Steady growth with some random fluctuation
-          const progress = i / daysWithData;
-          const steadyValue = baseValue + (finalValue - baseValue) * progress;
-          const fluctuation = 1 + (Math.random() * 0.1 - 0.05); // Random ±5%
-          dayValue = Math.round(steadyValue * fluctuation);
-          break;
+          case 'stepwise':
+            // Stepwise growth: periods of stability followed by sudden jumps
+            const steps = 4;
+            const stepsCompleted = Math.floor(i / (daysWithData / steps));
+            const stepProgress = (stepsCompleted / steps);
+            dayValue = Math.round(baseValue + (finalValue - baseValue) * stepProgress);
+            
+            // Add random fluctuation within each step
+            if (i % (daysWithData / steps) === 0 && i > 0) {
+              dayValue = Math.round(dayValue * 1.1); // Jump at step boundaries
+            }
+            break;
+          
+          case 'steady':
+          default:
+            // Steady growth with some random fluctuation
+            const progress = i / daysWithData;
+            const steadyValue = baseValue + (finalValue - baseValue) * progress;
+            const fluctuation = 1 + (Math.random() * 0.1 - 0.05); // Random ±5%
+            dayValue = Math.round(steadyValue * fluctuation);
+            break;
+        }
       }
       
       // Format date as "MMM DD" (e.g., "Jan 24")
@@ -108,7 +113,7 @@ const Overview = () => {
       
       data.push({
         day: formattedDate,
-        value: i === daysWithData - 1 ? finalValue : dayValue
+        value: dayValue
       });
     }
     
