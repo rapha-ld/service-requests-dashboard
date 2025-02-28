@@ -1,4 +1,3 @@
-
 import React from "react";
 import { SummaryCard } from "@/components/SummaryCard";
 import { Button } from "@/components/ui/button";
@@ -47,8 +46,8 @@ const Overview = () => {
     }
   ];
 
-  // Generate more varied, non-linear chart data for each metric
-  const generateChartData = (finalValue: number, growthPattern: 'steady' | 'exponential' | 'stepwise') => {
+  // Generate non-cumulative daily data that will add up to the target value
+  const generateDailyData = (targetValue: number, growthPattern: 'steady' | 'exponential' | 'stepwise') => {
     const data = [];
     
     // Start date: January 24, 2024
@@ -58,52 +57,57 @@ const Overview = () => {
     // Full month end date: February 29, 2024 (for x-axis display only)
     const fullMonthEndDate = new Date(2024, 1, 29);
     
-    // Calculate different growth patterns
-    let baseValue = finalValue * 0.3; // Start at 30% of final value
-    
-    // First generate data up to February 22
+    // Calculate different growth patterns for daily values
     const daysWithData = Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
     
+    // Generate daily values that will add up to targetValue
+    let dailyValues = [];
+    let remainingValue = targetValue;
+    
+    for (let i = 0; i < daysWithData; i++) {
+      // Last day gets whatever is left to ensure exact sum
+      if (i === daysWithData - 1) {
+        dailyValues.push(remainingValue);
+        continue;
+      }
+
+      let portion;
+      switch (growthPattern) {
+        case 'exponential':
+          // Exponential growth: smaller portions early, larger portions later
+          portion = Math.exp(i / daysWithData * 2) / Math.exp(2);
+          break;
+        case 'stepwise':
+          // Stepwise growth: random jumps
+          const step = Math.floor(i / (daysWithData / 5));
+          portion = 0.1 + (step * 0.25) + (Math.random() * 0.1 - 0.05);
+          break;
+        case 'steady':
+        default:
+          // Steady growth with some fluctuation
+          portion = 1/daysWithData + (Math.random() * 0.02 - 0.01);
+          break;
+      }
+      
+      // Calculate daily value based on portion and ensure we don't exceed remaining
+      let dailyValue = Math.round(targetValue * portion);
+      dailyValue = Math.min(dailyValue, remainingValue);
+      dailyValue = Math.max(1, dailyValue); // Ensure at least 1 per day
+      
+      dailyValues.push(dailyValue);
+      remainingValue -= dailyValue;
+    }
+    
+    // Normalize to ensure we hit exactly the target
+    if (dailyValues.reduce((sum, value) => sum + value, 0) !== targetValue) {
+      const lastDayIndex = daysWithData - 1;
+      dailyValues[lastDayIndex] = targetValue - dailyValues.slice(0, lastDayIndex).reduce((sum, value) => sum + value, 0);
+    }
+    
+    // Convert daily values to the format needed for the chart
     for (let i = 0; i < daysWithData; i++) {
       const currentDate = new Date(startDate);
       currentDate.setDate(startDate.getDate() + i);
-      
-      let dayValue;
-      
-      // For the last day (Feb 22), ensure we use the exact final value
-      if (i === daysWithData - 1) {
-        dayValue = finalValue;
-      } else {
-        switch (growthPattern) {
-          case 'exponential':
-            // Exponential growth: slower at first, faster at the end
-            const expFactor = Math.pow(finalValue / baseValue, 1 / daysWithData);
-            dayValue = Math.round(baseValue * Math.pow(expFactor, i));
-            break;
-          
-          case 'stepwise':
-            // Stepwise growth: periods of stability followed by sudden jumps
-            const steps = 4;
-            const stepsCompleted = Math.floor(i / (daysWithData / steps));
-            const stepProgress = (stepsCompleted / steps);
-            dayValue = Math.round(baseValue + (finalValue - baseValue) * stepProgress);
-            
-            // Add random fluctuation within each step
-            if (i % (daysWithData / steps) === 0 && i > 0) {
-              dayValue = Math.round(dayValue * 1.1); // Jump at step boundaries
-            }
-            break;
-          
-          case 'steady':
-          default:
-            // Steady growth with some random fluctuation
-            const progress = i / daysWithData;
-            const steadyValue = baseValue + (finalValue - baseValue) * progress;
-            const fluctuation = 1 + (Math.random() * 0.1 - 0.05); // Random ±5%
-            dayValue = Math.round(steadyValue * fluctuation);
-            break;
-        }
-      }
       
       // Format date as "MMM DD" (e.g., "Jan 24")
       const formattedDate = currentDate.toLocaleDateString('en-US', { 
@@ -113,7 +117,7 @@ const Overview = () => {
       
       data.push({
         day: formattedDate,
-        value: dayValue
+        value: dailyValues[i]
       });
     }
     
@@ -141,9 +145,9 @@ const Overview = () => {
   };
 
   const chartData = {
-    clientMAU: generateChartData(metricsData[1].value, 'steady'),
-    experimentEvents: generateChartData(metricsData[2].value, 'exponential'),
-    dataExportEvents: generateChartData(metricsData[3].value, 'stepwise')
+    clientMAU: generateDailyData(metricsData[1].value, 'steady'),
+    experimentEvents: generateDailyData(metricsData[2].value, 'exponential'),
+    dataExportEvents: generateDailyData(metricsData[3].value, 'stepwise')
   };
 
   return (
