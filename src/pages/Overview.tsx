@@ -24,17 +24,17 @@ const Overview = () => {
     {
       title: "Experiment Events",
       value: 325765,
-      unit: "events",
+      unit: "",
       limit: 500000,
       percentUsed: 65.15, // 325765/500000 * 100
       status: "good" as const
     },
     {
       title: "Data Export Events",
-      value: 89231,
-      unit: "events",
+      value: 97500,
+      unit: "",
       limit: 100000,
-      percentUsed: 89.23, // 89231/100000 * 100
+      percentUsed: 97.5, // 97500/100000 * 100
       status: "poor" as const
     }
   ];

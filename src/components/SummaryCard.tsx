@@ -25,6 +25,9 @@ export const SummaryCard = ({
   limit,
   percentUsed 
 }: SummaryCardProps) => {
+  // Determine if the progress bar should show the danger color (maxed out)
+  const isMaxedOut = percentUsed !== undefined && percentUsed >= 95;
+
   return (
     <div className={cn(
       "bg-card p-4 rounded-lg shadow-sm animate-slide-up transition-all duration-200 text-left",
@@ -62,11 +65,14 @@ export const SummaryCard = ({
       
       {(percentUsed !== undefined && limit !== undefined) && (
         <div className="mt-3">
-          <div className="flex justify-between text-xs text-muted-foreground mb-1">
-            <span>{value} {unit}</span>
-            <span>{limit} {unit}</span>
+          <div className="flex justify-end text-xs text-muted-foreground mb-1">
+            <span>max: {limit}</span>
           </div>
-          <Progress value={percentUsed} className="h-2" />
+          <Progress 
+            value={percentUsed} 
+            className="h-2" 
+            progressColor={isMaxedOut ? "#DB2251" : "#394497"}
+          />
         </div>
       )}
     </div>
