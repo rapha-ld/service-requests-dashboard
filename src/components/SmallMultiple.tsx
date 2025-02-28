@@ -1,3 +1,4 @@
+
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { cn } from "@/lib/utils";
 import { format } from 'date-fns';
@@ -54,6 +55,16 @@ export const SmallMultiple = ({ title, data, color, unit, className, viewType, m
     }
     
     return day;
+  };
+
+  // Custom formatter for Y-axis labels to prevent truncation
+  const formatYAxisTick = (value: number) => {
+    if (value >= 1000000) {
+      return `${(value / 1000000).toFixed(1)}M`;
+    } else if (value >= 1000) {
+      return `${(value / 1000).toFixed(0)}K`;
+    }
+    return value.toString();
   };
 
   const CustomTooltip = ({ active, payload, label }: any) => {
@@ -143,9 +154,10 @@ export const SmallMultiple = ({ title, data, color, unit, className, viewType, m
               tickLine={false}
               axisLine={false}
               domain={[0, maxValue]}
-              width={25}
+              width={40}
               stroke="currentColor"
               className="text-muted-foreground"
+              tickFormatter={formatYAxisTick}
             />
             <Tooltip content={<CustomTooltip />} />
             {chartType === 'area' ? (
