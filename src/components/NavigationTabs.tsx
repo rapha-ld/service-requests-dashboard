@@ -48,9 +48,9 @@ export function NavigationTabs() {
   };
 
   return (
-    <div className="flex w-full justify-between items-center border-b">
+    <div className="flex w-full items-center border-b">
       <Tabs value={activeTab} className="w-full">
-        <TabsList className="h-14 bg-transparent">
+        <TabsList className="h-14 bg-transparent justify-start">
           {filteredTabs.map((tab) => (
             <TabsTrigger
               key={tab.id}
@@ -64,31 +64,33 @@ export function NavigationTabs() {
         </TabsList>
       </Tabs>
       
-      <Popover>
-        <PopoverTrigger asChild>
-          <button className="p-2 mr-6 hover:bg-muted rounded-md" title="Configure tabs">
-            <Settings size={18} />
-          </button>
-        </PopoverTrigger>
-        <PopoverContent className="w-56" align="end">
-          <div className="space-y-4">
-            <h4 className="font-medium text-sm">Configure visible tabs</h4>
-            <div className="space-y-2">
-              {ALL_TABS.map((tab) => (
-                <div key={tab.id} className="flex items-center space-x-2">
-                  <Checkbox 
-                    id={`tab-${tab.id}`}
-                    checked={visibleTabs.includes(tab.id)}
-                    onCheckedChange={() => toggleTab(tab.id)}
-                    disabled={visibleTabs.length === 1 && visibleTabs.includes(tab.id)}
-                  />
-                  <Label htmlFor={`tab-${tab.id}`} className="text-sm">{tab.label}</Label>
-                </div>
-              ))}
+      <div className="flex-shrink-0 mr-6">
+        <Popover>
+          <PopoverTrigger asChild>
+            <button className="p-2 hover:bg-muted rounded-md" title="Configure tabs">
+              <Settings size={18} />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="w-56" align="end">
+            <div className="space-y-4">
+              <h4 className="font-medium text-sm">Configure visible tabs</h4>
+              <div className="space-y-2">
+                {ALL_TABS.map((tab) => (
+                  <div key={tab.id} className="flex items-center space-x-2">
+                    <Checkbox 
+                      id={`tab-${tab.id}`}
+                      checked={visibleTabs.includes(tab.id)}
+                      onCheckedChange={() => toggleTab(tab.id)}
+                      disabled={visibleTabs.length === 1 && visibleTabs.includes(tab.id)}
+                    />
+                    <Label htmlFor={`tab-${tab.id}`} className="text-sm">{tab.label}</Label>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        </PopoverContent>
-      </Popover>
+          </PopoverContent>
+        </Popover>
+      </div>
     </div>
   );
 }
