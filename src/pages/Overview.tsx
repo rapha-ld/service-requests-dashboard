@@ -50,41 +50,42 @@ const Overview = () => {
   // Generate more varied, non-linear chart data for each metric
   const generateChartData = (finalValue: number, growthPattern: 'steady' | 'exponential' | 'stepwise') => {
     const data = [];
-    const daysInMonth = 30;
     
     // Start date: January 24, 2024
     const startDate = new Date(2024, 0, 24);
     // End date: February 22, 2024 (approx. 30 days)
     const endDate = new Date(2024, 1, 22);
+    // Full month end date: February 29, 2024 (for x-axis display only)
+    const fullMonthEndDate = new Date(2024, 1, 29);
     
     // Calculate different growth patterns
     let baseValue = finalValue * 0.3; // Start at 30% of final value
     
-    for (let i = 0; i < daysInMonth; i++) {
+    // First generate data up to February 22
+    const daysWithData = Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    
+    for (let i = 0; i < daysWithData; i++) {
       const currentDate = new Date(startDate);
       currentDate.setDate(startDate.getDate() + i);
-      
-      // Don't go beyond end date
-      if (currentDate > endDate) break;
       
       let dayValue;
       
       switch (growthPattern) {
         case 'exponential':
           // Exponential growth: slower at first, faster at the end
-          const expFactor = Math.pow(finalValue / baseValue, 1 / daysInMonth);
+          const expFactor = Math.pow(finalValue / baseValue, 1 / daysWithData);
           dayValue = Math.round(baseValue * Math.pow(expFactor, i));
           break;
         
         case 'stepwise':
           // Stepwise growth: periods of stability followed by sudden jumps
           const steps = 4;
-          const stepsCompleted = Math.floor(i / (daysInMonth / steps));
+          const stepsCompleted = Math.floor(i / (daysWithData / steps));
           const stepProgress = (stepsCompleted / steps);
           dayValue = Math.round(baseValue + (finalValue - baseValue) * stepProgress);
           
           // Add random fluctuation within each step
-          if (i % (daysInMonth / steps) === 0 && i > 0) {
+          if (i % (daysWithData / steps) === 0 && i > 0) {
             dayValue = Math.round(dayValue * 1.1); // Jump at step boundaries
           }
           break;
@@ -92,7 +93,7 @@ const Overview = () => {
         case 'steady':
         default:
           // Steady growth with some random fluctuation
-          const progress = i / daysInMonth;
+          const progress = i / daysWithData;
           const steadyValue = baseValue + (finalValue - baseValue) * progress;
           const fluctuation = 1 + (Math.random() * 0.1 - 0.05); // Random ±5%
           dayValue = Math.round(steadyValue * fluctuation);
@@ -107,9 +108,27 @@ const Overview = () => {
       
       data.push({
         day: formattedDate,
-        value: i === daysInMonth - 1 || currentDate.getTime() === endDate.getTime() 
-               ? finalValue 
-               : dayValue
+        value: i === daysWithData - 1 ? finalValue : dayValue
+      });
+    }
+    
+    // Now add empty data points for the rest of the month (after Feb 22)
+    const remainingDays = Math.floor((fullMonthEndDate.getTime() - endDate.getTime()) / (1000 * 60 * 60 * 24));
+    
+    for (let i = 1; i <= remainingDays; i++) {
+      const currentDate = new Date(endDate);
+      currentDate.setDate(endDate.getDate() + i);
+      
+      // Format date as "MMM DD" (e.g., "Feb 23")
+      const formattedDate = currentDate.toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric' 
+      });
+      
+      // Add data point with null value to show on x-axis but not in the area chart
+      data.push({
+        day: formattedDate,
+        value: null
       });
     }
     

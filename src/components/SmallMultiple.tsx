@@ -1,4 +1,3 @@
-
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { cn } from "@/lib/utils";
 import { format } from 'date-fns';
@@ -9,7 +8,7 @@ import { toast } from './ui/use-toast';
 
 interface SmallMultipleProps {
   title: string;
-  data: Array<{ day: string; value: number }>;
+  data: Array<{ day: string; value: number | null }>;
   color: string;
   unit: string;
   className?: string;
@@ -21,29 +20,39 @@ interface SmallMultipleProps {
 
 export const SmallMultiple = ({ title, data, color, unit, className, viewType, maxValue, chartType, showThreshold = false }: SmallMultipleProps) => {
   const chartRef = useRef<any>(null);
-  const average = data.reduce((sum, item) => sum + item.value, 0) / data.length;
+  
+  const nonNullValues = data.filter(item => item.value !== null).map(item => item.value as number);
+  const average = nonNullValues.length > 0 
+    ? nonNullValues.reduce((sum, value) => sum + value, 0) / nonNullValues.length 
+    : 0;
   
   const transformedData = viewType === 'cumulative' 
     ? data.reduce((acc, curr, index) => {
-        const previousValue = index > 0 ? acc[index - 1].value : 0;
+        if (curr.value === null) {
+          return [...acc, {
+            day: curr.day,
+            value: null
+          }];
+        }
+        
+        const previousItem = index > 0 ? acc[index - 1] : null;
+        const previousValue = previousItem && previousItem.value !== null ? previousItem.value : 0;
+        
         return [...acc, {
           day: curr.day,
-          value: previousValue + curr.value
+          value: previousValue + (curr.value as number)
         }];
-      }, [] as Array<{ day: string; value: number }>)
+      }, [] as Array<{ day: string; value: number | null }>)
     : data;
   
   const formatTooltipDate = (day: string) => {
-    // Check if day is already in a formatted date pattern like "Jan 24"
     if (day.includes(' ')) return day;
     
-    // If day is a number (legacy format), convert it
     if (!isNaN(parseInt(day))) {
       const date = new Date(new Date().getFullYear(), 0, parseInt(day));
       return format(date, 'MMM dd, yyyy');
     }
     
-    // Return as is if it's already in a date format we can't process
     return day;
   };
 
@@ -67,26 +76,15 @@ export const SmallMultiple = ({ title, data, color, unit, className, viewType, m
     try {
       if (!chartRef.current) return;
 
-      // Get the SVG element
       const svgElement = chartRef.current.container.children[0];
-      
-      // Clone the SVG to modify it without affecting the display
       const svgClone = svgElement.cloneNode(true) as SVGElement;
-      
-      // Set white background for better visibility
       svgClone.style.backgroundColor = 'white';
-      
-      // Convert SVG to string
       const svgString = new XMLSerializer().serializeToString(svgClone);
-      
-      // Create blob and download link
       const blob = new Blob([svgString], { type: 'image/svg+xml' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       link.download = `${title.toLowerCase().replace(/\s+/g, '-')}-chart.svg`;
-      
-      // Trigger download
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -157,6 +155,7 @@ export const SmallMultiple = ({ title, data, color, unit, className, viewType, m
                 stroke="#30459B"
                 fill="url(#colorGradient)"
                 strokeWidth={2}
+                connectNulls={true}
               />
             ) : (
               <Bar
