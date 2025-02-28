@@ -26,9 +26,10 @@ export const PlanUsageSection: React.FC<PlanUsageSectionProps> = ({ metricsData 
           <h3 className="text-sm font-semibold text-muted-foreground text-left">Plan Usage</h3>
           <Link 
             to="/upgrade" 
-            className="text-xs text-primary hover:underline"
+            className="text-xs hover:underline"
+            style={{ color: "#6E59A5" }}
           >
-            Upgrade plan
+            Upgrade
           </Link>
         </div>
       </div>
