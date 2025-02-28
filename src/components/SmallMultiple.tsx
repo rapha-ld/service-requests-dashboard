@@ -1,7 +1,6 @@
 
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { cn } from "@/lib/utils";
-import { Download } from 'lucide-react';
 import { Button } from './ui/button';
 import { useRef } from 'react';
 import { CustomTooltip } from './charts/CustomTooltip';
@@ -49,13 +48,12 @@ export const SmallMultiple = ({
       <div className="flex justify-between items-center mb-2">
         <h3 className="text-sm font-medium text-foreground">{title}</h3>
         <Button
-          variant="ghost"
+          variant="outline"
           size="sm"
+          className="h-7 px-2 text-xs"
           onClick={handleExport}
-          className="h-8 w-8 p-0"
-          title="Export as SVG"
         >
-          <Download className="h-4 w-4" />
+          Details
         </Button>
       </div>
       <div className="h-48">
