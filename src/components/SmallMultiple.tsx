@@ -1,7 +1,6 @@
 
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { cn } from "@/lib/utils";
-import { Download } from 'lucide-react';
 import { Button } from './ui/button';
 import { useRef } from 'react';
 import { CustomTooltip } from './charts/CustomTooltip';
@@ -44,18 +43,23 @@ export const SmallMultiple = ({
   const ChartComponent = chartType === 'area' ? AreaChart : BarChart;
   const DataComponent = chartType === 'area' ? Area : Bar;
 
+  const handleViewMore = () => {
+    // This function would navigate to a detailed view
+    // For now just log to console
+    console.log(`View more details for ${title}`);
+  };
+
   return (
     <div className={cn("bg-card dark:bg-card/80 p-4 rounded-lg shadow-sm animate-fade-in", className)}>
       <div className="flex justify-between items-center mb-2">
         <h3 className="text-sm font-medium text-foreground">{title}</h3>
         <Button
-          variant="ghost"
+          variant="link"
           size="sm"
-          onClick={handleExport}
-          className="h-8 w-8 p-0"
-          title="Export as SVG"
+          onClick={handleViewMore}
+          className="h-6 p-0 text-xs text-primary underline hover:no-underline"
         >
-          <Download className="h-4 w-4" />
+          View more
         </Button>
       </div>
       <div className="h-48">
