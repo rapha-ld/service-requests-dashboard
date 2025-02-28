@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Settings } from "lucide-react";
+import { Settings, Sun, Moon } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Popover,
@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { useTheme } from "@/hooks/useTheme";
+import { Button } from "@/components/ui/button";
 
 const ALL_TABS = [
   { id: "overview", label: "Overview", path: "/overview" },
@@ -22,6 +24,7 @@ const ALL_TABS = [
 
 export function NavigationTabs() {
   const location = useLocation();
+  const { theme, toggleTheme } = useTheme();
   const [visibleTabs, setVisibleTabs] = useState(() => {
     const saved = localStorage.getItem("visibleTabs");
     return saved ? JSON.parse(saved) : ALL_TABS.map(tab => tab.id);
@@ -37,6 +40,11 @@ export function NavigationTabs() {
   const filteredTabs = ALL_TABS.filter(tab => visibleTabs.includes(tab.id));
 
   const toggleTab = (tabId: string) => {
+    // Never allow removing the "overview" tab
+    if (tabId === "overview" && visibleTabs.includes(tabId)) {
+      return;
+    }
+    
     if (visibleTabs.includes(tabId)) {
       // Don't allow removing the last tab
       if (visibleTabs.length > 1) {
@@ -64,7 +72,22 @@ export function NavigationTabs() {
         </TabsList>
       </Tabs>
       
-      <div className="flex-shrink-0 mr-6">
+      <div className="flex-shrink-0 mr-2 flex items-center gap-2">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={toggleTheme}
+          className="rounded-full"
+          title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+        >
+          {theme === 'light' ? (
+            <Sun className="h-4 w-4" />
+          ) : (
+            <Moon className="h-4 w-4" />
+          )}
+          <span className="sr-only">Toggle theme</span>
+        </Button>
+        
         <Popover>
           <PopoverTrigger asChild>
             <button className="p-2 hover:bg-muted rounded-md" title="Configure tabs">
@@ -81,7 +104,7 @@ export function NavigationTabs() {
                       id={`tab-${tab.id}`}
                       checked={visibleTabs.includes(tab.id)}
                       onCheckedChange={() => toggleTab(tab.id)}
-                      disabled={visibleTabs.length === 1 && visibleTabs.includes(tab.id)}
+                      disabled={(visibleTabs.length === 1 && visibleTabs.includes(tab.id)) || tab.id === "overview"}
                     />
                     <Label htmlFor={`tab-${tab.id}`} className="text-sm">{tab.label}</Label>
                   </div>
