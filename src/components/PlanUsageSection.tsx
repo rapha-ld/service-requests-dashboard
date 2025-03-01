@@ -33,7 +33,7 @@ export const PlanUsageSection: React.FC<PlanUsageSectionProps> = ({ metricsData 
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         {metricsData.map((metric, index) => (
           <SummaryCard
             key={index}
