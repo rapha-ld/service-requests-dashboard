@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Settings, Sun, Moon } from "lucide-react";
@@ -55,23 +56,25 @@ export function NavigationTabs() {
   };
 
   return (
-    <div className="flex w-full items-center border-b">
-      <Tabs value={activeTab} className="w-full">
-        <TabsList className="h-14 bg-transparent justify-start">
-          {filteredTabs.map((tab) => (
-            <TabsTrigger
-              key={tab.id}
-              value={tab.id}
-              className="h-full px-6 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
-              asChild
-            >
-              <Link to={tab.path}>{tab.label}</Link>
-            </TabsTrigger>
-          ))}
-        </TabsList>
-      </Tabs>
+    <div className="w-full border-b">
+      <div className="max-w-7xl mx-auto px-6">
+        <Tabs value={activeTab} className="w-full">
+          <TabsList className="h-14 bg-transparent justify-start">
+            {filteredTabs.map((tab) => (
+              <TabsTrigger
+                key={tab.id}
+                value={tab.id}
+                className="h-full px-6 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
+                asChild
+              >
+                <Link to={tab.path}>{tab.label}</Link>
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+      </div>
       
-      <div className="flex-shrink-0 mr-2 flex items-center gap-2">
+      <div className="absolute right-6 top-4 flex items-center gap-2">
         <Button
           variant="outline"
           size="icon"

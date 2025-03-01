@@ -70,7 +70,7 @@ const Overview = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-2xl font-semibold text-foreground mb-6 text-left">Overview</h1>
         
