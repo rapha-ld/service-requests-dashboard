@@ -19,6 +19,9 @@ interface PlanUsageSectionProps {
 }
 
 export const PlanUsageSection: React.FC<PlanUsageSectionProps> = ({ metricsData }) => {
+  // Find the Data Export Events card to extract its action
+  const dataExportCard = metricsData.find(metric => metric.title === "Data Export Events");
+  
   return (
     <>
       <div className="flex justify-between items-center mb-4">
@@ -31,6 +34,11 @@ export const PlanUsageSection: React.FC<PlanUsageSectionProps> = ({ metricsData 
             Upgrade
           </Link>
         </div>
+        {dataExportCard?.action && (
+          <div className="mb-2">
+            {dataExportCard.action}
+          </div>
+        )}
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
@@ -43,7 +51,7 @@ export const PlanUsageSection: React.FC<PlanUsageSectionProps> = ({ metricsData 
             status={metric.status}
             limit={metric.limit}
             percentUsed={metric.percentUsed}
-            action={metric.action}
+            action={metric.title === "Data Export Events" ? undefined : metric.action}
           />
         ))}
       </div>

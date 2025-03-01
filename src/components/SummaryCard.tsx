@@ -35,6 +35,9 @@ export const SummaryCard = ({
     return num.toLocaleString('en-US');
   };
 
+  // Determine if this is the Data Export Events card (to apply red color)
+  const isDataExportEvents = title === "Data Export Events";
+
   return (
     <div className={cn(
       "bg-card p-4 rounded-lg shadow-sm animate-slide-up transition-all duration-200 text-left",
@@ -46,7 +49,10 @@ export const SummaryCard = ({
         {action && <div>{action}</div>}
       </div>
       <div className="mt-2 flex items-baseline gap-2">
-        <span className="text-2xl font-semibold text-foreground">
+        <span className={cn(
+          "text-2xl font-semibold",
+          isDataExportEvents && isMaxedOut ? "text-[#ea384c]" : "text-foreground"
+        )}>
           {formatNumber(value)}
         </span>
         {percentChange !== undefined && (
