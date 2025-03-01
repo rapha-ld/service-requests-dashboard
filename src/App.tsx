@@ -21,17 +21,21 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <NavigationTabs />
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/overview" element={<Overview />} />
-          <Route path="/client-mau" element={<ClientMAU />} />
-          <Route path="/experiments" element={<Experiments />} />
-          <Route path="/data-export" element={<DataExport />} />
-          <Route path="/server" element={<Server />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <div className="w-full max-w-none mx-0 px-0">
+          <NavigationTabs />
+          <div className="p-6">
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/overview" element={<Overview />} />
+              <Route path="/client-mau" element={<ClientMAU />} />
+              <Route path="/experiments" element={<Experiments />} />
+              <Route path="/data-export" element={<DataExport />} />
+              <Route path="/server" element={<Server />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </div>
+        </div>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

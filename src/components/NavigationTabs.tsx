@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Settings, Sun, Moon } from "lucide-react";
@@ -57,7 +58,7 @@ export function NavigationTabs() {
   return (
     <div className="flex w-full items-center border-b">
       <Tabs value={activeTab} className="w-full">
-        <TabsList className="h-14 bg-transparent justify-start">
+        <TabsList className="h-14 px-0 bg-transparent justify-start">
           {filteredTabs.map((tab) => (
             <TabsTrigger
               key={tab.id}
