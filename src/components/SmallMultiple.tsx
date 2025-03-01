@@ -80,7 +80,7 @@ export const SmallMultiple = ({
     <div className={cn("bg-card dark:bg-card/80 p-4 rounded-lg shadow-sm animate-fade-in", className)}>
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-sm font-medium text-foreground">{title}</h3>
-        {useViewDetails ? (
+        {useViewDetails && (
           <Button
             variant="outline"
             size="sm"
@@ -88,16 +88,6 @@ export const SmallMultiple = ({
             asChild
           >
             <Link to={detailsRoute}>View details</Link>
-          </Button>
-        ) : (
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-7 px-2 text-xs"
-            onClick={handleExport}
-            title="Export PNG"
-          >
-            <Download className="h-4 w-4" />
           </Button>
         )}
       </div>

@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
@@ -6,8 +7,6 @@ import { DashboardCharts } from "@/components/DashboardCharts";
 import { getMockData } from "@/utils/mockDataGenerator";
 import { getTotalValue, calculatePercentChange } from "@/utils/dataTransformers";
 import { format, subMonths } from "date-fns";
-import { Button } from "@/components/ui/button";
-import { exportChartAsPNG } from "@/components/charts/exportChart";
 import { useRef } from "react";
 
 type GroupingType = 'environment' | 'relayId' | 'userAgent';
@@ -97,12 +96,6 @@ const Dashboard = () => {
     value: Object.values(serviceData.current).reduce((sum, data) => sum + data[index].value, 0)
   }));
 
-  const handleExportChart = (title: string) => {
-    if (chartRefs.current[title]) {
-      exportChartAsPNG(chartRefs.current[title], title);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
@@ -133,7 +126,8 @@ const Dashboard = () => {
           maxValue={maxValue}
           grouping={grouping}
           chartRefs={chartRefs}
-          onExportChart={handleExportChart}
+          onExportChart={() => {}}
+          useViewDetailsButton={false}
         />
       </div>
     </div>
