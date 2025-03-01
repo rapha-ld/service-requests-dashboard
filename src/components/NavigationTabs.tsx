@@ -56,7 +56,7 @@ export function NavigationTabs() {
   };
 
   return (
-    <div className="flex w-full items-center border-b">
+    <div className="fixed top-0 left-0 right-0 flex w-full items-center border-b bg-background z-10">
       <Tabs value={activeTab} className="w-full">
         <TabsList className="h-14 px-0 bg-transparent justify-start">
           {filteredTabs.map((tab) => (
