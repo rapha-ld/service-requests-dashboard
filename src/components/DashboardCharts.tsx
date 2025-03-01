@@ -19,6 +19,7 @@ interface DashboardChartsProps {
   grouping: 'environment' | 'relayId' | 'userAgent';
   chartRefs: React.MutableRefObject<{ [key: string]: any }>;
   onExportChart: (title: string) => void;
+  useViewDetailsButton?: boolean;
 }
 
 const getTotalTitle = (grouping: string): string => {
@@ -43,6 +44,7 @@ export const DashboardCharts = ({
   grouping,
   chartRefs,
   onExportChart,
+  useViewDetailsButton = true,
 }: DashboardChartsProps) => {
   const [layoutMode, setLayoutMode] = useState<'compact' | 'expanded'>('compact');
 
@@ -67,7 +69,7 @@ export const DashboardCharts = ({
           className="w-full"
           chartRef={chartRefs.current[getTotalTitle(grouping)]}
           onExport={onExportChart}
-          useViewDetails={false}
+          useViewDetails={useViewDetailsButton}
         />
       </div>
 
@@ -109,7 +111,7 @@ export const DashboardCharts = ({
             chartType={chartType}
             chartRef={chartRefs.current[group.title]}
             onExport={onExportChart}
-            useViewDetails={false}
+            useViewDetails={useViewDetailsButton}
           />
         ))}
       </div>
