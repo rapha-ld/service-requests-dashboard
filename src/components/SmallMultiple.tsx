@@ -19,6 +19,9 @@ interface SmallMultipleProps {
   maxValue: number;
   chartType: 'area' | 'bar';
   showThreshold?: boolean;
+  chartRef?: React.MutableRefObject<any>;
+  onExport?: (title: string) => void;
+  useViewDetails?: boolean;
 }
 
 const getTitleRoute = (title: string): string => {
@@ -48,15 +51,23 @@ export const SmallMultiple = ({
   viewType, 
   maxValue, 
   chartType, 
-  showThreshold = false 
+  showThreshold = false,
+  chartRef,
+  onExport,
+  useViewDetails = true
 }: SmallMultipleProps) => {
-  const chartRef = useRef<any>(null);
+  const internalChartRef = useRef<any>(null);
+  const effectiveChartRef = chartRef || internalChartRef;
   
   const average = calculateAverage(data);
   const transformedData = transformData(data, viewType);
   
   const handleExport = () => {
-    exportChartAsSVG(chartRef, title);
+    if (onExport) {
+      onExport(title);
+    } else {
+      exportChartAsSVG(effectiveChartRef, title);
+    }
   };
 
   const ChartComponent = chartType === 'area' ? AreaChart : BarChart;
@@ -68,18 +79,29 @@ export const SmallMultiple = ({
     <div className={cn("bg-card dark:bg-card/80 p-4 rounded-lg shadow-sm animate-fade-in", className)}>
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-sm font-medium text-foreground">{title}</h3>
-        <Button
-          variant="outline"
-          size="sm"
-          className="h-7 px-2 text-xs"
-          asChild
-        >
-          <Link to={detailsRoute}>View details</Link>
-        </Button>
+        {useViewDetails ? (
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-7 px-2 text-xs"
+            asChild
+          >
+            <Link to={detailsRoute}>View details</Link>
+          </Button>
+        ) : (
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-7 px-2 text-xs"
+            onClick={handleExport}
+          >
+            Export SVG
+          </Button>
+        )}
       </div>
       <div className="h-48">
         <ResponsiveContainer width="100%" height="100%">
-          <ChartComponent ref={chartRef} data={transformedData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
+          <ChartComponent ref={effectiveChartRef} data={transformedData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
             <defs>
               <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#30459B" stopOpacity={1} />

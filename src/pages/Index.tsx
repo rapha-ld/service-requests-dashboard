@@ -7,6 +7,9 @@ import { DashboardCharts } from "@/components/DashboardCharts";
 import { getMockData } from "@/utils/mockDataGenerator";
 import { getTotalValue, calculatePercentChange } from "@/utils/dataTransformers";
 import { format, subMonths } from "date-fns";
+import { Button } from "@/components/ui/button";
+import { exportChartAsSVG } from "@/components/charts/exportChart";
+import { useRef } from "react";
 
 type GroupingType = 'environment' | 'relayId' | 'userAgent';
 type TimeRangeType = 'month-to-date' | 'last-12-months';
@@ -18,6 +21,7 @@ const Dashboard = () => {
   const [chartType, setChartType] = useState<'area' | 'bar'>('area');
   const [grouping, setGrouping] = useState<GroupingType>('environment');
   const [timeRange, setTimeRange] = useState<TimeRangeType>('month-to-date');
+  const chartRefs = useRef<{ [key: string]: any }>({});
 
   const currentDate = new Date(new Date().getFullYear(), selectedMonth);
   const previousDate = new Date(new Date().getFullYear(), selectedMonth - 1);
@@ -94,6 +98,12 @@ const Dashboard = () => {
     value: Object.values(serviceData.current).reduce((sum, data) => sum + data[index].value, 0)
   }));
 
+  const handleExportChart = (title: string) => {
+    if (chartRefs.current[title]) {
+      exportChartAsSVG(chartRefs.current[title], title);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
@@ -123,6 +133,8 @@ const Dashboard = () => {
           chartType={chartType}
           maxValue={maxValue}
           grouping={grouping}
+          chartRefs={chartRefs}
+          onExportChart={handleExportChart}
         />
       </div>
     </div>
@@ -130,4 +142,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
