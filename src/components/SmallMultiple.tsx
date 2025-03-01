@@ -1,62 +1,112 @@
-import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import React from "react";
+import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ReferenceLine
+} from "recharts";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Button } from './ui/button';
-import { useRef } from 'react';
-import { Link } from 'react-router-dom';
-import { CustomTooltip } from './charts/CustomTooltip';
-import { formatYAxisTick } from './charts/formatters';
-import { transformData, calculateAverage } from './charts/dataTransformers';
-import { exportChartAsSVG } from './charts/exportChart';
+import { Link } from "react-router-dom";
 
 interface SmallMultipleProps {
   title: string;
   data: Array<{ day: string; value: number | null }>;
-  color: string;
-  unit: string;
+  color?: string;
+  unit?: string;
+  viewType?: "standard" | "cumulative";
+  maxValue?: number;
   className?: string;
-  viewType: 'net-new' | 'cumulative';
-  maxValue: number;
-  chartType: 'area' | 'bar';
+  chartType?: 'area' | 'bar';
   showThreshold?: boolean;
 }
 
-const getTitleRoute = (title: string): string => {
-  const normalizedTitle = title.toLowerCase();
-  
-  if (normalizedTitle.includes('client') || normalizedTitle.includes('mau')) {
-    return '/client-mau';
-  } else if (normalizedTitle.includes('experiment')) {
-    return '/experiments';
-  } else if (normalizedTitle.includes('data export')) {
-    return '/data-export';
-  } else if (normalizedTitle.includes('server')) {
-    return '/server';
-  } else if (normalizedTitle.includes('service')) {
-    return '/';
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: Array<{ name: string; value: number }>;
+  label?: string;
+  unit?: string;
+}
+
+const getTitleRoute = (title: string) => {
+  const titleMap: { [key: string]: string } = {
+    "Client MAU": "/client-mau",
+    "Experiment Events": "/experiments",
+    "Data Export Events": "/data-export"
+  };
+  return titleMap[title] || "/";
+};
+
+const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload, label, unit }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white border rounded-md p-2 shadow-md">
+        <p className="text-sm font-medium text-gray-700">{label}</p>
+        <p className="text-xs text-gray-500">
+          {payload[0].name}: {payload[0].value} {unit}
+        </p>
+      </div>
+    );
   }
-  
-  return '/overview';
+
+  return null;
+};
+
+const formatYAxisTick = (value: number, unit: string) => {
+  if (value >= 1000000) {
+    return (value / 1000000).toFixed(1) + 'M' + unit;
+  } else if (value >= 1000) {
+    return (value / 1000).toFixed(1) + 'K' + unit;
+  } else {
+    return value + unit;
+  }
 };
 
 export const SmallMultiple = ({ 
   title, 
   data, 
-  color, 
-  unit, 
-  className, 
-  viewType, 
-  maxValue, 
-  chartType, 
-  showThreshold = false 
+  color = "hsl(var(--primary))", 
+  unit = "",
+  viewType = "standard",
+  maxValue = 0,
+  className = "",
+  chartType = 'area',
+  showThreshold = false
 }: SmallMultipleProps) => {
-  const chartRef = useRef<any>(null);
   
-  const average = calculateAverage(data);
-  const transformedData = transformData(data, viewType);
-  
-  const handleExport = () => {
-    exportChartAsSVG(chartRef, title);
-  };
+  const transformedData = React.useMemo(() => {
+    if (viewType === "cumulative") {
+      let cumulativeValue = 0;
+      return data.map(item => {
+        cumulativeValue += (item.value || 0);
+        return { ...item, value: cumulativeValue };
+      });
+    }
+    return data;
+  }, [data, viewType]);
+
+  const chartRef = React.useRef<any>(null);
+
+  const handleExport = React.useCallback(() => {
+    if (chartRef.current) {
+      // Basic implementation - consider using a library for more robust export
+      const svgData = chartRef.current.container.innerHTML;
+      const blob = new Blob([svgData], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${title.replace(/\s+/g, '_').toLowerCase()}_chart.svg`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+  }, [title]);
 
   const ChartComponent = chartType === 'area' ? AreaChart : BarChart;
   const DataComponent = chartType === 'area' ? Area : Bar;
@@ -65,8 +115,8 @@ export const SmallMultiple = ({
 
   return (
     <div className={cn("bg-card dark:bg-card/80 p-4 rounded-lg shadow-sm animate-fade-in", className)}>
-      <div className="flex justify-between items-center mb-2">
-        <h3 className="text-sm font-medium text-foreground">{title}</h3>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-sm font-medium">{title}</h3>
         <Button
           variant="outline"
           size="sm"
@@ -78,76 +128,60 @@ export const SmallMultiple = ({
       </div>
       <div className="h-48">
         <ResponsiveContainer width="100%" height="100%">
-          <ChartComponent ref={chartRef} data={transformedData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
-            <defs>
-              <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#30459B" stopOpacity={1} />
-                <stop offset="100%" stopColor="#30459B" stopOpacity={0.3} />
-              </linearGradient>
-            </defs>
+          <ChartComponent
+            data={transformedData}
+            margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
+            className={cn('overflow-visible')}
+          >
             <XAxis 
               dataKey="day" 
-              tick={{ fontSize: 10 }}
-              interval="preserveStart"
-              tickLine={false}
-              stroke="currentColor"
-              className="text-muted-foreground"
-            />
-            <YAxis 
-              tick={{ fontSize: 10 }}
               tickLine={false}
               axisLine={false}
-              domain={[0, maxValue]}
-              width={40}
-              stroke="currentColor"
-              className="text-muted-foreground"
-              tickFormatter={formatYAxisTick}
+              tick={{ fontSize: 10 }}
+              tickFormatter={(value) => {
+                // Only show first and last date
+                const index = transformedData.findIndex(item => item.day === value);
+                return index === 0 || index === transformedData.length - 1 
+                  ? value 
+                  : '';
+              }}
+            />
+            <YAxis 
+              tickLine={false}
+              axisLine={false}
+              tick={{ fontSize: 10 }}
+              tickFormatter={(value) => formatYAxisTick(value, unit)}
+              width={28}
             />
             <Tooltip content={<CustomTooltip unit={unit} />} />
             {chartType === 'area' ? (
-              <Area
-                type="monotone"
-                dataKey="value"
-                stroke="#30459B"
-                fill="url(#colorGradient)"
-                strokeWidth={2}
-                connectNulls={true}
+              <Area 
+                type="monotone" 
+                dataKey="value" 
+                stroke={color} 
+                fill={color}
+                fillOpacity={0.1}
+                animationDuration={500}
               />
             ) : (
-              <Bar
-                dataKey="value"
-                fill="#30459B"
-                radius={[1.5, 1.5, 0, 0]}
+              <Bar 
+                dataKey="value" 
+                fill={color} 
+                radius={[4, 4, 0, 0]}
+                animationDuration={500}
               />
             )}
-            {viewType === 'net-new' && (
+            {showThreshold && maxValue > 0 && (
               <ReferenceLine 
-                y={average}
-                stroke="currentColor"
-                strokeDasharray="3 3"
-                strokeOpacity={0.5}
-                label={{
-                  value: `Avg: ${average.toFixed(1)}${unit}`,
-                  fill: 'currentColor',
-                  fontSize: 10,
+                y={maxValue} 
+                stroke="hsl(var(--primary))" 
+                strokeDasharray="3 3" 
+                label={{ 
+                  value: 'Limit',
                   position: 'insideTopRight',
-                  style: { zIndex: 10 },
-                  dy: -15
-                }}
-              />
-            )}
-            {showThreshold && (
-              <ReferenceLine 
-                y={maxValue}
-                stroke="#DB2251"
-                strokeWidth={1.5}
-                label={{
-                  value: `Limit: ${maxValue.toLocaleString()}${unit}`,
-                  fill: '#DB2251',
-                  fontSize: 10,
-                  position: 'insideTopRight',
-                  style: { zIndex: 10 },
-                }}
+                  fill: 'hsl(var(--muted-foreground))',
+                  fontSize: 10
+                }} 
               />
             )}
           </ChartComponent>
