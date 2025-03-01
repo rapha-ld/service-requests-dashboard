@@ -25,7 +25,7 @@ interface UsageTrendsSectionProps {
 export const UsageTrendsSection: React.FC<UsageTrendsSectionProps> = ({ chartData, metricsInfo }) => {
   return (
     <>
-      <h3 className="text-sm font-semibold text-muted-foreground mb-4 text-left">Cumulative Monthly Usage</h3>
+      <h3 className="text-sm font-semibold text-muted-foreground mb-6 text-left">Cumulative Monthly Usage</h3>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <SmallMultiple
           title="Client MAU"

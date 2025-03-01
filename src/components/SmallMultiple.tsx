@@ -1,3 +1,4 @@
+
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { cn } from "@/lib/utils";
 import { Button } from './ui/button';
@@ -65,7 +66,7 @@ export const SmallMultiple = ({
 
   return (
     <div className={cn("bg-card dark:bg-card/80 p-4 rounded-lg shadow-sm animate-fade-in", className)}>
-      <div className="flex justify-between items-center mb-2">
+      <div className="flex justify-between items-center mb-4">
         <h3 className="text-sm font-medium text-foreground">{title}</h3>
         <Button
           variant="outline"
