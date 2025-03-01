@@ -3,9 +3,9 @@
 export const generateDailyData = (targetValue: number, growthPattern: 'steady' | 'exponential' | 'stepwise') => {
   const data = [];
   
-  // Start date: January 24, 2024
-  const startDate = new Date(2024, 0, 24);
-  // End date: February 22, 2024 (approx. 30 days)
+  // Start date: February 1, 2024 (changed from January 24)
+  const startDate = new Date(2024, 1, 1);
+  // End date: February 22, 2024 (approx. 22 days)
   const endDate = new Date(2024, 1, 22);
   // Full month end date: February 29, 2024 (for x-axis display only)
   const fullMonthEndDate = new Date(2024, 1, 29);
@@ -62,7 +62,7 @@ export const generateDailyData = (targetValue: number, growthPattern: 'steady' |
     const currentDate = new Date(startDate);
     currentDate.setDate(startDate.getDate() + i);
     
-    // Format date as "MMM DD" (e.g., "Jan 24")
+    // Format date as "MMM DD" (e.g., "Feb 01")
     const formattedDate = currentDate.toLocaleDateString('en-US', { 
       month: 'short', 
       day: 'numeric' 
