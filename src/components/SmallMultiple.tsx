@@ -8,6 +8,7 @@ import { CustomTooltip } from './charts/CustomTooltip';
 import { formatYAxisTick } from './charts/formatters';
 import { transformData, calculateAverage } from './charts/dataTransformers';
 import { exportChartAsSVG } from './charts/exportChart';
+import { Download } from 'lucide-react';
 
 interface SmallMultipleProps {
   title: string;
@@ -94,8 +95,9 @@ export const SmallMultiple = ({
             size="sm"
             className="h-7 px-2 text-xs"
             onClick={handleExport}
+            title="Export SVG"
           >
-            Export SVG
+            <Download className="h-4 w-4" />
           </Button>
         )}
       </div>
