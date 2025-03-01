@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
@@ -8,7 +7,7 @@ import { getMockData } from "@/utils/mockDataGenerator";
 import { getTotalValue, calculatePercentChange } from "@/utils/dataTransformers";
 import { format, subMonths } from "date-fns";
 import { Button } from "@/components/ui/button";
-import { exportChartAsSVG } from "@/components/charts/exportChart";
+import { exportChartAsPNG } from "@/components/charts/exportChart";
 import { useRef } from "react";
 
 type GroupingType = 'environment' | 'relayId' | 'userAgent';
@@ -100,7 +99,7 @@ const Dashboard = () => {
 
   const handleExportChart = (title: string) => {
     if (chartRefs.current[title]) {
-      exportChartAsSVG(chartRefs.current[title], title);
+      exportChartAsPNG(chartRefs.current[title], title);
     }
   };
 

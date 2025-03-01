@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { CustomTooltip } from './charts/CustomTooltip';
 import { formatYAxisTick } from './charts/formatters';
 import { transformData, calculateAverage } from './charts/dataTransformers';
-import { exportChartAsSVG } from './charts/exportChart';
+import { exportChartAsSVG, exportChartAsPNG } from './charts/exportChart';
 import { Download } from 'lucide-react';
 
 interface SmallMultipleProps {
@@ -67,7 +67,7 @@ export const SmallMultiple = ({
     if (onExport) {
       onExport(title);
     } else {
-      exportChartAsSVG(effectiveChartRef, title);
+      exportChartAsPNG(effectiveChartRef, title);
     }
   };
 
@@ -95,7 +95,7 @@ export const SmallMultiple = ({
             size="sm"
             className="h-7 px-2 text-xs"
             onClick={handleExport}
-            title="Export SVG"
+            title="Export PNG"
           >
             <Download className="h-4 w-4" />
           </Button>
