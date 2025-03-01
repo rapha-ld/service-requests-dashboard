@@ -55,14 +55,13 @@ export const exportChartAsPNG = (chartRef: React.RefObject<any>, title: string) 
     
     // Convert the chart container to an image
     const svgData = new XMLSerializer().serializeToString(chartContainer);
-    const DOMURL = window.URL || window.webkitURL || window;
     const img = new Image();
     const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-    const url = DOMURL.createObjectURL(svgBlob);
+    const url = URL.createObjectURL(svgBlob);
     
     img.onload = () => {
       ctx.drawImage(img, 0, 0);
-      DOMURL.revokeObjectURL(url);
+      URL.revokeObjectURL(url);
       
       // Convert canvas to png
       const pngUrl = canvas.toDataURL('image/png');
@@ -83,7 +82,7 @@ export const exportChartAsPNG = (chartRef: React.RefObject<any>, title: string) 
     
     img.onerror = (error) => {
       console.error('Image error:', error);
-      DOMURL.revokeObjectURL(url);
+      URL.revokeObjectURL(url);
       
       // Fallback to SVG if PNG conversion fails
       exportChartAsSVG(chartRef, title);
