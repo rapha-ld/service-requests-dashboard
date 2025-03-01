@@ -1,3 +1,4 @@
+
 import React from "react";
 import {
   ResponsiveContainer,
@@ -19,7 +20,7 @@ interface SmallMultipleProps {
   data: Array<{ day: string; value: number | null }>;
   color?: string;
   unit?: string;
-  viewType?: "standard" | "cumulative";
+  viewType?: "standard" | "cumulative" | "net-new";
   maxValue?: number;
   className?: string;
   chartType?: 'area' | 'bar';
@@ -80,7 +81,7 @@ export const SmallMultiple = ({
 }: SmallMultipleProps) => {
   
   const transformedData = React.useMemo(() => {
-    if (viewType === "cumulative") {
+    if (viewType === "cumulative" || viewType === "net-new") {
       let cumulativeValue = 0;
       return data.map(item => {
         cumulativeValue += (item.value || 0);
