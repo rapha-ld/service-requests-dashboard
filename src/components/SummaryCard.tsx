@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { AreaChart, Area, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { CustomTooltip } from './charts/CustomTooltip';
 import { formatYAxisTick } from './charts/formatters';
+import { transformData } from './charts/dataTransformers';
 
 interface SummaryCardProps {
   title: string;
@@ -43,6 +44,9 @@ export const SummaryCard = ({
 
   // Determine if this is the Data Export Events card (to apply red color)
   const isDataExportEvents = title === "Data Export Events";
+
+  // Transform data to cumulative if chart data exists
+  const transformedChartData = chartData ? transformData(chartData, 'cumulative') : [];
 
   return (
     <div className={cn(
@@ -87,7 +91,8 @@ export const SummaryCard = ({
       
       {(percentUsed !== undefined && limit !== undefined) && (
         <div className="mt-3">
-          <div className="flex justify-end text-xs text-muted-foreground mb-1">
+          <div className="flex justify-between text-xs text-muted-foreground mb-1">
+            <span>{percentUsed.toFixed(1)}%</span>
             <span>Limit: {formatNumber(limit)}</span>
           </div>
           <Progress 
@@ -105,7 +110,7 @@ export const SummaryCard = ({
           
           <div className="h-32">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
+              <AreaChart data={transformedChartData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
                 <defs>
                   <linearGradient id={`colorGradient-${title.replace(/\s+/g, '')}`} x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#30459B" stopOpacity={1} />
@@ -143,9 +148,10 @@ export const SummaryCard = ({
                   <ReferenceLine 
                     y={limit}
                     stroke="#DB2251"
+                    strokeDasharray="3 3"
                     strokeWidth={1.5}
                     label={{
-                      value: `Limit: ${limit.toLocaleString()}`,
+                      value: "Limit",
                       fill: '#DB2251',
                       fontSize: 10,
                       position: 'insideTopRight',
