@@ -1,4 +1,3 @@
-
 import React from "react";
 import { SummaryCard } from "@/components/SummaryCard";
 import { Button } from "@/components/ui/button";
@@ -68,26 +67,19 @@ export const PlanUsageSection: React.FC<PlanUsageSectionProps> = ({ metricsData 
               limit={metric.limit}
               percentUsed={metric.percentUsed}
               action={metric.action}
-              heightClass="h-[172px]"
+              heightClass="h-[120px]" // Reduced height from 172px to 120px
             />
           ))}
           
           {/* Remaining this month card */}
-          <div className="bg-card p-4 rounded-lg shadow-sm dark:bg-secondary dark:border dark:border-border h-[172px]">
+          <div className="bg-card p-4 rounded-lg shadow-sm dark:bg-secondary dark:border dark:border-border h-[224px]">
             <h3 className="text-sm font-medium text-foreground mb-4">Remaining this month</h3>
-            <div className="overflow-y-auto max-h-[116px]">
+            <div className="overflow-y-auto max-h-[168px]">
               <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-muted-foreground border-b">
-                    <th className="text-left py-2 font-medium">Metric</th>
-                    <th className="text-right py-2 font-medium">Remaining</th>
-                    <th className="text-right py-2 font-medium">Percentage</th>
-                  </tr>
-                </thead>
                 <tbody>
                   {remainingData.map((item, index) => (
                     <tr key={index} className="border-b">
-                      <td className="py-2 text-left">{item.title}</td>
+                      <td className="py-2 text-left text-muted-foreground">{item.title}</td>
                       <td className="py-2 text-right">{item.remaining.toLocaleString()}{item.unit}</td>
                       <td className="py-2 text-right">{Math.round(item.percentRemaining)}%</td>
                     </tr>
