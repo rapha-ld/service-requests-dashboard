@@ -8,6 +8,7 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveCo
 import { CustomTooltip } from './charts/CustomTooltip';
 import { formatYAxisTick } from './charts/formatters';
 import { transformData } from './charts/dataTransformers';
+import { Link } from "react-router-dom";
 
 interface SummaryCardProps {
   title: string;
@@ -20,6 +21,7 @@ interface SummaryCardProps {
   percentUsed?: number;
   action?: React.ReactNode;
   chartData?: Array<{ day: string; value: number | null }>;
+  detailsLink?: string;
 }
 
 export const SummaryCard = ({ 
@@ -32,7 +34,8 @@ export const SummaryCard = ({
   limit,
   percentUsed,
   action,
-  chartData
+  chartData,
+  detailsLink
 }: SummaryCardProps) => {
   // Determine if the progress bar should show the danger color (maxed out)
   const isMaxedOut = percentUsed !== undefined && percentUsed >= 95;
@@ -56,7 +59,17 @@ export const SummaryCard = ({
     )}>
       <div className="flex justify-between items-start">
         <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
-        {action && <div>{action}</div>}
+        <div className="flex items-center gap-2">
+          {detailsLink && (
+            <Link 
+              to={detailsLink}
+              className="text-xs text-muted-foreground underline hover:no-underline"
+            >
+              View details
+            </Link>
+          )}
+          {action && <div>{action}</div>}
+        </div>
       </div>
       <div className="mt-2 flex items-baseline gap-2">
         <span className={cn(

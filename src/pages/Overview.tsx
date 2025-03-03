@@ -23,7 +23,8 @@ const Overview = () => {
       limit: 25000,
       percentUsed: 73.8, // 18450/25000 * 100
       status: "moderate" as const,
-      chartData: generateDailyData(18450, 'steady')
+      chartData: generateDailyData(18450, 'steady'),
+      detailsLink: "/client-mau"
     },
     {
       title: "Experiment Events",
@@ -32,7 +33,8 @@ const Overview = () => {
       limit: 500000,
       percentUsed: 65.15, // 325765/500000 * 100
       status: "good" as const,
-      chartData: generateDailyData(325765, 'exponential')
+      chartData: generateDailyData(325765, 'exponential'),
+      detailsLink: "/experiments"
     },
     {
       title: "Data Export Events",
@@ -46,7 +48,8 @@ const Overview = () => {
         <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
           Upgrade Plan
         </Button>
-      )
+      ),
+      detailsLink: "/data-export"
     }
   ];
 
