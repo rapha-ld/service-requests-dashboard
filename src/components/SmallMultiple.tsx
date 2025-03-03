@@ -1,4 +1,3 @@
-
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { cn } from "@/lib/utils";
 import { Button } from './ui/button';
@@ -91,7 +90,7 @@ export const SmallMultiple = ({
           </Button>
         )}
       </div>
-      <div className="h-48">
+      <div className="h-[192px]">
         <ResponsiveContainer width="100%" height="100%">
           <ChartComponent ref={effectiveChartRef} data={transformedData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
             <defs>
