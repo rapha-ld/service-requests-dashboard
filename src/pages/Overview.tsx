@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -45,7 +44,11 @@ const Overview = () => {
       status: "poor" as const,
       chartData: generateDailyData(100000, 'stepwise'),
       action: (
-        <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="h-7 px-2 text-xs bg-[#425EFF] text-white hover:bg-[#425EFF]/90 border-[#425EFF]"
+        >
           Upgrade Plan
         </Button>
       ),
