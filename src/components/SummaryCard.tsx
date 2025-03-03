@@ -92,7 +92,7 @@ export const SummaryCard = ({
       {(percentUsed !== undefined && limit !== undefined) && (
         <div className="mt-3">
           <div className="flex justify-between text-xs text-muted-foreground mb-1">
-            <span>{percentUsed.toFixed(1)}%</span>
+            <span>{Math.round(percentUsed)}%</span>
             <span>Limit: {formatNumber(limit)}</span>
           </div>
           <Progress 
