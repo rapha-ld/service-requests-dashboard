@@ -12,7 +12,6 @@ interface MetricData {
   percentUsed: number;
   status: "good" | "moderate" | "poor";
   action?: React.ReactNode;
-  chartData?: Array<{ day: string; value: number | null }>;
 }
 
 interface PlanUsageSectionProps {
@@ -53,8 +52,6 @@ export const PlanUsageSection: React.FC<PlanUsageSectionProps> = ({ metricsData 
             limit={metric.limit}
             percentUsed={metric.percentUsed}
             action={metric.title === "Data Export Events" ? undefined : metric.action}
-            chartData={metric.chartData}
-            showChart={metric.title !== "Seats" && metric.chartData !== undefined}
           />
         ))}
       </div>
