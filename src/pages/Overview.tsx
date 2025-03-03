@@ -19,7 +19,7 @@ const Overview = () => {
     {
       title: "Client MAU",
       value: 18450,
-      unit: "users",
+      unit: "users", // We'll remove this in the display but keep it for calculation
       limit: 25000,
       percentUsed: 73.8, // 18450/25000 * 100
       status: "moderate" as const,
