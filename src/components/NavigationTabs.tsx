@@ -19,7 +19,7 @@ const ALL_TABS = [
   { id: "experiments", label: "Experiments", path: "/experiments" },
   { id: "data-export", label: "Data Export", path: "/data-export" },
   { id: "server", label: "Server", path: "/server" },
-  { id: "service-requests", label: "Service Requests", path: "/" },
+  { id: "service-requests", label: "Service Requests", path: "/service-requests" },
 ];
 
 export function NavigationTabs() {

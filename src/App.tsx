@@ -26,7 +26,7 @@ const App = () => (
           <div className="p-6 pt-20">
             <Routes>
               <Route path="/" element={<Navigate to="/overview" replace />} />
-              <Route path="/index" element={<Index />} />
+              <Route path="/service-requests" element={<Index />} />
               <Route path="/overview" element={<Overview />} />
               <Route path="/client-mau" element={<ClientMAU />} />
               <Route path="/experiments" element={<Experiments />} />
