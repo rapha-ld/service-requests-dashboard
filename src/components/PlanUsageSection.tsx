@@ -1,3 +1,4 @@
+
 import React from "react";
 import { SummaryCard } from "@/components/SummaryCard";
 import { Button } from "@/components/ui/button";
@@ -80,7 +81,11 @@ export const PlanUsageSection: React.FC<PlanUsageSectionProps> = ({ metricsData 
                   {remainingData.map((item, index) => (
                     <tr key={index} className="border-b">
                       <td className="py-2 text-left text-muted-foreground">{item.title}</td>
-                      <td className="py-2 text-right">{item.remaining.toLocaleString()}{item.unit}</td>
+                      <td className="py-2 text-right">
+                        <span className={item.remaining === 0 ? "text-[#ea384c]" : ""}>
+                          {item.remaining.toLocaleString()}{item.unit}
+                        </span>
+                      </td>
                       <td className="py-2 text-right">{Math.round(item.percentRemaining)}%</td>
                     </tr>
                   ))}

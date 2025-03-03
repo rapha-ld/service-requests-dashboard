@@ -1,3 +1,4 @@
+
 import React from "react";
 import { cn } from "@/lib/utils";
 import { ArrowDown, ArrowUp } from "lucide-react";
@@ -118,7 +119,7 @@ export const SummaryCard = ({
         <>
           <div className="h-px bg-gray-200 dark:bg-gray-700 my-8 mb-10"></div>
           
-          <div className="h-32">
+          <div className="h-38">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={transformedChartData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
                 <defs>
