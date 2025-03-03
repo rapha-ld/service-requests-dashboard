@@ -77,11 +77,7 @@ const Overview = () => {
         <PlanUsageSection metricsData={metricsData} />
         
         <div className="mt-8 mb-4">
-          <UsageTrendsSection 
-            chartData={chartData} 
-            metricsInfo={metricsInfo} 
-            metricsData={metricsData}
-          />
+          <UsageTrendsSection chartData={chartData} metricsInfo={metricsInfo} />
         </div>
         
         <div className="mt-8">
