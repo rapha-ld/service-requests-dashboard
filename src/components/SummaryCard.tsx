@@ -22,6 +22,7 @@ interface SummaryCardProps {
   action?: React.ReactNode;
   chartData?: Array<{ day: string; value: number | null }>;
   detailsLink?: string;
+  heightClass?: string; // Add new prop for custom height
 }
 
 export const SummaryCard = ({ 
@@ -35,7 +36,8 @@ export const SummaryCard = ({
   percentUsed,
   action,
   chartData,
-  detailsLink
+  detailsLink,
+  heightClass
 }: SummaryCardProps) => {
   // Determine if the progress bar should show the danger color (maxed out)
   const isMaxedOut = percentUsed !== undefined && percentUsed >= 95;
@@ -55,6 +57,7 @@ export const SummaryCard = ({
     <div className={cn(
       "bg-card p-4 rounded-lg shadow-sm animate-slide-up transition-all duration-200 text-left",
       "dark:bg-secondary dark:border dark:border-border",
+      heightClass, // Apply custom height if provided
       className
     )}>
       <div className="flex justify-between items-start">
@@ -118,7 +121,7 @@ export const SummaryCard = ({
       
       {chartData && chartData.length > 0 && (
         <>
-          {/* Separator line with adjusted padding (30% more than the reduced padding) */}
+          {/* Separator line with adjusted padding */}
           <div className="h-px bg-gray-200 dark:bg-gray-700 my-8"></div>
           
           <div className="h-32">
