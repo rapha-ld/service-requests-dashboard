@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils"
 
 const TooltipProvider = TooltipPrimitive.Provider
 
-const Tooltip = ({ delayDuration = 500, ...props }: React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Root> & { delayDuration?: number }) => (
+const Tooltip = ({ delayDuration = 200, ...props }: React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Root> & { delayDuration?: number }) => (
   <TooltipPrimitive.Root delayDuration={delayDuration} {...props} />
 )
 

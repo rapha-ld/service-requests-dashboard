@@ -88,7 +88,7 @@ export const SmallMultiple = ({
         <TooltipProvider>
           <UITooltip>
             <TooltipTrigger asChild>
-              <span className="border-b border-dashed border-current">MAU</span>
+              <span className="border-b border-dotted border-current">MAU</span>
             </TooltipTrigger>
             <TooltipContent>
               <p>Monthly Active Users</p>
