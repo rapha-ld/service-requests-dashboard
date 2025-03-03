@@ -100,8 +100,8 @@ export const SummaryCard = ({
       
       {chartData && chartData.length > 0 && (
         <>
-          {/* Separator line */}
-          <div className="h-px bg-gray-200 dark:bg-gray-700 my-3"></div>
+          {/* Separator line with increased padding */}
+          <div className="h-px bg-gray-200 dark:bg-gray-700 my-6"></div>
           
           <div className="h-32">
             <ResponsiveContainer width="100%" height="100%">
@@ -145,7 +145,7 @@ export const SummaryCard = ({
                     stroke="#DB2251"
                     strokeWidth={1.5}
                     label={{
-                      value: `Limit: ${limit.toLocaleString()}${unit}`,
+                      value: `Limit: ${limit.toLocaleString()}`,
                       fill: '#DB2251',
                       fontSize: 10,
                       position: 'insideTopRight',
