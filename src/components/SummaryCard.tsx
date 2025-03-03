@@ -94,7 +94,7 @@ export const SummaryCard = ({
                   ) : (
                     <ArrowDown className="h-4 w-4" />
                   )}
-                  <span>{Math.abs(percentChange).toFixed(1)}%</span>
+                  <span>{Math.abs(Math.round(percentChange))}%</span>
                 </div>
               </TooltipTrigger>
               <TooltipContent>

@@ -1,3 +1,4 @@
+
 import React from "react";
 import { SummaryCard } from "@/components/SummaryCard";
 import { Button } from "@/components/ui/button";
@@ -28,7 +29,7 @@ export const PlanUsageSection: React.FC<PlanUsageSectionProps> = ({ metricsData 
     title: metric.title,
     remaining: metric.limit - metric.value,
     percentRemaining: 100 - metric.percentUsed,
-    unit: metric.unit === "users" ? "" : metric.unit // Remove "users" unit
+    unit: metric.unit === "users" || metric.unit === "seats" ? "" : metric.unit // Remove "users" and "seats" units
   }));
   
   return (
@@ -54,43 +55,46 @@ export const PlanUsageSection: React.FC<PlanUsageSectionProps> = ({ metricsData 
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        {/* Seats card */}
-        {metricsData.filter(metric => metric.title === "Seats").map((metric, index) => (
-          <SummaryCard
-            key={index}
-            title={metric.title}
-            value={metric.value}
-            unit={metric.unit}
-            status={metric.status}
-            limit={metric.limit}
-            percentUsed={metric.percentUsed}
-            action={metric.action}
-            heightClass="h-[172px]"
-          />
-        ))}
-        
-        {/* Remaining this month card */}
-        <div className="bg-card p-4 rounded-lg shadow-sm dark:bg-secondary dark:border dark:border-border h-[172px]">
-          <h3 className="text-sm font-medium text-foreground mb-4">Remaining this month</h3>
-          <div className="overflow-y-auto max-h-[116px]">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-muted-foreground border-b">
-                  <th className="text-left py-2 font-medium">Metric</th>
-                  <th className="text-right py-2 font-medium">Remaining</th>
-                  <th className="text-right py-2 font-medium">Percentage</th>
-                </tr>
-              </thead>
-              <tbody>
-                {remainingData.map((item, index) => (
-                  <tr key={index} className="border-b">
-                    <td className="py-2 text-left">{item.title}</td>
-                    <td className="py-2 text-right">{item.remaining.toLocaleString()}{item.unit}</td>
-                    <td className="py-2 text-right">{item.percentRemaining.toFixed(1)}%</td>
+        {/* First column: Seats card and Remaining this month card */}
+        <div className="flex flex-col gap-4">
+          {/* Seats card */}
+          {metricsData.filter(metric => metric.title === "Seats").map((metric, index) => (
+            <SummaryCard
+              key={index}
+              title={metric.title}
+              value={metric.value}
+              unit="" // Remove "seats" unit
+              status={metric.status}
+              limit={metric.limit}
+              percentUsed={metric.percentUsed}
+              action={metric.action}
+              heightClass="h-[172px]"
+            />
+          ))}
+          
+          {/* Remaining this month card */}
+          <div className="bg-card p-4 rounded-lg shadow-sm dark:bg-secondary dark:border dark:border-border h-[172px]">
+            <h3 className="text-sm font-medium text-foreground mb-4">Remaining this month</h3>
+            <div className="overflow-y-auto max-h-[116px]">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-muted-foreground border-b">
+                    <th className="text-left py-2 font-medium">Metric</th>
+                    <th className="text-right py-2 font-medium">Remaining</th>
+                    <th className="text-right py-2 font-medium">Percentage</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {remainingData.map((item, index) => (
+                    <tr key={index} className="border-b">
+                      <td className="py-2 text-left">{item.title}</td>
+                      <td className="py-2 text-right">{item.remaining.toLocaleString()}{item.unit}</td>
+                      <td className="py-2 text-right">{Math.round(item.percentRemaining)}%</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
         
@@ -100,7 +104,7 @@ export const PlanUsageSection: React.FC<PlanUsageSectionProps> = ({ metricsData 
             key={index}
             title={metric.title}
             value={metric.value}
-            unit={metric.title === "Client MAU" ? "" : metric.unit} // Remove "users" for Client MAU
+            unit={metric.title === "Client MAU" || metric.title === "Seats" ? "" : metric.unit} // Remove "users" for Client MAU and "seats" for Seats
             status={metric.status}
             limit={metric.limit}
             percentUsed={metric.percentUsed}
