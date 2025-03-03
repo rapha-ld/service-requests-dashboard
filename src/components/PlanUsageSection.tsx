@@ -28,14 +28,16 @@ export const PlanUsageSection: React.FC<PlanUsageSectionProps> = ({ metricsData 
     <>
       <div className="flex justify-between items-center mb-4">
         <div className="flex flex-col items-start gap-1">
-          <h3 className="text-sm font-semibold text-muted-foreground text-left">Plan Usage</h3>
+          <div className="flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-muted-foreground text-left">Plan Usage</h3>
+            <Link 
+              to="/upgrade" 
+              className="text-xs text-muted-foreground underline hover:no-underline"
+            >
+              Upgrade
+            </Link>
+          </div>
           <p className="text-xs text-muted-foreground">Will reset on Feb 28 at 4:00 PM PST</p>
-          <Link 
-            to="/upgrade" 
-            className="text-xs text-muted-foreground underline hover:no-underline"
-          >
-            Upgrade
-          </Link>
         </div>
         {dataExportCard?.action && (
           <div className="mb-2">
