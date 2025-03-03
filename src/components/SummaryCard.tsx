@@ -45,6 +45,27 @@ export const SummaryCard = ({
   // Determine if this is the Data Export Events card (to apply red color)
   const isDataExportEvents = title === "Data Export Events";
 
+  // Make sure the last data point matches the current value
+  const processedChartData = React.useMemo(() => {
+    if (!chartData) return [];
+    
+    // Find the last non-null data point
+    const lastRealDataIndex = [...chartData].reverse().findIndex(item => item.value !== null);
+    if (lastRealDataIndex === -1) return chartData;
+    
+    // Create a copy of the chart data
+    const newChartData = [...chartData];
+    
+    // Set the last real data point's value to the current value
+    const lastRealDataPosition = chartData.length - 1 - lastRealDataIndex;
+    newChartData[lastRealDataPosition] = {
+      ...newChartData[lastRealDataPosition],
+      value: value
+    };
+    
+    return newChartData;
+  }, [chartData, value]);
+
   return (
     <div className={cn(
       "bg-card p-4 rounded-lg shadow-sm animate-slide-up transition-all duration-200 text-left",
@@ -100,10 +121,10 @@ export const SummaryCard = ({
       )}
 
       {/* Chart section - added more top margin (mt-6 instead of mt-4) */}
-      {showChart && chartData && (
+      {showChart && processedChartData.length > 0 && (
         <div className="h-32 mt-6">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
+            <AreaChart data={processedChartData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
               <defs>
                 <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#30459B" stopOpacity={1} />
