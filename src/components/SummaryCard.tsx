@@ -99,9 +99,9 @@ export const SummaryCard = ({
         </div>
       )}
 
-      {/* Chart section */}
+      {/* Chart section - added more top margin (mt-6 instead of mt-4) */}
       {showChart && chartData && (
-        <div className="h-32 mt-4">
+        <div className="h-32 mt-6">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
               <defs>

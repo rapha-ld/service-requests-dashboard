@@ -6,12 +6,12 @@ import { PlanUsageSection } from "@/components/PlanUsageSection";
 import { generateDailyData } from "@/utils/chartDataGenerator";
 
 const Overview = () => {
-  // Generate chart data for each metric
+  // Generate chart data for each metric - using the exact same data as before
   const clientMAUChartData = generateDailyData(18450, 'steady');
   const experimentEventsChartData = generateDailyData(325765, 'exponential');
   const dataExportEventsChartData = generateDailyData(100000, 'stepwise');
 
-  // Mock data for the cards
+  // Mock data for the cards - same as before but with chartData added
   const metricsData = [
     {
       title: "Seats",
