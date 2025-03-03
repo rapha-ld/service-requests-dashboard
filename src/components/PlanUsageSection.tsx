@@ -1,4 +1,3 @@
-
 import React from "react";
 import { SummaryCard } from "@/components/SummaryCard";
 import { Button } from "@/components/ui/button";
@@ -74,7 +73,7 @@ export const PlanUsageSection: React.FC<PlanUsageSectionProps> = ({ metricsData 
           
           {/* Remaining this month card */}
           <div className="bg-card p-4 rounded-lg shadow-sm dark:bg-secondary dark:border dark:border-border h-[224px]">
-            <h3 className="text-sm font-medium text-muted-foreground mb-4">Remaining this month</h3>
+            <h3 className="text-sm font-medium text-muted-foreground mb-4 text-left">Remaining this month</h3>
             <div className="overflow-y-auto max-h-[168px]">
               <table className="w-full text-sm">
                 <tbody>

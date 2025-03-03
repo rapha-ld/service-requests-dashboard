@@ -1,4 +1,3 @@
-
 import React from "react";
 import { cn } from "@/lib/utils";
 import { ArrowDown, ArrowUp } from "lucide-react";
@@ -22,7 +21,7 @@ interface SummaryCardProps {
   action?: React.ReactNode;
   chartData?: Array<{ day: string; value: number | null }>;
   detailsLink?: string;
-  heightClass?: string; // Add new prop for custom height
+  heightClass?: string;
 }
 
 export const SummaryCard = ({ 
@@ -39,25 +38,21 @@ export const SummaryCard = ({
   detailsLink,
   heightClass
 }: SummaryCardProps) => {
-  // Determine if the progress bar should show the danger color (maxed out)
   const isMaxedOut = percentUsed !== undefined && percentUsed >= 95;
 
-  // Format numbers with comma separators
   const formatNumber = (num: number): string => {
     return num.toLocaleString('en-US');
   };
 
-  // Determine if this is the Data Export Events card (to apply red color)
   const isDataExportEvents = title === "Data Export Events";
 
-  // Transform data to cumulative if chart data exists
   const transformedChartData = chartData ? transformData(chartData, 'cumulative') : [];
 
   return (
     <div className={cn(
       "bg-card p-4 rounded-lg shadow-sm animate-slide-up transition-all duration-200 text-left",
       "dark:bg-secondary dark:border dark:border-border",
-      heightClass, // Apply custom height if provided
+      heightClass,
       className
     )}>
       <div className="flex justify-between items-start">
@@ -121,8 +116,7 @@ export const SummaryCard = ({
       
       {chartData && chartData.length > 0 && (
         <>
-          {/* Separator line with adjusted padding */}
-          <div className="h-px bg-gray-200 dark:bg-gray-700 my-8"></div>
+          <div className="h-px bg-gray-200 dark:bg-gray-700 my-8 mb-10"></div>
           
           <div className="h-32">
             <ResponsiveContainer width="100%" height="100%">
