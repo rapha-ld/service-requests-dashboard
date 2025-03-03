@@ -69,7 +69,7 @@ export const PlanUsageSection: React.FC<PlanUsageSectionProps> = ({ metricsData 
               Upgrade
             </Link>
           </div>
-          <p className="text-xs text-muted-foreground">Will reset on Feb 28 at 4:00 PM PST</p>
+          <p className="text-xs text-muted-foreground">Monthly limits reset on Feb 28 at 4:00 PM PST</p>
         </div>
         {dataExportCard?.action && (
           <div className="mb-2">
@@ -112,7 +112,11 @@ export const PlanUsageSection: React.FC<PlanUsageSectionProps> = ({ metricsData 
                           {item.remaining.toLocaleString()}{item.unit}
                         </span>
                       </td>
-                      <td className="py-2 text-right">{Math.round(item.percentRemaining)}%</td>
+                      <td className="py-2 text-right">
+                        <span className={item.percentRemaining === 0 ? "text-[#ea384c]" : ""}>
+                          {Math.round(item.percentRemaining)}%
+                        </span>
+                      </td>
                     </tr>
                   ))}
                 </tbody>

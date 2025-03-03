@@ -1,5 +1,5 @@
 
-import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { cn } from "@/lib/utils";
 import { Button } from './ui/button';
 import { useRef } from 'react';
@@ -19,7 +19,7 @@ interface SmallMultipleProps {
   className?: string;
   viewType: 'net-new' | 'cumulative';
   maxValue: number;
-  chartType: 'area' | 'bar';
+  chartType: 'area' | 'bar' | 'line';
   showThreshold?: boolean;
   chartRef?: React.MutableRefObject<any>;
   onExport?: (title: string) => void;
@@ -72,8 +72,20 @@ export const SmallMultiple = ({
     }
   };
 
-  const ChartComponent = chartType === 'area' ? AreaChart : BarChart;
-  const DataComponent = chartType === 'area' ? Area : Bar;
+  // Select the appropriate chart component based on chartType
+  let ChartComponent;
+  let DataComponent;
+  
+  if (chartType === 'area') {
+    ChartComponent = AreaChart;
+    DataComponent = Area;
+  } else if (chartType === 'bar') {
+    ChartComponent = BarChart;
+    DataComponent = Bar;
+  } else if (chartType === 'line') {
+    ChartComponent = LineChart;
+    DataComponent = Line;
+  }
   
   const detailsRoute = getTitleRoute(title);
   
@@ -143,7 +155,7 @@ export const SmallMultiple = ({
               tickFormatter={formatYAxisTick}
             />
             <Tooltip content={<CustomTooltip unit={unit} />} />
-            {chartType === 'area' ? (
+            {chartType === 'area' && (
               <Area
                 type="monotone"
                 dataKey="value"
@@ -152,11 +164,22 @@ export const SmallMultiple = ({
                 strokeWidth={2}
                 connectNulls={true}
               />
-            ) : (
+            )}
+            {chartType === 'bar' && (
               <Bar
                 dataKey="value"
                 fill="#30459B"
                 radius={[1.5, 1.5, 0, 0]}
+              />
+            )}
+            {chartType === 'line' && (
+              <Line
+                type="monotone"
+                dataKey="value"
+                stroke="#30459B"
+                strokeWidth={2}
+                dot={false}
+                connectNulls={true}
               />
             )}
             {viewType === 'net-new' && (
