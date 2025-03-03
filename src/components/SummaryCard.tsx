@@ -3,6 +3,9 @@ import { cn } from "@/lib/utils";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Progress } from "@/components/ui/progress";
+import { AreaChart, Area, ReferenceLine, ResponsiveContainer, XAxis, YAxis, Tooltip as RechartsTooltip } from 'recharts';
+import { CustomTooltip } from './charts/CustomTooltip';
+import { formatYAxisTick } from './charts/formatters';
 
 interface SummaryCardProps {
   title: string;
@@ -14,6 +17,8 @@ interface SummaryCardProps {
   limit?: number;
   percentUsed?: number;
   action?: React.ReactNode;
+  chartData?: Array<{ day: string; value: number | null }>;
+  showChart?: boolean;
 }
 
 export const SummaryCard = ({ 
@@ -25,7 +30,9 @@ export const SummaryCard = ({
   percentChange, 
   limit,
   percentUsed,
-  action
+  action,
+  chartData,
+  showChart = false
 }: SummaryCardProps) => {
   // Determine if the progress bar should show the danger color (maxed out)
   const isMaxedOut = percentUsed !== undefined && percentUsed >= 95;
@@ -89,6 +96,56 @@ export const SummaryCard = ({
             className="h-2" 
             progressColor={isMaxedOut ? "#DB2251" : "#394497"}
           />
+        </div>
+      )}
+
+      {/* Chart section */}
+      {showChart && chartData && (
+        <div className="h-32 mt-4">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={chartData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
+              <defs>
+                <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#30459B" stopOpacity={1} />
+                  <stop offset="100%" stopColor="#30459B" stopOpacity={0.3} />
+                </linearGradient>
+              </defs>
+              <XAxis 
+                dataKey="day" 
+                tick={{ fontSize: 10 }}
+                interval="preserveStart"
+                tickLine={false}
+                stroke="currentColor"
+                className="text-muted-foreground"
+              />
+              <YAxis 
+                tick={{ fontSize: 10 }}
+                tickLine={false}
+                axisLine={false}
+                domain={[0, limit || 0]}
+                width={40}
+                stroke="currentColor"
+                className="text-muted-foreground"
+                tickFormatter={formatYAxisTick}
+              />
+              <RechartsTooltip content={<CustomTooltip unit={unit} />} />
+              <Area
+                type="monotone"
+                dataKey="value"
+                stroke="#30459B"
+                fill="url(#colorGradient)"
+                strokeWidth={2}
+                connectNulls={true}
+              />
+              {limit && (
+                <ReferenceLine 
+                  y={limit}
+                  stroke="#DB2251"
+                  strokeWidth={1.5}
+                />
+              )}
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
       )}
     </div>
