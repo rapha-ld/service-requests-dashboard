@@ -118,7 +118,7 @@ export const SummaryCard = ({
       
       {chartData && chartData.length > 0 && (
         <>
-          {/* Separator line with increased padding */}
+          {/* Separator line with reduced padding */}
           <div className="h-px bg-gray-200 dark:bg-gray-700 my-6"></div>
           
           <div className="h-32">
