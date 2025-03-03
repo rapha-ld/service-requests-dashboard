@@ -23,6 +23,7 @@ interface SmallMultipleProps {
   chartRef?: React.MutableRefObject<any>;
   onExport?: (title: string) => void;
   useViewDetails?: boolean;
+  hideTitle?: boolean;
 }
 
 const getTitleRoute = (title: string): string => {
@@ -55,7 +56,8 @@ export const SmallMultiple = ({
   showThreshold = false,
   chartRef,
   onExport,
-  useViewDetails = true
+  useViewDetails = true,
+  hideTitle = false
 }: SmallMultipleProps) => {
   const internalChartRef = useRef<any>(null);
   const effectiveChartRef = chartRef || internalChartRef;
@@ -78,19 +80,21 @@ export const SmallMultiple = ({
 
   return (
     <div className={cn("bg-card dark:bg-card/80 p-4 rounded-lg shadow-sm animate-fade-in", className)}>
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-sm font-medium text-foreground">{title}</h3>
-        {useViewDetails && (
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-7 px-2 text-xs"
-            asChild
-          >
-            <Link to={detailsRoute}>View details</Link>
-          </Button>
-        )}
-      </div>
+      {!hideTitle && (
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-sm font-medium text-foreground">{title}</h3>
+          {useViewDetails && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-7 px-2 text-xs"
+              asChild
+            >
+              <Link to={detailsRoute}>View details</Link>
+            </Button>
+          )}
+        </div>
+      )}
       <div className="h-48">
         <ResponsiveContainer width="100%" height="100%">
           <ChartComponent ref={effectiveChartRef} data={transformedData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
