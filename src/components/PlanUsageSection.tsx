@@ -3,6 +3,7 @@ import React from "react";
 import { SummaryCard } from "@/components/SummaryCard";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface MetricData {
   title: string;
@@ -31,6 +32,29 @@ export const PlanUsageSection: React.FC<PlanUsageSectionProps> = ({ metricsData 
     percentRemaining: 100 - metric.percentUsed,
     unit: metric.unit === "users" || metric.unit === "seats" ? "" : metric.unit // Remove "users" and "seats" units
   }));
+  
+  // Function to format title with MAU tooltip
+  const formatTitle = (title: string) => {
+    if (!title.includes('MAU')) return title;
+    
+    const parts = title.split('MAU');
+    return (
+      <>
+        {parts[0]}
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="border-b border-dashed border-current">MAU</span>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Monthly Active Users</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        {parts[1]}
+      </>
+    );
+  };
   
   return (
     <>
@@ -80,7 +104,9 @@ export const PlanUsageSection: React.FC<PlanUsageSectionProps> = ({ metricsData 
                 <tbody>
                   {remainingData.map((item, index) => (
                     <tr key={index} className="border-b">
-                      <td className="py-2 text-left text-muted-foreground">{item.title}</td>
+                      <td className="py-2 text-left text-muted-foreground">
+                        {formatTitle(item.title)}
+                      </td>
                       <td className="py-2 text-right">
                         <span className={item.remaining === 0 ? "text-[#ea384c]" : ""}>
                           {item.remaining.toLocaleString()}{item.unit}

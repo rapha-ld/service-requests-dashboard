@@ -45,6 +45,28 @@ export const SummaryCard = ({
   };
 
   const isDataExportEvents = title === "Data Export Events";
+  
+  const formattedTitle = React.useMemo(() => {
+    if (!title.includes('MAU')) return title;
+    
+    const parts = title.split('MAU');
+    return (
+      <>
+        {parts[0]}
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="border-b border-dashed border-current">MAU</span>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Monthly Active Users</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        {parts[1]}
+      </>
+    );
+  }, [title]);
 
   const transformedChartData = chartData ? transformData(chartData, 'cumulative') : [];
 
@@ -56,7 +78,7 @@ export const SummaryCard = ({
       className
     )}>
       <div className="flex justify-between items-start">
-        <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
+        <h3 className="text-sm font-medium text-muted-foreground">{formattedTitle}</h3>
         <div className="flex items-center gap-2">
           {detailsLink && (
             <Link 

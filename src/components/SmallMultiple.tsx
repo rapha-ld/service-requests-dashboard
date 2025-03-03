@@ -1,3 +1,4 @@
+
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { cn } from "@/lib/utils";
 import { Button } from './ui/button';
@@ -8,6 +9,7 @@ import { formatYAxisTick } from './charts/formatters';
 import { transformData, calculateAverage } from './charts/dataTransformers';
 import { exportChartAsSVG, exportChartAsPNG } from './charts/exportChart';
 import { Download } from 'lucide-react';
+import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface SmallMultipleProps {
   title: string;
@@ -74,11 +76,34 @@ export const SmallMultiple = ({
   const DataComponent = chartType === 'area' ? Area : Bar;
   
   const detailsRoute = getTitleRoute(title);
+  
+  // Format the title to add tooltip to MAU
+  const formattedTitle = () => {
+    if (!title.includes('MAU')) return title;
+    
+    const parts = title.split('MAU');
+    return (
+      <>
+        {parts[0]}
+        <TooltipProvider>
+          <UITooltip>
+            <TooltipTrigger asChild>
+              <span className="border-b border-dashed border-current">MAU</span>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Monthly Active Users</p>
+            </TooltipContent>
+          </UITooltip>
+        </TooltipProvider>
+        {parts[1]}
+      </>
+    );
+  };
 
   return (
     <div className={cn("bg-card dark:bg-card/80 p-4 rounded-lg shadow-sm animate-fade-in", className)}>
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-sm font-medium text-foreground">{title}</h3>
+        <h3 className="text-sm font-medium text-foreground">{formattedTitle()}</h3>
         {useViewDetails && (
           <Button
             variant="outline"
