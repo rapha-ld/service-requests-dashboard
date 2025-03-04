@@ -25,8 +25,17 @@ export function SearchableSelect({
   // Ensure we have a valid array of items
   const safeItems = Array.isArray(items) ? items : [];
   
-  const selectedItem = safeItems.find(item => item.value === value);
-  const displayValue = selectedItem?.label || 'All projects';
+  // Always add "All projects" if it doesn't exist
+  const allProjectsItem = { value: "all", label: "All projects" };
+  const hasAllProjectsOption = safeItems.some(item => item.value === "all");
+  
+  // Create the full list of items, adding the "All projects" option if needed
+  const fullItemsList = hasAllProjectsOption 
+    ? safeItems 
+    : [allProjectsItem, ...safeItems];
+  
+  // Find the selected item or default to "All projects"
+  const selectedItem = fullItemsList.find(item => item.value === value) || allProjectsItem;
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -39,7 +48,7 @@ export function SearchableSelect({
         >
           <div className="flex items-center">
             <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
-            <span className="truncate">{displayValue}</span>
+            <span className="truncate">{selectedItem.label}</span>
           </div>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -50,12 +59,12 @@ export function SearchableSelect({
           <CommandEmpty>No item found.</CommandEmpty>
           <ScrollArea className="h-60">
             <CommandGroup>
-              {safeItems.map((item) => (
+              {fullItemsList.map((item) => (
                 <CommandItem
                   key={item.value}
                   value={item.value}
                   onSelect={() => {
-                    onChange(item.value === value ? "all" : item.value);
+                    onChange(item.value);
                     setOpen(false);
                   }}
                 >

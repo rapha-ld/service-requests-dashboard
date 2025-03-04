@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { useState, useRef, useMemo } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
@@ -106,14 +107,14 @@ const ClientMAU = () => {
 
   if (!mauData) return null;
 
-  const groups: ChartGroup[] = Object.entries(mauData.current).map(([id, data]) => ({
+  const groups: ChartGroup[] = Object.entries(mauData.current || {}).map(([id, data]) => ({
     id,
     title: id.charAt(0).toUpperCase() + id.slice(1).replace(/([A-Z])/g, ' $1'),
-    value: mauData.currentTotals[id],
+    value: mauData.currentTotals?.[id] || 0,
     data,
     percentChange: calculatePercentChange(
-      mauData.currentTotals[id],
-      mauData.previousTotals[id]
+      mauData.currentTotals?.[id] || 0,
+      mauData.previousTotals?.[id] || 0
     )
   }));
 
@@ -122,10 +123,10 @@ const ClientMAU = () => {
   );
 
   const maxValue = viewType === 'net-new'
-    ? Math.max(...groups.flatMap(env => env.data.map(d => d.value)))
+    ? Math.max(...groups.flatMap(env => (env.data || []).map(d => d.value)), 0)
     : Math.max(...groups.map(env => 
-        env.data.reduce((sum, item) => sum + item.value, 0)
-      ));
+        (env.data || []).reduce((sum, item) => sum + item.value, 0)
+      ), 0);
 
   let allEnvironmentsData: EnvironmentData = [];
   if (mauData.current && Object.values(mauData.current).length > 0) {
