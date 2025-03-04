@@ -1,6 +1,6 @@
 
 import { useQuery } from "@tanstack/react-query";
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
@@ -37,7 +37,8 @@ const ClientMAU = () => {
   const [selectedProject, setSelectedProject] = useState<string>("all");
   const chartRefs = useRef<{ [key: string]: any }>({});
 
-  const projects = generateProjectList();
+  // Memoize projects to avoid regenerating on every render
+  const projects = useMemo(() => generateProjectList(), []);
 
   const currentDate = new Date(new Date().getFullYear(), selectedMonth);
   const previousDate = new Date(new Date().getFullYear(), selectedMonth - 1);
@@ -45,41 +46,66 @@ const ClientMAU = () => {
   const { data: mauData } = useQuery<MAUDataResult>({
     queryKey: ['mau-data', currentDate.toISOString(), selectedProject, timeRange],
     queryFn: () => {
-      const current = getMockMAUData(selectedProject);
-      const previous = getMockMAUData(selectedProject);
+      try {
+        const current = getMockMAUData(selectedProject);
+        const previous = getMockMAUData(selectedProject);
 
-      // Transform data for last 12 months
-      if (timeRange === 'last-12-months') {
-        const last12MonthsData: EnvironmentsMap = {};
-        Object.keys(current).forEach(key => {
-          last12MonthsData[key] = Array.from({ length: 12 }, (_, i) => ({
-            day: format(subMonths(new Date(), i), 'MMM'),
-            value: Math.floor(Math.random() * 5000)
-          })).reverse();
-        });
+        // Transform data for last 12 months
+        if (timeRange === 'last-12-months') {
+          const last12MonthsData: EnvironmentsMap = {};
+          
+          // Ensure we have environments to work with
+          if (current && Object.keys(current).length > 0) {
+            Object.keys(current).forEach(key => {
+              last12MonthsData[key] = Array.from({ length: 12 }, (_, i) => ({
+                day: format(subMonths(new Date(), i), 'MMM'),
+                value: Math.floor(Math.random() * 5000)
+              })).reverse();
+            });
+          } else {
+            // Fallback if no environments are found
+            last12MonthsData['production'] = Array.from({ length: 12 }, (_, i) => ({
+              day: format(subMonths(new Date(), i), 'MMM'),
+              value: Math.floor(Math.random() * 5000)
+            })).reverse();
+          }
+
+          return {
+            current: last12MonthsData,
+            previous,
+            currentTotals: Object.fromEntries(
+              Object.entries(last12MonthsData).map(([key, data]) => [key, getTotalValue(data)])
+            ),
+            previousTotals: Object.fromEntries(
+              Object.entries(previous).map(([key, data]) => [key, getTotalValue(data)])
+            )
+          };
+        }
 
         return {
-          current: last12MonthsData,
+          current,
           previous,
           currentTotals: Object.fromEntries(
-            Object.entries(last12MonthsData).map(([key, data]) => [key, getTotalValue(data)])
+            Object.entries(current).map(([key, data]) => [key, getTotalValue(data)])
           ),
           previousTotals: Object.fromEntries(
             Object.entries(previous).map(([key, data]) => [key, getTotalValue(data)])
           )
         };
+      } catch (error) {
+        console.error("Error fetching MAU data:", error);
+        // Return a simple default structure if there's an error
+        const defaultData: EnvironmentsMap = {
+          production: generateMockMonthlyData(500, new Date())
+        };
+        
+        return {
+          current: defaultData,
+          previous: defaultData,
+          currentTotals: { production: getTotalValue(defaultData.production) },
+          previousTotals: { production: getTotalValue(defaultData.production) }
+        };
       }
-
-      return {
-        current,
-        previous,
-        currentTotals: Object.fromEntries(
-          Object.entries(current).map(([key, data]) => [key, getTotalValue(data)])
-        ),
-        previousTotals: Object.fromEntries(
-          Object.entries(previous).map(([key, data]) => [key, getTotalValue(data)])
-        )
-      };
     }
   });
 
@@ -106,12 +132,20 @@ const ClientMAU = () => {
         env.data.reduce((sum, item) => sum + item.value, 0)
       ));
 
-  const allEnvironmentsData = Object.values(mauData.current)[0].map((_, index) => ({
-    day: timeRange === 'last-12-months' 
-      ? Object.values(mauData.current)[0][index].day
-      : (index + 1).toString(),
-    value: Object.values(mauData.current).reduce((sum, data) => sum + data[index].value, 0)
-  }));
+  // Make sure we have valid data for allEnvironmentsData
+  let allEnvironmentsData: EnvironmentData = [];
+  if (mauData.current && Object.values(mauData.current).length > 0) {
+    const firstEnvData = Object.values(mauData.current)[0];
+    if (firstEnvData && firstEnvData.length > 0) {
+      allEnvironmentsData = firstEnvData.map((_, index) => ({
+        day: timeRange === 'last-12-months' 
+          ? (firstEnvData[index]?.day || `Month ${index + 1}`)
+          : (index + 1).toString(),
+        value: Object.values(mauData.current).reduce((sum, data) => 
+          sum + (data[index]?.value || 0), 0)
+      }));
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background p-6">

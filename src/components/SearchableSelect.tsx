@@ -22,7 +22,10 @@ export function SearchableSelect({
 }: SearchableSelectProps) {
   const [open, setOpen] = useState(false);
 
-  const selectedItem = items.find(item => item.value === value);
+  // Ensure we have a valid array of items
+  const safeItems = Array.isArray(items) ? items : [];
+  
+  const selectedItem = safeItems.find(item => item.value === value);
   const displayValue = selectedItem?.label || 'All projects';
 
   return (
@@ -47,7 +50,7 @@ export function SearchableSelect({
           <CommandEmpty>No item found.</CommandEmpty>
           <ScrollArea className="h-60">
             <CommandGroup>
-              {items.map((item) => (
+              {safeItems.map((item) => (
                 <CommandItem
                   key={item.value}
                   value={item.value}
