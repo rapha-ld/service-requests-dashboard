@@ -14,7 +14,7 @@ const Experiments = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
   const [viewType, setViewType] = useState<'net-new' | 'cumulative'>('net-new');
-  const [chartType, setChartType] = useState<'line' | 'bar'>('line');
+  const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>('line');
   const [timeRange, setTimeRange] = useState<TimeRangeType>('month-to-date');
   const chartRefs = useRef<{ [key: string]: any }>({});
 
