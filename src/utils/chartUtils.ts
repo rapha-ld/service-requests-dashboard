@@ -11,3 +11,13 @@ export const getTotalTitle = (grouping: string): string => {
       return 'All Environments';
   }
 };
+
+export const getUnitLabel = (route: string): string => {
+  switch (route) {
+    case 'client-mau':
+      return 'users';
+    case 'service-requests':
+    default:
+      return 'reqs';
+  }
+};
