@@ -1,7 +1,6 @@
 import { generateMockMonthlyData } from "./mockDataGenerator";
-
-type EnvironmentData = Array<{ day: string; value: number }>;
-type EnvironmentsMap = Record<string, EnvironmentData>;
+import { EnvironmentData, EnvironmentsMap, MAUDataResult } from "@/hooks/useMAUData";
+import { getTotalValue } from "./dataTransformers";
 
 // Generate a list of project names
 export const generateProjectList = () => {
@@ -96,4 +95,15 @@ export const getMockMAUData = (projectId: string): EnvironmentsMap => {
       production: generateMockMonthlyData(500, new Date())
     };
   }
+};
+
+// Helper function to create a fallback data structure
+export const createFallbackData = (): MAUDataResult => {
+  const defaultData: EnvironmentData = generateMockMonthlyData(500, new Date());
+  return {
+    current: { production: defaultData },
+    previous: { production: defaultData },
+    currentTotals: { production: getTotalValue(defaultData) },
+    previousTotals: { production: getTotalValue(defaultData) }
+  };
 };
