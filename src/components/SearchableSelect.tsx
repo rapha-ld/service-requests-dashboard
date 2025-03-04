@@ -1,5 +1,5 @@
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -25,16 +25,18 @@ export function SearchableSelect({
   // Ensure we have a valid array of items
   const safeItems = Array.isArray(items) ? items : [];
   
-  // Always add "All projects" if it doesn't exist
+  // Always include "All projects" option
   const allProjectsItem = { value: "all", label: "All projects" };
-  const hasAllProjectsOption = safeItems.some(item => item.value === "all");
   
-  // Create the full list of items, adding the "All projects" option if needed
-  const fullItemsList = hasAllProjectsOption 
+  // Check if "all" option already exists in the items array
+  const hasAllOption = safeItems.some(item => item.value === "all");
+  
+  // Create a complete list with "All projects" first if it doesn't exist
+  const fullItemsList = hasAllOption 
     ? safeItems 
     : [allProjectsItem, ...safeItems];
   
-  // Find the selected item or default to "All projects"
+  // Find the selected item or default to the "All projects" option
   const selectedItem = fullItemsList.find(item => item.value === value) || allProjectsItem;
 
   return (
@@ -53,7 +55,7 @@ export function SearchableSelect({
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-full md:w-[280px] p-0" align="start">
+      <PopoverContent className="w-full md:w-[280px] p-0 bg-background border" align="start">
         <Command>
           <CommandInput placeholder={`Search ${placeholder.toLowerCase()}...`} />
           <CommandEmpty>No item found.</CommandEmpty>
