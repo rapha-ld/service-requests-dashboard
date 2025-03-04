@@ -22,10 +22,10 @@ export function SearchableSelect({
 }: SearchableSelectProps) {
   const [open, setOpen] = useState(false);
 
-  // Ensure we have a valid array of items
+  // Defensive programming - ensure we have a valid array of items
   const safeItems = Array.isArray(items) ? items : [];
   
-  // Always include "All projects" option
+  // Create the "All projects" option
   const allProjectsItem = { value: "all", label: "All projects" };
   
   // Check if "all" option already exists in the items array

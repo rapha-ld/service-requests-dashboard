@@ -29,6 +29,17 @@ interface ChartGroup {
   percentChange: number;
 }
 
+// Helper function to create a fallback data structure
+const createFallbackData = (): MAUDataResult => {
+  const defaultData: EnvironmentData = generateMockMonthlyData(500, new Date());
+  return {
+    current: { production: defaultData },
+    previous: { production: defaultData },
+    currentTotals: { production: getTotalValue(defaultData) },
+    previousTotals: { production: getTotalValue(defaultData) }
+  };
+};
+
 const ClientMAU = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
@@ -38,50 +49,37 @@ const ClientMAU = () => {
   const [selectedProject, setSelectedProject] = useState<string>("all");
   const chartRefs = useRef<{ [key: string]: any }>({});
 
-  // Use memoization to prevent unnecessary re-renders
+  // Generate projects list once
   const projects = useMemo(() => generateProjectList(), []);
-
+  
   const currentDate = new Date(new Date().getFullYear(), selectedMonth);
   const previousDate = new Date(new Date().getFullYear(), selectedMonth - 1);
 
-  // Create a safe fallback data structure
-  const createFallbackData = (): MAUDataResult => {
-    const defaultData: EnvironmentData = generateMockMonthlyData(500, new Date());
-    return {
-      current: { production: defaultData },
-      previous: { production: defaultData },
-      currentTotals: { production: getTotalValue(defaultData) },
-      previousTotals: { production: getTotalValue(defaultData) }
-    };
-  };
-
-  const { data: mauData = createFallbackData() } = useQuery<MAUDataResult>({
+  // Fetch MAU data with proper error handling
+  const { data: mauData = createFallbackData(), isLoading, error } = useQuery<MAUDataResult>({
     queryKey: ['mau-data', currentDate.toISOString(), selectedProject, timeRange],
-    queryFn: () => {
+    queryFn: async () => {
       try {
-        // Get data for the current project
-        const current = getMockMAUData(selectedProject);
-        const previous = getMockMAUData(selectedProject);
+        // Get data for the selected project
+        const currentData = getMockMAUData(selectedProject);
+        const previousData = getMockMAUData(selectedProject);
+        
+        // Ensure we have valid data structures
+        if (!currentData || Object.keys(currentData).length === 0) {
+          console.error("No current data returned for project", selectedProject);
+          return createFallbackData();
+        }
 
         // Handle the case for last 12 months view
         if (timeRange === 'last-12-months') {
           const last12MonthsData: EnvironmentsMap = {};
           
-          // Make sure current has data
-          if (current && Object.keys(current).length > 0) {
-            Object.keys(current).forEach(key => {
-              last12MonthsData[key] = Array.from({ length: 12 }, (_, i) => ({
-                day: format(subMonths(new Date(), i), 'MMM'),
-                value: Math.floor(Math.random() * 5000)
-              })).reverse();
-            });
-          } else {
-            // Fallback if no environments are found
-            last12MonthsData['production'] = Array.from({ length: 12 }, (_, i) => ({
+          Object.keys(currentData).forEach(key => {
+            last12MonthsData[key] = Array.from({ length: 12 }, (_, i) => ({
               day: format(subMonths(new Date(), i), 'MMM'),
               value: Math.floor(Math.random() * 5000)
             })).reverse();
-          }
+          });
 
           // Calculate totals for each environment
           const currentTotals = Object.fromEntries(
@@ -89,12 +87,12 @@ const ClientMAU = () => {
           );
           
           const previousTotals = Object.fromEntries(
-            Object.entries(previous || {}).map(([key, data]) => [key, getTotalValue(data)])
+            Object.entries(previousData || {}).map(([key, data]) => [key, getTotalValue(data)])
           );
 
           return {
             current: last12MonthsData,
-            previous: previous || {},
+            previous: previousData || {},
             currentTotals,
             previousTotals
           };
@@ -102,16 +100,16 @@ const ClientMAU = () => {
 
         // Calculate totals for regular month view
         const currentTotals = Object.fromEntries(
-          Object.entries(current || {}).map(([key, data]) => [key, getTotalValue(data)])
+          Object.entries(currentData).map(([key, data]) => [key, getTotalValue(data)])
         );
         
         const previousTotals = Object.fromEntries(
-          Object.entries(previous || {}).map(([key, data]) => [key, getTotalValue(data)])
+          Object.entries(previousData || {}).map(([key, data]) => [key, getTotalValue(data)])
         );
 
         return {
-          current: current || {},
-          previous: previous || {},
+          current: currentData,
+          previous: previousData || {},
           currentTotals,
           previousTotals
         };
@@ -120,12 +118,11 @@ const ClientMAU = () => {
         return createFallbackData();
       }
     },
-    // Provide a fallback value if the query fails
     placeholderData: createFallbackData()
   });
 
-  // Early return with fallback UI if no data is available
-  if (!mauData || !mauData.current) {
+  // Handle loading state
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-background p-6">
         <div className="max-w-7xl mx-auto">
@@ -146,19 +143,30 @@ const ClientMAU = () => {
     );
   }
 
-  // Transform the data into chart groups
-  const groups: ChartGroup[] = Object.entries(mauData.current || {}).map(([id, data]) => ({
+  // Handle error state
+  if (error) {
+    console.error("Error in MAU query:", error);
+  }
+
+  // Ensure we have valid data to work with
+  const safeData = mauData || createFallbackData();
+  const safeCurrent = safeData.current || {};
+  const safeCurrentTotals = safeData.currentTotals || {};
+  const safePreviousTotals = safeData.previousTotals || {};
+
+  // Transform the data into chart groups with defensive programming
+  const groups: ChartGroup[] = Object.entries(safeCurrent).map(([id, data]) => ({
     id,
     title: id.charAt(0).toUpperCase() + id.slice(1).replace(/([A-Z])/g, ' $1'),
-    value: mauData.currentTotals?.[id] || 0,
     data: data || [],
+    value: safeCurrentTotals[id] || 0,
     percentChange: calculatePercentChange(
-      mauData.currentTotals?.[id] || 0,
-      mauData.previousTotals?.[id] || 0
+      safeCurrentTotals[id] || 0, 
+      safePreviousTotals[id] || 0
     )
   }));
 
-  // Sort the groups based on the selected sort direction
+  // Sort the groups
   const sortedGroups = groups.sort((a, b) => 
     sortDirection === 'desc' ? b.value - a.value : a.value - b.value
   );
@@ -172,9 +180,10 @@ const ClientMAU = () => {
 
   // Prepare the combined data for all environments
   let allEnvironmentsData: EnvironmentData = [];
-  if (mauData.current && Object.keys(mauData.current).length > 0) {
-    const firstEnvKey = Object.keys(mauData.current)[0];
-    const firstEnvData = mauData.current[firstEnvKey];
+  
+  if (safeCurrent && Object.keys(safeCurrent).length > 0) {
+    const firstEnvKey = Object.keys(safeCurrent)[0];
+    const firstEnvData = safeCurrent[firstEnvKey];
     
     if (firstEnvData && firstEnvData.length > 0) {
       allEnvironmentsData = firstEnvData.map((_, index) => {
@@ -182,7 +191,7 @@ const ClientMAU = () => {
           ? (firstEnvData[index]?.day || `Month ${index + 1}`)
           : (index + 1).toString();
           
-        const value = Object.values(mauData.current).reduce((sum, data) => {
+        const value = Object.values(safeCurrent).reduce((sum, data) => {
           if (!data || !data[index]) return sum;
           return sum + (data[index]?.value || 0);
         }, 0);
