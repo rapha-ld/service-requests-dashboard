@@ -10,6 +10,23 @@ import { SearchableSelect } from "@/components/SearchableSelect";
 import { getMockMAUData, generateProjectList } from "@/utils/mauDataGenerator";
 
 type TimeRangeType = 'month-to-date' | 'last-12-months';
+type EnvironmentData = Array<{ day: string; value: number }>;
+type EnvironmentsMap = Record<string, EnvironmentData>;
+
+type MAUDataResult = {
+  current: EnvironmentsMap;
+  previous: EnvironmentsMap;
+  currentTotals: Record<string, number>;
+  previousTotals: Record<string, number>;
+};
+
+interface ChartGroup {
+  id: string;
+  title: string;
+  data: EnvironmentData;
+  value: number;
+  percentChange: number;
+}
 
 const ClientMAU = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
@@ -25,7 +42,7 @@ const ClientMAU = () => {
   const currentDate = new Date(new Date().getFullYear(), selectedMonth);
   const previousDate = new Date(new Date().getFullYear(), selectedMonth - 1);
 
-  const { data: mauData } = useQuery({
+  const { data: mauData } = useQuery<MAUDataResult>({
     queryKey: ['mau-data', currentDate.toISOString(), selectedProject, timeRange],
     queryFn: () => {
       const current = getMockMAUData(selectedProject);
@@ -33,15 +50,14 @@ const ClientMAU = () => {
 
       // Transform data for last 12 months
       if (timeRange === 'last-12-months') {
-        const last12MonthsData = Object.fromEntries(
-          Object.entries(current).map(([key, data]) => [
-            key,
-            Array.from({ length: 12 }, (_, i) => ({
-              day: format(subMonths(new Date(), i), 'MMM'),
-              value: Math.floor(Math.random() * 5000)
-            })).reverse()
-          ])
-        );
+        const last12MonthsData: EnvironmentsMap = {};
+        Object.keys(current).forEach(key => {
+          last12MonthsData[key] = Array.from({ length: 12 }, (_, i) => ({
+            day: format(subMonths(new Date(), i), 'MMM'),
+            value: Math.floor(Math.random() * 5000)
+          })).reverse();
+        });
+
         return {
           current: last12MonthsData,
           previous,
@@ -69,7 +85,7 @@ const ClientMAU = () => {
 
   if (!mauData) return null;
 
-  const groups = Object.entries(mauData.current).map(([id, data]) => ({
+  const groups: ChartGroup[] = Object.entries(mauData.current).map(([id, data]) => ({
     id,
     title: id.charAt(0).toUpperCase() + id.slice(1).replace(/([A-Z])/g, ' $1'),
     value: mauData.currentTotals[id],

@@ -1,5 +1,8 @@
 import { generateMockMonthlyData } from "./mockDataGenerator";
 
+type EnvironmentData = Array<{ day: string; value: number }>;
+type EnvironmentsMap = Record<string, EnvironmentData>;
+
 // Generate a list of project names
 export const generateProjectList = () => {
   const projectTypes = [
@@ -36,10 +39,10 @@ export const generateProjectList = () => {
 };
 
 // Map between projects and their environments
-const projectEnvironments = new Map();
+const projectEnvironments = new Map<string, EnvironmentsMap>();
 
 // Generate mock MAU data for projects and environments
-export const getMockMAUData = (projectId: string) => {
+export const getMockMAUData = (projectId: string): EnvironmentsMap => {
   // If it's "all", return data for all environments
   if (projectId === "all") {
     return {
@@ -54,7 +57,7 @@ export const getMockMAUData = (projectId: string) => {
   
   // If we've already generated environments for this project, return them
   if (projectEnvironments.has(projectId)) {
-    return projectEnvironments.get(projectId);
+    return projectEnvironments.get(projectId) as EnvironmentsMap;
   }
   
   // Otherwise, generate random environments for this project
@@ -62,7 +65,7 @@ export const getMockMAUData = (projectId: string) => {
   const numEnvironments = 2 + Math.floor(Math.random() * 4); // 2-5 environments per project
   
   // Randomly select environments
-  const selectedEnvironments = [];
+  const selectedEnvironments: string[] = [];
   // Always include production
   selectedEnvironments.push("production");
   
@@ -75,7 +78,7 @@ export const getMockMAUData = (projectId: string) => {
   }
   
   // Generate data for selected environments
-  const environments = {};
+  const environments: EnvironmentsMap = {};
   selectedEnvironments.forEach(env => {
     const baseValue = env === "production" ? 500 : 50 + Math.floor(Math.random() * 200);
     environments[env] = generateMockMonthlyData(baseValue, new Date());
