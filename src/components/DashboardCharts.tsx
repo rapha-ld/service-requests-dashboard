@@ -1,8 +1,9 @@
 
-import { SmallMultiple } from "@/components/SmallMultiple";
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { LayoutGrid, LayoutList } from "lucide-react";
+import { TotalChart } from "@/components/charts/TotalChart";
+import { LayoutToggle } from "@/components/charts/LayoutToggle";
+import { ChartGrid } from "@/components/charts/ChartGrid";
+import { getTotalTitle } from "@/utils/chartUtils";
 
 interface ChartGroup {
   id: string;
@@ -23,19 +24,6 @@ interface DashboardChartsProps {
   unitLabel?: string;
 }
 
-const getTotalTitle = (grouping: string): string => {
-  switch (grouping) {
-    case 'environment':
-      return 'All Environments';
-    case 'relayId':
-      return 'All Relay IDs';
-    case 'userAgent':
-      return 'All User Agents';
-    default:
-      return 'All Environments';
-  }
-};
-
 export const DashboardCharts = ({
   allEnvironmentsData,
   sortedGroups,
@@ -49,80 +37,37 @@ export const DashboardCharts = ({
   unitLabel = "reqs"
 }: DashboardChartsProps) => {
   const [layoutMode, setLayoutMode] = useState<'compact' | 'expanded'>('compact');
+  const totalTitle = getTotalTitle(grouping);
 
   return (
     <>
-      <div className="mb-6">
-        <SmallMultiple
-          title={getTotalTitle(grouping)}
-          data={allEnvironmentsData}
-          color="#2AB4FF"
-          unit={unitLabel}
-          viewType={viewType}
-          maxValue={viewType === 'cumulative' 
-            ? Math.max(...allEnvironmentsData.reduce((acc, curr, index) => {
-                const previousValue = index > 0 ? acc[index - 1] : 0;
-                acc[index] = previousValue + curr.value;
-                return acc;
-              }, [] as number[]))
-            : Math.max(...allEnvironmentsData.map(d => d.value))
-          }
-          chartType={chartType}
-          className="w-full"
-          chartRef={chartRefs.current[getTotalTitle(grouping)]}
-          onExport={onExportChart}
-          useViewDetails={useViewDetailsButton}
-        />
-      </div>
+      <TotalChart
+        title={totalTitle}
+        data={allEnvironmentsData}
+        viewType={viewType}
+        chartType={chartType}
+        chartRef={chartRefs.current[totalTitle]}
+        onExportChart={onExportChart}
+        useViewDetailsButton={useViewDetailsButton}
+        unitLabel={unitLabel}
+      />
 
-      <div className="flex justify-end items-center mb-4">
-        <div className="flex gap-2">
-          <Button
-            variant={layoutMode === 'compact' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setLayoutMode('compact')}
-            title="3 charts per row"
-            className={layoutMode === 'compact' 
-              ? 'dark:bg-[#0B144D] dark:border-[#7084FF] dark:text-white bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
-              : ''}
-          >
-            <LayoutGrid className="h-4 w-4" />
-          </Button>
-          <Button
-            variant={layoutMode === 'expanded' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setLayoutMode('expanded')}
-            title="6 charts per row"
-            className={layoutMode === 'expanded' 
-              ? 'dark:bg-[#0B144D] dark:border-[#7084FF] dark:text-white bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
-              : ''}
-          >
-            <LayoutList className="h-4 w-4 rotate-90" />
-          </Button>
-        </div>
-      </div>
+      <LayoutToggle 
+        layoutMode={layoutMode}
+        setLayoutMode={setLayoutMode}
+      />
 
-      <div className={`grid grid-cols-1 gap-4 ${
-        layoutMode === 'compact' 
-          ? 'md:grid-cols-2 lg:grid-cols-3' 
-          : 'md:grid-cols-3 lg:grid-cols-6'
-      }`}>
-        {sortedGroups.map(group => (
-          <SmallMultiple
-            key={group.id}
-            title={group.title}
-            data={group.data}
-            color="#2AB4FF"
-            unit={unitLabel}
-            viewType={viewType}
-            maxValue={maxValue}
-            chartType={chartType}
-            chartRef={chartRefs.current[group.title]}
-            onExport={onExportChart}
-            useViewDetails={useViewDetailsButton}
-          />
-        ))}
-      </div>
+      <ChartGrid
+        sortedGroups={sortedGroups}
+        layoutMode={layoutMode}
+        viewType={viewType}
+        chartType={chartType}
+        maxValue={maxValue}
+        chartRefs={chartRefs}
+        onExportChart={onExportChart}
+        useViewDetailsButton={useViewDetailsButton}
+        unitLabel={unitLabel}
+      />
     </>
   );
 };
