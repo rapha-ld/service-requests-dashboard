@@ -1,15 +1,10 @@
 
-import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
-import { cn } from "@/lib/utils";
-import { Button } from './ui/button';
 import { useRef } from 'react';
-import { Link } from 'react-router-dom';
-import { CustomTooltip } from './charts/CustomTooltip';
-import { formatYAxisTick } from './charts/formatters';
-import { transformData, calculateAverage } from './charts/dataTransformers';
-import { exportChartAsSVG, exportChartAsPNG } from './charts/exportChart';
+import { cn } from "@/lib/utils";
 import { Download } from 'lucide-react';
-import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { ChartTitle } from './charts/ChartTitle';
+import { ChartComponent } from './charts/ChartComponent';
+import { exportChartAsPNG } from './charts/exportChart';
 
 interface SmallMultipleProps {
   title: string;
@@ -25,24 +20,6 @@ interface SmallMultipleProps {
   onExport?: (title: string) => void;
   useViewDetails?: boolean;
 }
-
-const getTitleRoute = (title: string): string => {
-  const normalizedTitle = title.toLowerCase();
-  
-  if (normalizedTitle.includes('client') || normalizedTitle.includes('mau')) {
-    return '/client-mau';
-  } else if (normalizedTitle.includes('experiment')) {
-    return '/experiments';
-  } else if (normalizedTitle.includes('data export')) {
-    return '/data-export';
-  } else if (normalizedTitle.includes('server')) {
-    return '/server';
-  } else if (normalizedTitle.includes('service')) {
-    return '/';
-  }
-  
-  return '/overview';
-};
 
 export const SmallMultiple = ({ 
   title, 
@@ -61,9 +38,6 @@ export const SmallMultiple = ({
   const internalChartRef = useRef<any>(null);
   const effectiveChartRef = chartRef || internalChartRef;
   
-  const average = calculateAverage(data);
-  const transformedData = transformData(data, viewType);
-  
   const handleExport = () => {
     if (onExport) {
       onExport(title);
@@ -72,148 +46,19 @@ export const SmallMultiple = ({
     }
   };
 
-  // Select the appropriate chart component based on chartType
-  let ChartComponent;
-  let DataComponent;
-  
-  if (chartType === 'area') {
-    ChartComponent = AreaChart;
-    DataComponent = Area;
-  } else if (chartType === 'bar') {
-    ChartComponent = BarChart;
-    DataComponent = Bar;
-  } else if (chartType === 'line') {
-    ChartComponent = LineChart;
-    DataComponent = Line;
-  }
-  
-  const detailsRoute = getTitleRoute(title);
-  
-  // Format the title to add tooltip to MAU
-  const formattedTitle = () => {
-    if (!title.includes('MAU')) return title;
-    
-    const parts = title.split('MAU');
-    return (
-      <>
-        {parts[0]}
-        <TooltipProvider>
-          <UITooltip>
-            <TooltipTrigger asChild>
-              <span className="border-b border-dotted border-current">MAU</span>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Monthly Active Users</p>
-            </TooltipContent>
-          </UITooltip>
-        </TooltipProvider>
-        {parts[1]}
-      </>
-    );
-  };
-
   return (
     <div className={cn("bg-card dark:bg-card/80 p-4 rounded-lg shadow-sm animate-fade-in", className)}>
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-sm font-medium text-foreground">{formattedTitle()}</h3>
-        {useViewDetails && (
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-7 px-2 text-xs"
-            asChild
-          >
-            <Link to={detailsRoute}>View details</Link>
-          </Button>
-        )}
-      </div>
+      <ChartTitle title={title} useViewDetails={useViewDetails} />
       <div className="h-[192px]">
-        <ResponsiveContainer width="100%" height="100%">
-          <ChartComponent ref={effectiveChartRef} data={transformedData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
-            <defs>
-              <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#30459B" stopOpacity={1} />
-                <stop offset="100%" stopColor="#30459B" stopOpacity={0.3} />
-              </linearGradient>
-            </defs>
-            <XAxis 
-              dataKey="day" 
-              tick={{ fontSize: 10 }}
-              interval="preserveStart"
-              tickLine={false}
-              stroke="currentColor"
-              className="text-muted-foreground"
-            />
-            <YAxis 
-              tick={{ fontSize: 10 }}
-              tickLine={false}
-              axisLine={false}
-              domain={[0, maxValue]}
-              width={40}
-              stroke="currentColor"
-              className="text-muted-foreground"
-              tickFormatter={formatYAxisTick}
-            />
-            <Tooltip content={<CustomTooltip unit={unit} />} />
-            {chartType === 'area' && (
-              <Area
-                type="monotone"
-                dataKey="value"
-                stroke="#30459B"
-                fill="url(#colorGradient)"
-                strokeWidth={2}
-                connectNulls={true}
-              />
-            )}
-            {chartType === 'bar' && (
-              <Bar
-                dataKey="value"
-                fill="#30459B"
-                radius={[1.5, 1.5, 0, 0]}
-              />
-            )}
-            {chartType === 'line' && (
-              <Line
-                type="monotone"
-                dataKey="value"
-                stroke="#30459B"
-                strokeWidth={2}
-                dot={false}
-                connectNulls={true}
-              />
-            )}
-            {viewType === 'net-new' && (
-              <ReferenceLine 
-                y={average}
-                stroke="currentColor"
-                strokeDasharray="3 3"
-                strokeOpacity={0.5}
-                label={{
-                  value: `Avg: ${average.toFixed(1)}${unit}`,
-                  fill: 'currentColor',
-                  fontSize: 10,
-                  position: 'insideTopRight',
-                  style: { zIndex: 10 },
-                  dy: -15
-                }}
-              />
-            )}
-            {showThreshold && (
-              <ReferenceLine 
-                y={maxValue}
-                stroke="#DB2251"
-                strokeWidth={1.5}
-                label={{
-                  value: `Limit: ${maxValue.toLocaleString()}${unit}`,
-                  fill: '#DB2251',
-                  fontSize: 10,
-                  position: 'insideTopRight',
-                  style: { zIndex: 10 },
-                }}
-              />
-            )}
-          </ChartComponent>
-        </ResponsiveContainer>
+        <ChartComponent
+          data={data}
+          viewType={viewType}
+          chartType={chartType}
+          maxValue={maxValue}
+          unit={unit}
+          showThreshold={showThreshold}
+          chartRef={effectiveChartRef}
+        />
       </div>
     </div>
   );
