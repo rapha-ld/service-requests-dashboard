@@ -83,16 +83,16 @@ export const DashboardHeader = ({
       </div>
       <div className="flex">
         <Button
-          variant={chartType === 'line' ? 'default' : 'outline'}
-          onClick={() => onChartTypeChange('line')}
+          variant={chartType === 'area' ? 'default' : 'outline'}
+          onClick={() => onChartTypeChange('area')}
           className={`rounded-r-none ${
-            chartType === 'line' 
+            chartType === 'area' 
               ? 'dark:bg-[#0B144D] dark:border-[#7084FF] dark:text-white bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
               : ''
           }`}
         >
           <LineChart className="h-4 w-4 mr-2" />
-          Line
+          Area
         </Button>
         <Button
           variant={chartType === 'bar' ? 'default' : 'outline'}
