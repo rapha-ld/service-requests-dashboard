@@ -14,12 +14,13 @@ interface DashboardChartsProps {
   allEnvironmentsData: Array<{ day: string; value: number }>;
   sortedGroups: ChartGroup[];
   viewType: 'net-new' | 'cumulative';
-  chartType: 'area' | 'bar';
+  chartType: 'area' | 'bar' | 'line';
   maxValue: number;
   grouping: 'environment' | 'relayId' | 'userAgent';
   chartRefs: React.MutableRefObject<{ [key: string]: any }>;
   onExportChart: (title: string) => void;
   useViewDetailsButton?: boolean;
+  unitLabel?: string;
 }
 
 const getTotalTitle = (grouping: string): string => {
@@ -45,6 +46,7 @@ export const DashboardCharts = ({
   chartRefs,
   onExportChart,
   useViewDetailsButton = true,
+  unitLabel = "reqs"
 }: DashboardChartsProps) => {
   const [layoutMode, setLayoutMode] = useState<'compact' | 'expanded'>('compact');
 
@@ -55,7 +57,7 @@ export const DashboardCharts = ({
           title={getTotalTitle(grouping)}
           data={allEnvironmentsData}
           color="#2AB4FF"
-          unit="reqs"
+          unit={unitLabel}
           viewType={viewType}
           maxValue={viewType === 'cumulative' 
             ? Math.max(...allEnvironmentsData.reduce((acc, curr, index) => {
@@ -80,6 +82,9 @@ export const DashboardCharts = ({
             size="sm"
             onClick={() => setLayoutMode('compact')}
             title="3 charts per row"
+            className={layoutMode === 'compact' 
+              ? 'dark:bg-[#0B144D] dark:border-[#7084FF] dark:text-white bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
+              : ''}
           >
             <LayoutGrid className="h-4 w-4" />
           </Button>
@@ -88,6 +93,9 @@ export const DashboardCharts = ({
             size="sm"
             onClick={() => setLayoutMode('expanded')}
             title="6 charts per row"
+            className={layoutMode === 'expanded' 
+              ? 'dark:bg-[#0B144D] dark:border-[#7084FF] dark:text-white bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
+              : ''}
           >
             <LayoutList className="h-4 w-4 rotate-90" />
           </Button>
@@ -105,7 +113,7 @@ export const DashboardCharts = ({
             title={group.title}
             data={group.data}
             color="#2AB4FF"
-            unit="reqs"
+            unit={unitLabel}
             viewType={viewType}
             maxValue={maxValue}
             chartType={chartType}
