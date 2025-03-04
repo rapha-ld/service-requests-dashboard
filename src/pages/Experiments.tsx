@@ -29,9 +29,9 @@ const Experiments = () => {
 
       // Rename keys to experiment names
       const experimentNames = [
-        'UserSegmentation', 'FeatureToggle', 'ABTesting', 
-        'MultiVariant', 'Personalization', 'Targeting', 
-        'ReleaseGating', 'CanaryRelease', 'BlueGreenDeploy'
+        'User Segmentation', 'Feature Toggle', 'AB Testing', 
+        'Multi Variant', 'Personalization', 'Targeting', 
+        'Release Gating', 'Canary Release', 'Blue Green Deploy'
       ];
       
       // Create new objects with experiment names as keys
@@ -91,7 +91,7 @@ const Experiments = () => {
 
   const groups = Object.entries(serviceData.current).map(([id, data]) => ({
     id,
-    title: id.charAt(0).toUpperCase() + id.slice(1).replace(/([A-Z])/g, ' $1').trim(),
+    title: id, // Using the experiment name directly instead of formatting it
     value: serviceData.currentTotals[id],
     data,
     percentChange: calculatePercentChange(
@@ -120,7 +120,7 @@ const Experiments = () => {
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl font-semibold text-foreground mb-6 text-left pl-0">Experiments</h1>
+        <h1 className="text-2xl font-semibold text-foreground mb-6 text-left pl-0">Experiment Keys</h1>
         
         <DashboardHeader
           grouping="environment" 
