@@ -63,7 +63,7 @@ export const DashboardHeader = ({
           onClick={() => onViewTypeChange('net-new')}
           className={`rounded-r-none ${
             viewType === 'net-new' 
-              ? 'dark:bg-[#0B144D] dark:border-[#7084FF] dark:text-white bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
+              ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
               : ''
           }`}
         >
@@ -74,7 +74,7 @@ export const DashboardHeader = ({
           onClick={() => onViewTypeChange('cumulative')}
           className={`rounded-l-none border-l-0 ${
             viewType === 'cumulative' 
-              ? 'dark:bg-[#0B144D] dark:border-[#7084FF] dark:text-white bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
+              ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
               : ''
           }`}
         >
@@ -87,7 +87,7 @@ export const DashboardHeader = ({
           onClick={() => onChartTypeChange('area')}
           className={`rounded-r-none ${
             chartType === 'area' 
-              ? 'dark:bg-[#0B144D] dark:border-[#7084FF] dark:text-white bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
+              ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
               : ''
           }`}
         >
@@ -99,7 +99,7 @@ export const DashboardHeader = ({
           onClick={() => onChartTypeChange('bar')}
           className={`rounded-l-none border-l-0 ${
             chartType === 'bar' 
-              ? 'dark:bg-[#0B144D] dark:border-[#7084FF] dark:text-white bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
+              ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
               : ''
           }`}
         >
@@ -122,7 +122,7 @@ export const DashboardHeader = ({
           onClick={() => onTimeRangeChange('month-to-date')}
           className={`rounded-r-none ${
             timeRange === 'month-to-date' 
-              ? 'dark:bg-[#0B144D] dark:border-[#7084FF] dark:text-white bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
+              ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
               : ''
           }`}
         >
@@ -133,7 +133,7 @@ export const DashboardHeader = ({
           onClick={() => onTimeRangeChange('last-12-months')}
           className={`rounded-l-none border-l-0 ${
             timeRange === 'last-12-months' 
-              ? 'dark:bg-[#0B144D] dark:border-[#7084FF] dark:text-white bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
+              ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
               : ''
           }`}
         >
