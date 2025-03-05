@@ -22,7 +22,7 @@ export function SearchableSelect({
 }: SearchableSelectProps) {
   const [open, setOpen] = useState(false);
 
-  // Defensive programming - ensure we have a valid array of items
+  // Ensure items is always a valid array
   const safeItems = Array.isArray(items) ? items : [];
   
   // Create the "All projects" option
@@ -36,8 +36,25 @@ export function SearchableSelect({
     ? safeItems 
     : [allProjectsItem, ...safeItems];
   
-  // Find the selected item or default to the "All projects" option
-  const selectedItem = fullItemsList.find(item => item.value === value) || allProjectsItem;
+  // Find the selected item or default to the first item in the list
+  const selectedItem = fullItemsList.find(item => item.value === value) || 
+    (fullItemsList.length > 0 ? fullItemsList[0] : allProjectsItem);
+
+  // Handle selection safely
+  const handleSelect = (selectedValue: string) => {
+    try {
+      // Make sure we close the popover first to prevent any UI glitches
+      setOpen(false);
+      // Small delay to ensure popover closes before state changes
+      setTimeout(() => {
+        onChange(selectedValue);
+      }, 10);
+    } catch (error) {
+      console.error("Error selecting item:", error);
+      // Default to "all" if there's an error
+      onChange("all");
+    }
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -65,10 +82,7 @@ export function SearchableSelect({
                 <CommandItem
                   key={item.value}
                   value={item.value}
-                  onSelect={() => {
-                    onChange(item.value);
-                    setOpen(false);
-                  }}
+                  onSelect={() => handleSelect(item.value)}
                 >
                   <Check
                     className={cn(

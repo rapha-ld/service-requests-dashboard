@@ -30,19 +30,20 @@ export const useMAUData = (
   timeRange: TimeRangeType
 ) => {
   const currentDate = new Date(new Date().getFullYear(), selectedMonth);
+  const safeProject = selectedProject || "all"; // Default to "all" if project is undefined
 
   // Fetch MAU data with proper error handling
-  const { data: mauData = createFallbackData(), isLoading, error } = useQuery<MAUDataResult>({
-    queryKey: ['mau-data', currentDate.toISOString(), selectedProject, timeRange],
+  const { data: mauData, isLoading, error } = useQuery<MAUDataResult>({
+    queryKey: ['mau-data', currentDate.toISOString(), safeProject, timeRange],
     queryFn: async () => {
       try {
         // Get data for the selected project
-        const currentData = getMockMAUData(selectedProject);
-        const previousData = getMockMAUData(selectedProject);
+        const currentData = getMockMAUData(safeProject);
+        const previousData = getMockMAUData(safeProject);
         
         // Ensure we have valid data structures
         if (!currentData || Object.keys(currentData).length === 0) {
-          console.error("No current data returned for project", selectedProject);
+          console.error("No current data returned for project", safeProject);
           return createFallbackData();
         }
 
@@ -98,7 +99,7 @@ export const useMAUData = (
   });
 
   return {
-    mauData,
+    mauData: mauData || createFallbackData(), // Always return valid data structure
     isLoading,
     error
   };

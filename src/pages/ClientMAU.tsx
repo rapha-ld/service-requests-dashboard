@@ -10,11 +10,11 @@ import { useMAUData, TimeRangeType } from "@/hooks/useMAUData";
 import { 
   transformDataToChartGroups, 
   getLast12MonthsData, 
-  calculateMaxValue,
-  createFallbackData
+  calculateMaxValue
 } from "@/utils/mauDataTransformers";
 
 const ClientMAU = () => {
+  // State management
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
   const [viewType, setViewType] = useState<'net-new' | 'cumulative'>('net-new');
@@ -22,6 +22,16 @@ const ClientMAU = () => {
   const [timeRange, setTimeRange] = useState<TimeRangeType>('month-to-date');
   const [selectedProject, setSelectedProject] = useState<string>("all");
   const chartRefs = useRef<{ [key: string]: any }>({});
+
+  // Error handling wrapper for state setters
+  const safeSetSelectedProject = (project: string) => {
+    try {
+      setSelectedProject(project || "all");
+    } catch (error) {
+      console.error("Error setting project:", error);
+      setSelectedProject("all");
+    }
+  };
 
   // Fetch MAU data with the custom hook
   const { mauData, isLoading } = useMAUData(selectedMonth, selectedProject, timeRange);
@@ -31,16 +41,16 @@ const ClientMAU = () => {
     return (
       <LoadingState 
         selectedProject={selectedProject} 
-        setSelectedProject={setSelectedProject} 
+        setSelectedProject={safeSetSelectedProject} 
       />
     );
   }
 
   // Ensure we have valid data to work with
-  const safeData = mauData || createFallbackData();
-  const safeCurrent = safeData.current || {};
-  const safeCurrentTotals = safeData.currentTotals || {};
-  const safePreviousTotals = safeData.previousTotals || {};
+  const safeData = mauData;
+  const safeCurrent = safeData?.current || {};
+  const safeCurrentTotals = safeData?.currentTotals || {};
+  const safePreviousTotals = safeData?.previousTotals || {};
 
   // Transform the data into chart groups
   const groups = transformDataToChartGroups(safeCurrent, safeCurrentTotals, safePreviousTotals);
@@ -63,7 +73,7 @@ const ClientMAU = () => {
         
         <ProjectSelector 
           selectedProject={selectedProject}
-          setSelectedProject={setSelectedProject}
+          setSelectedProject={safeSetSelectedProject}
         />
         
         <MAUDashboardControls
