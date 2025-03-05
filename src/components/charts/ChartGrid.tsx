@@ -36,18 +36,26 @@ export const ChartGrid = ({
   threshold,
   individualMaxValues = false
 }: ChartGridProps) => {
-  // Calculate max value for each chart if individualMaxValues is true
-  const getChartMaxValue = (group: ChartGroup) => {
-    if (!individualMaxValues) return maxValue;
+  // Calculate the shared maximum value for all charts based on the highest value chart
+  const calculateSharedMaxValue = () => {
+    if (sortedGroups.length === 0) return maxValue;
     
-    // Calculate the max value based on viewType
-    if (viewType === 'net-new') {
-      return Math.max(...group.data.map(d => d.value), 0);
-    } else {
-      // For cumulative, calculate the sum
-      return group.data.reduce((sum, curr) => sum + curr.value, 0);
-    }
+    // For each chart, determine its maximum value based on the view type
+    const chartMaxValues = sortedGroups.map(group => {
+      if (viewType === 'net-new') {
+        return Math.max(...group.data.map(d => d.value), 0);
+      } else {
+        // For cumulative, calculate the sum
+        return group.data.reduce((sum, curr) => sum + curr.value, 0);
+      }
+    });
+    
+    // Return the highest value among all charts
+    return Math.max(...chartMaxValues, 0);
   };
+  
+  // Get the shared max value for all small charts
+  const sharedMaxValue = calculateSharedMaxValue();
 
   return (
     <div className={`grid grid-cols-1 gap-4 ${
@@ -63,7 +71,7 @@ export const ChartGrid = ({
           color="#2AB4FF"
           unit={unitLabel}
           viewType={viewType}
-          maxValue={getChartMaxValue(group)}
+          maxValue={sharedMaxValue}
           chartType={chartType}
           chartRef={chartRefs.current[group.title]}
           onExport={onExportChart}

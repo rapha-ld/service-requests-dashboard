@@ -78,7 +78,6 @@ export const DashboardCharts = ({
         unitLabel={unitLabel}
         showThreshold={false} // Never show threshold on individual charts
         threshold={threshold}
-        individualMaxValues={true} // New prop to enable individual max values
       />
     </>
   );
