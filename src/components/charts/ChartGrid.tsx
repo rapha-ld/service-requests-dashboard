@@ -42,11 +42,14 @@ export const ChartGrid = ({
     
     // For each chart, determine its maximum value based on the view type
     const chartMaxValues = sortedGroups.map(group => {
+      // Filter out null values that might exist after Feb 22
+      const validData = group.data.filter(d => d.value !== null);
+      
       if (viewType === 'net-new') {
-        return Math.max(...group.data.map(d => d.value), 0);
+        return Math.max(...validData.map(d => d.value as number), 0);
       } else {
-        // For cumulative, calculate the sum
-        return group.data.reduce((sum, curr) => sum + curr.value, 0);
+        // For cumulative, calculate the sum of valid values
+        return validData.reduce((sum, curr) => sum + (curr.value as number), 0);
       }
     });
     
@@ -71,7 +74,7 @@ export const ChartGrid = ({
           color="#2AB4FF"
           unit={unitLabel}
           viewType={viewType}
-          maxValue={sharedMaxValue}
+          maxValue={individualMaxValues ? undefined : sharedMaxValue}
           chartType={chartType}
           chartRef={chartRefs.current[group.title]}
           onExport={onExportChart}

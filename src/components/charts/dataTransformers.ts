@@ -1,4 +1,3 @@
-
 // Transform raw data to cumulative values if needed
 export const transformData = (
   data: Array<{ day: string; value: number | null }>, 
@@ -8,6 +7,7 @@ export const transformData = (
   
   return data.reduce((acc, curr, index) => {
     if (curr.value === null) {
+      // For null values (after Feb 22), keep them null in cumulative view too
       return [...acc, {
         day: curr.day,
         value: null
