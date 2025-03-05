@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowUpDown, BarChart3, LineChart } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TimeRangeType } from "@/hooks/useMAUData";
+import { ProjectSelector } from "@/components/mau/ProjectSelector";
 
 interface MAUDashboardControlsProps {
   viewType: 'net-new' | 'cumulative';
@@ -10,6 +11,8 @@ interface MAUDashboardControlsProps {
   selectedMonth: number;
   sortDirection: 'desc' | 'asc';
   timeRange: TimeRangeType;
+  selectedProject: string;
+  setSelectedProject: (value: string) => void;
   onViewTypeChange: (value: 'net-new' | 'cumulative') => void;
   onChartTypeChange: (value: 'area' | 'bar' | 'line') => void;
   onSortDirectionChange: () => void;
@@ -28,6 +31,8 @@ export const MAUDashboardControls = ({
   selectedMonth,
   sortDirection,
   timeRange,
+  selectedProject,
+  setSelectedProject,
   onViewTypeChange,
   onChartTypeChange,
   onSortDirectionChange,
@@ -36,6 +41,11 @@ export const MAUDashboardControls = ({
 }: MAUDashboardControlsProps) => {
   return (
     <div className="flex gap-2 items-center mb-6 flex-wrap">
+      <ProjectSelector 
+        selectedProject={selectedProject}
+        setSelectedProject={setSelectedProject}
+      />
+      
       <div className="flex">
         <Button
           variant={viewType === 'net-new' ? 'default' : 'outline'}

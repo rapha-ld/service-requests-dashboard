@@ -1,7 +1,6 @@
 
 import { useState, useRef } from "react";
 import { MAUHeader } from "@/components/mau/MAUHeader";
-import { ProjectSelector } from "@/components/mau/ProjectSelector";
 import { MAUDashboardControls } from "@/components/mau/MAUDashboardControls";
 import { LoadingState } from "@/components/mau/LoadingState";
 import { DashboardSummary } from "@/components/DashboardSummary";
@@ -71,17 +70,14 @@ const ClientMAU = () => {
       <div className="max-w-7xl mx-auto">
         <MAUHeader title="Client MAU" />
         
-        <ProjectSelector 
-          selectedProject={selectedProject}
-          setSelectedProject={safeSetSelectedProject}
-        />
-        
         <MAUDashboardControls
           viewType={viewType}
           chartType={chartType}
           selectedMonth={selectedMonth}
           sortDirection={sortDirection}
           timeRange={timeRange}
+          selectedProject={selectedProject}
+          setSelectedProject={safeSetSelectedProject}
           onViewTypeChange={setViewType}
           onChartTypeChange={setChartType}
           onSortDirectionChange={() => setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc')}

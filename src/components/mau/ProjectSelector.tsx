@@ -1,7 +1,6 @@
 
-import { SearchableSelect } from "@/components/SearchableSelect";
-import { generateProjectList } from "@/utils/mauDataGenerator";
 import { useMemo } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface ProjectSelectorProps {
   selectedProject: string;
@@ -15,8 +14,20 @@ export const ProjectSelector = ({
   // Generate projects list once and handle any errors
   const projects = useMemo(() => {
     try {
-      const generatedProjects = generateProjectList();
-      return Array.isArray(generatedProjects) ? generatedProjects : [];
+      // Create a simplified list of 10 projects for the dropdown
+      const projectsList = [
+        { value: "all", label: "All projects" },
+        { value: "quantum-frontend-001", label: "Quantum Frontend 001" },
+        { value: "fusion-backend-002", label: "Fusion Backend 002" },
+        { value: "nova-mobile-003", label: "Nova Mobile 003" },
+        { value: "nexus-analytics-004", label: "Nexus Analytics 004" },
+        { value: "pulse-dashboard-005", label: "Pulse Dashboard 005" },
+        { value: "horizon-admin-006", label: "Horizon Admin 006" },
+        { value: "spark-portal-007", label: "Spark Portal 007" },
+        { value: "vector-reporting-008", label: "Vector Reporting 008" },
+        { value: "apex-api-009", label: "Apex API 009" }
+      ];
+      return projectsList;
     } catch (error) {
       console.error("Error generating project list:", error);
       return [{ value: "all", label: "All projects" }];
@@ -34,13 +45,20 @@ export const ProjectSelector = ({
   };
   
   return (
-    <div className="mb-6">
-      <SearchableSelect 
-        items={projects}
-        value={selectedProject || "all"}
-        onChange={handleProjectChange}
-        placeholder="Select project"
-      />
-    </div>
+    <Select
+      value={selectedProject || "all"}
+      onValueChange={handleProjectChange}
+    >
+      <SelectTrigger className="w-[200px]">
+        <SelectValue placeholder="Select project" />
+      </SelectTrigger>
+      <SelectContent>
+        {projects.map((project) => (
+          <SelectItem key={project.value} value={project.value}>
+            {project.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 };
