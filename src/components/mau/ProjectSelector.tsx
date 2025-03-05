@@ -46,11 +46,10 @@ export const ProjectSelector = ({
   
   return (
     <SearchableSelect
-      options={projects}
+      items={projects}
       value={selectedProject || "all"}
       onChange={handleProjectChange}
       placeholder="Select project"
-      searchPlaceholder="Search projects..."
     />
   );
 };
