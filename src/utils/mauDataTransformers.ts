@@ -1,6 +1,7 @@
 
-import { calculatePercentChange } from "./dataTransformers";
+import { calculatePercentChange, getTotalValue } from "./dataTransformers";
 import { ChartGroup, EnvironmentData, EnvironmentsMap, MAUDataResult } from "@/hooks/useMAUData";
+import { generateMockMonthlyData } from "./mockDataGenerator";
 
 // Transform the data into chart groups
 export const transformDataToChartGroups = (
@@ -82,4 +83,15 @@ export const getLast12MonthsData = (safeCurrent: EnvironmentsMap, timeRange: str
   }
   
   return allEnvironmentsData;
+};
+
+// Helper function to create a fallback data structure
+export const createFallbackData = (): MAUDataResult => {
+  const defaultData: EnvironmentData = generateMockMonthlyData(500, new Date());
+  return {
+    current: { production: defaultData },
+    previous: { production: defaultData },
+    currentTotals: { production: getTotalValue(defaultData) },
+    previousTotals: { production: getTotalValue(defaultData) }
+  };
 };

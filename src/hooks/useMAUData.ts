@@ -1,8 +1,9 @@
 
 import { useQuery } from "@tanstack/react-query";
-import { createFallbackData, getMockMAUData } from "@/utils/mauDataGenerator";
+import { getMockMAUData } from "@/utils/mauDataGenerator";
 import { getTotalValue } from "@/utils/dataTransformers";
 import { format, subMonths } from "date-fns";
+import { createFallbackData } from "@/utils/mauDataTransformers";
 
 export type TimeRangeType = 'month-to-date' | 'last-12-months';
 export type EnvironmentData = Array<{ day: string; value: number }>;
