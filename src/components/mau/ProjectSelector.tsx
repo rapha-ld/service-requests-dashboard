@@ -47,7 +47,7 @@ export const ProjectSelector = ({
   return (
     <SearchableSelect
       items={projects}
-      value={selectedProject || "all"}
+      value={selectedProject}
       onChange={handleProjectChange}
       placeholder="Select project"
     />
