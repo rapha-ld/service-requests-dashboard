@@ -1,6 +1,5 @@
 
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 interface DataTypeToggleProps {
   dataType: 'mau' | 'connections';
@@ -12,19 +11,29 @@ export const DataTypeToggle = ({
   onDataTypeChange 
 }: DataTypeToggleProps) => {
   return (
-    <RadioGroup
-      value={dataType}
-      onValueChange={(value) => onDataTypeChange(value as 'mau' | 'connections')}
-      className="flex items-center space-x-4"
-    >
-      <div className="flex items-center space-x-2">
-        <RadioGroupItem value="mau" id="mau" />
-        <Label htmlFor="mau">MAU</Label>
-      </div>
-      <div className="flex items-center space-x-2">
-        <RadioGroupItem value="connections" id="connections" />
-        <Label htmlFor="connections">Connections</Label>
-      </div>
-    </RadioGroup>
+    <div className="flex">
+      <Button
+        variant={dataType === 'mau' ? 'default' : 'outline'}
+        onClick={() => onDataTypeChange('mau')}
+        className={`rounded-r-none ${
+          dataType === 'mau' 
+            ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
+            : ''
+        }`}
+      >
+        MAU
+      </Button>
+      <Button
+        variant={dataType === 'connections' ? 'default' : 'outline'}
+        onClick={() => onDataTypeChange('connections')}
+        className={`rounded-l-none border-l-0 ${
+          dataType === 'connections' 
+            ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
+            : ''
+        }`}
+      >
+        Connections
+      </Button>
+    </div>
   );
 };
