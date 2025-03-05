@@ -73,7 +73,7 @@ export const DashboardCharts = ({
         onExportChart={onExportChart}
         useViewDetailsButton={useViewDetailsButton}
         unitLabel={unitLabel}
-        showThreshold={showThreshold}
+        showThreshold={false} // Never show threshold on individual charts
         threshold={threshold}
       />
     </>

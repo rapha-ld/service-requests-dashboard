@@ -29,6 +29,13 @@ export const ChartComponent = ({
   const average = calculateAverage(data);
   const transformedData = transformData(data, viewType);
   
+  // Calculate effective max value for the chart
+  // When threshold is shown, make sure y-axis includes it
+  // When threshold is not shown, use the actual data maximum
+  const effectiveMaxValue = showThreshold && threshold && threshold > maxValue 
+    ? threshold 
+    : maxValue;
+  
   // Select the appropriate chart component based on chartType
   let ChartComponent;
   let DataComponent;
@@ -65,7 +72,7 @@ export const ChartComponent = ({
           tick={{ fontSize: 10 }}
           tickLine={false}
           axisLine={false}
-          domain={[0, maxValue]}
+          domain={[0, effectiveMaxValue]}
           width={40}
           stroke="currentColor"
           className="text-muted-foreground"

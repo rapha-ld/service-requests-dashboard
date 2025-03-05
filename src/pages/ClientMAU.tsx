@@ -1,4 +1,3 @@
-
 import { useState, useRef } from "react";
 import { MAUHeader } from "@/components/mau/MAUHeader";
 import { MAUDashboardControls } from "@/components/mau/MAUDashboardControls";
@@ -64,6 +63,9 @@ const ClientMAU = () => {
 
   // Calculate max value for the charts
   const maxValue = calculateMaxValue(groups, viewType);
+  
+  // Determine if we should show the threshold based on project selection
+  const showThreshold = selectedProject === "all";
 
   // Prepare the combined data for all environments
   const allEnvironmentsData = getLast12MonthsData(safeCurrent, timeRange);
@@ -101,7 +103,7 @@ const ClientMAU = () => {
           onExportChart={() => {}}
           useViewDetailsButton={false}
           unitLabel="users"
-          showThreshold={true}
+          showThreshold={showThreshold}
           threshold={USER_LIMIT}
         />
       </div>
