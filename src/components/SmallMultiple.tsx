@@ -48,6 +48,12 @@ export const SmallMultiple = ({
     }
   };
 
+  // For smaller charts, ensure there's a minimum scale to make data visible
+  let effectiveMaxValue = maxValue;
+  if (effectiveMaxValue === 0) {
+    effectiveMaxValue = 10; // Minimum scale when there's no data
+  }
+
   return (
     <div className={cn("bg-card dark:bg-card/80 p-4 rounded-lg shadow-sm animate-fade-in", className)}>
       <ChartTitle title={title} useViewDetails={useViewDetails} />
@@ -56,7 +62,7 @@ export const SmallMultiple = ({
           data={data}
           viewType={viewType}
           chartType={chartType}
-          maxValue={maxValue}
+          maxValue={effectiveMaxValue}
           unit={unit}
           showThreshold={showThreshold}
           threshold={threshold}

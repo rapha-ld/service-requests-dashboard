@@ -19,6 +19,7 @@ interface ChartGridProps {
   unitLabel: string;
   showThreshold?: boolean;
   threshold?: number;
+  individualMaxValues?: boolean;
 }
 
 export const ChartGrid = ({
@@ -32,8 +33,22 @@ export const ChartGrid = ({
   useViewDetailsButton,
   unitLabel,
   showThreshold = false,
-  threshold
+  threshold,
+  individualMaxValues = false
 }: ChartGridProps) => {
+  // Calculate max value for each chart if individualMaxValues is true
+  const getChartMaxValue = (group: ChartGroup) => {
+    if (!individualMaxValues) return maxValue;
+    
+    // Calculate the max value based on viewType
+    if (viewType === 'net-new') {
+      return Math.max(...group.data.map(d => d.value), 0);
+    } else {
+      // For cumulative, calculate the sum
+      return group.data.reduce((sum, curr) => sum + curr.value, 0);
+    }
+  };
+
   return (
     <div className={`grid grid-cols-1 gap-4 ${
       layoutMode === 'compact' 
@@ -48,7 +63,7 @@ export const ChartGrid = ({
           color="#2AB4FF"
           unit={unitLabel}
           viewType={viewType}
-          maxValue={maxValue}
+          maxValue={getChartMaxValue(group)}
           chartType={chartType}
           chartRef={chartRefs.current[group.title]}
           onExport={onExportChart}
