@@ -1,6 +1,6 @@
 
 import { useMemo } from "react";
-import { SearchableSelect } from "@/components/SearchableSelect";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface ProjectSelectorProps {
   selectedProject: string;
@@ -45,11 +45,17 @@ export const ProjectSelector = ({
   };
   
   return (
-    <SearchableSelect
-      items={projects}
-      value={selectedProject}
-      onChange={handleProjectChange}
-      placeholder="Select project"
-    />
+    <Select value={selectedProject} onValueChange={handleProjectChange}>
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Select project" />
+      </SelectTrigger>
+      <SelectContent>
+        {projects.map((project) => (
+          <SelectItem key={project.value} value={project.value}>
+            {project.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 };

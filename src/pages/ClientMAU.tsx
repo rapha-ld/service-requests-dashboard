@@ -1,3 +1,4 @@
+
 import { useState, useRef } from "react";
 import { MAUHeader } from "@/components/mau/MAUHeader";
 import { MAUDashboardControls } from "@/components/mau/MAUDashboardControls";
@@ -19,6 +20,7 @@ const ClientMAU = () => {
   const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>('area');
   const [timeRange, setTimeRange] = useState<TimeRangeType>('month-to-date');
   const [selectedProject, setSelectedProject] = useState<string>("all");
+  const [dataType, setDataType] = useState<'mau' | 'connections'>('mau');
   const chartRefs = useRef<{ [key: string]: any }>({});
 
   // Monthly user limit - same as in Overview
@@ -73,7 +75,7 @@ const ClientMAU = () => {
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
-        <MAUHeader title="Client MAU" />
+        <MAUHeader title="Client" />
         
         <MAUDashboardControls
           viewType={viewType}
@@ -82,12 +84,14 @@ const ClientMAU = () => {
           sortDirection={sortDirection}
           timeRange={timeRange}
           selectedProject={selectedProject}
+          dataType={dataType}
           setSelectedProject={safeSetSelectedProject}
           onViewTypeChange={setViewType}
           onChartTypeChange={setChartType}
           onSortDirectionChange={() => setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc')}
           onMonthChange={(value) => setSelectedMonth(parseInt(value))}
           onTimeRangeChange={setTimeRange}
+          onDataTypeChange={setDataType}
         />
         
         <DashboardSummary groups={sortedGroups} />
@@ -102,7 +106,7 @@ const ClientMAU = () => {
           chartRefs={chartRefs}
           onExportChart={() => {}}
           useViewDetailsButton={false}
-          unitLabel="users"
+          unitLabel={dataType === 'mau' ? "users" : "connections"}
           showThreshold={showThreshold}
           threshold={USER_LIMIT}
         />
