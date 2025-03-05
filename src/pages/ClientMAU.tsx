@@ -1,4 +1,3 @@
-
 import { useState, useRef } from "react";
 import { MAUHeader } from "@/components/mau/MAUHeader";
 import { MAUDashboardControls } from "@/components/mau/MAUDashboardControls";
@@ -58,19 +57,43 @@ const ClientMAU = () => {
   // Transform the data into chart groups
   const groups = transformDataToChartGroups(safeCurrent, safeCurrentTotals, safePreviousTotals);
 
+  // For connections view, scale the data to show higher values
+  const connectionMultiplier = 4; // Show 4x the MAU values for connections
+  let effectiveGroups = groups;
+  
+  if (dataType === 'connections') {
+    // Create a deep copy with scaled values for connections
+    effectiveGroups = groups.map(group => ({
+      ...group,
+      data: group.data.map(item => ({
+        ...item,
+        value: Math.floor(item.value * connectionMultiplier)
+      })),
+      value: Math.floor(group.value * connectionMultiplier)
+    }));
+  }
+
   // Sort the groups
-  const sortedGroups = [...groups].sort((a, b) => 
+  const sortedGroups = [...effectiveGroups].sort((a, b) => 
     sortDirection === 'desc' ? b.value - a.value : a.value - b.value
   );
 
   // Calculate max value for the charts
-  const maxValue = calculateMaxValue(groups, viewType);
+  const maxValue = calculateMaxValue(sortedGroups, viewType);
   
-  // Determine if we should show the threshold based on project selection
-  const showThreshold = selectedProject === "all";
+  // Determine if we should show the threshold based on project selection and data type
+  const showThreshold = selectedProject === "all" && dataType === 'mau';
 
   // Prepare the combined data for all environments
-  const allEnvironmentsData = getLast12MonthsData(safeCurrent, timeRange);
+  let allEnvironmentsData = getLast12MonthsData(safeCurrent, timeRange);
+  
+  // Scale the all environments data for connections view
+  if (dataType === 'connections') {
+    allEnvironmentsData = allEnvironmentsData.map(item => ({
+      day: item.day,
+      value: Math.floor(item.value * connectionMultiplier)
+    }));
+  }
 
   return (
     <div className="min-h-screen bg-background p-6">
@@ -101,7 +124,7 @@ const ClientMAU = () => {
           sortedGroups={sortedGroups}
           viewType={viewType}
           chartType={chartType}
-          maxValue={Math.max(maxValue, USER_LIMIT)}
+          maxValue={Math.max(maxValue, dataType === 'mau' ? USER_LIMIT : 0)}
           grouping="environment"
           chartRefs={chartRefs}
           onExportChart={() => {}}
