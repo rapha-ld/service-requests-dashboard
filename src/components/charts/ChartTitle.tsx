@@ -38,7 +38,7 @@ export const ChartTitle = ({ title, useViewDetails = true }: ChartTitleProps) =>
   return (
     <div className="flex justify-between items-center mb-4">
       <h3 className="text-sm font-medium text-foreground">{formattedTitle()}</h3>
-      {useViewDetails && (
+      {useViewDetails && detailsRoute !== '/experiment-details' && (
         <Button
           variant="outline"
           size="sm"

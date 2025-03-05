@@ -27,11 +27,11 @@ const Experiments = () => {
       const current = getMockData('environment'); // Using environment as base but we'll rename the keys
       const previous = getMockData('environment');
 
-      // Rename keys to experiment names
+      // Rename keys to environment-style naming for experiments
       const experimentNames = [
-        'User Segmentation', 'Feature Toggle', 'AB Testing', 
-        'Multi Variant', 'Personalization', 'Targeting', 
-        'Release Gating', 'Canary Release', 'Blue Green Deploy'
+        'Development', 'Staging', 'Production', 
+        'QA', 'Integration', 'UAT', 
+        'Training', 'Demo', 'Sandbox'
       ];
       
       // Create new objects with experiment names as keys
@@ -91,7 +91,7 @@ const Experiments = () => {
 
   const groups = Object.entries(serviceData.current).map(([id, data]) => ({
     id,
-    title: id, // Using the experiment name directly instead of formatting it
+    title: id, // Using the environment name directly
     value: serviceData.currentTotals[id],
     data,
     percentChange: calculatePercentChange(
@@ -150,7 +150,7 @@ const Experiments = () => {
           chartRefs={chartRefs}
           onExportChart={() => {}}
           unitLabel="keys" // Change unit from "reqs" to "keys"
-          useViewDetailsButton={true}
+          useViewDetailsButton={false} // Set to false to remove view details buttons
         />
       </div>
     </div>
