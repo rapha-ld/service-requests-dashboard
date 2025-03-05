@@ -17,6 +17,8 @@ interface ChartGridProps {
   onExportChart: (title: string) => void;
   useViewDetailsButton: boolean;
   unitLabel: string;
+  showThreshold?: boolean;
+  threshold?: number;
 }
 
 export const ChartGrid = ({
@@ -28,7 +30,9 @@ export const ChartGrid = ({
   chartRefs,
   onExportChart,
   useViewDetailsButton,
-  unitLabel
+  unitLabel,
+  showThreshold = false,
+  threshold
 }: ChartGridProps) => {
   return (
     <div className={`grid grid-cols-1 gap-4 ${
@@ -49,6 +53,8 @@ export const ChartGrid = ({
           chartRef={chartRefs.current[group.title]}
           onExport={onExportChart}
           useViewDetails={useViewDetailsButton}
+          showThreshold={showThreshold}
+          threshold={threshold}
         />
       ))}
     </div>

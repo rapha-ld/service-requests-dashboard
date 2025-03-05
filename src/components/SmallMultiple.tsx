@@ -16,6 +16,7 @@ interface SmallMultipleProps {
   maxValue: number;
   chartType: 'area' | 'bar' | 'line';
   showThreshold?: boolean;
+  threshold?: number;
   chartRef?: React.MutableRefObject<any>;
   onExport?: (title: string) => void;
   useViewDetails?: boolean;
@@ -31,6 +32,7 @@ export const SmallMultiple = ({
   maxValue, 
   chartType, 
   showThreshold = false,
+  threshold,
   chartRef,
   onExport,
   useViewDetails = true
@@ -57,6 +59,7 @@ export const SmallMultiple = ({
           maxValue={maxValue}
           unit={unit}
           showThreshold={showThreshold}
+          threshold={threshold}
           chartRef={effectiveChartRef}
         />
       </div>
