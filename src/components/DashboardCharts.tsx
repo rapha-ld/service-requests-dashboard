@@ -42,6 +42,9 @@ export const DashboardCharts = ({
 }: DashboardChartsProps) => {
   const [layoutMode, setLayoutMode] = useState<'compact' | 'expanded'>('compact');
   const totalTitle = getTotalTitle(grouping);
+  
+  // Only show the threshold on the Total chart when viewType is cumulative
+  const shouldShowThreshold = showThreshold && viewType === 'cumulative';
 
   return (
     <>
@@ -54,7 +57,7 @@ export const DashboardCharts = ({
         onExportChart={onExportChart}
         useViewDetailsButton={useViewDetailsButton}
         unitLabel={unitLabel}
-        showThreshold={showThreshold}
+        showThreshold={shouldShowThreshold}
         threshold={threshold}
       />
 

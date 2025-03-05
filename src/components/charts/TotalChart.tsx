@@ -34,8 +34,8 @@ export const TotalChart = ({
       }, [] as number[]))
     : Math.max(...data.map(d => d.value));
 
-  // If threshold is provided, ensure maxValue is at least the threshold
-  const effectiveMaxValue = threshold && threshold > maxValue ? threshold : maxValue;
+  // If threshold is provided and showing threshold is enabled, ensure maxValue is at least the threshold
+  const effectiveMaxValue = showThreshold && threshold && threshold > maxValue ? threshold : maxValue;
 
   return (
     <div className="mb-6">
