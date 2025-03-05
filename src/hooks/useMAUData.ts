@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { getMockMAUData } from "@/utils/mauDataGenerator";
 import { getTotalValue } from "@/utils/dataTransformers";
@@ -24,6 +23,9 @@ export interface ChartGroup {
   percentChange: number;
 }
 
+// Client MAU value from the Overview page
+const CLIENT_MAU_VALUE = 18450;
+
 export const useMAUData = (
   selectedMonth: number,
   selectedProject: string,
@@ -47,6 +49,27 @@ export const useMAUData = (
           return createFallbackData();
         }
 
+        // If we're showing "all" projects, ensure the total matches the Overview page
+        if (safeProject === "all") {
+          let totalCurrentMAU = 0;
+          
+          // Calculate the current total across all environments
+          Object.values(currentData).forEach(envData => {
+            totalCurrentMAU += getTotalValue(envData);
+          });
+          
+          // Scaling factor to adjust all values proportionally
+          const scalingFactor = CLIENT_MAU_VALUE / totalCurrentMAU;
+          
+          // Scale all values to match the overview page total
+          Object.keys(currentData).forEach(env => {
+            currentData[env] = currentData[env].map(day => ({
+              ...day,
+              value: Math.round(day.value * scalingFactor)
+            }));
+          });
+        }
+
         // Handle the case for last 12 months view
         if (timeRange === 'last-12-months') {
           const last12MonthsData: EnvironmentsMap = {};
@@ -57,6 +80,22 @@ export const useMAUData = (
               value: Math.floor(Math.random() * 5000)
             })).reverse();
           });
+
+          // If we're showing "all" projects, ensure the total 12-month data matches the Overview
+          if (safeProject === "all") {
+            // Adjust the last-12-months data to match CLIENT_MAU_VALUE over the period
+            const totalMonthlyValue = CLIENT_MAU_VALUE / 12;
+            Object.keys(last12MonthsData).forEach(env => {
+              const envCount = Object.keys(last12MonthsData).length;
+              const envValue = totalMonthlyValue / envCount;
+              
+              last12MonthsData[env] = last12MonthsData[env].map((day, idx) => ({
+                day: day.day,
+                // Add some variation while keeping the overall total close to CLIENT_MAU_VALUE
+                value: Math.round(envValue * (0.7 + (idx / 11) * 0.6))
+              }));
+            });
+          }
 
           // Calculate totals for each environment
           const currentTotals = Object.fromEntries(

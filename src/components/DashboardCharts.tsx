@@ -22,6 +22,8 @@ interface DashboardChartsProps {
   onExportChart: (title: string) => void;
   useViewDetailsButton?: boolean;
   unitLabel?: string;
+  showThreshold?: boolean;
+  threshold?: number;
 }
 
 export const DashboardCharts = ({
@@ -34,7 +36,9 @@ export const DashboardCharts = ({
   chartRefs,
   onExportChart,
   useViewDetailsButton = true,
-  unitLabel = "reqs"
+  unitLabel = "reqs",
+  showThreshold = false,
+  threshold
 }: DashboardChartsProps) => {
   const [layoutMode, setLayoutMode] = useState<'compact' | 'expanded'>('compact');
   const totalTitle = getTotalTitle(grouping);
@@ -50,6 +54,8 @@ export const DashboardCharts = ({
         onExportChart={onExportChart}
         useViewDetailsButton={useViewDetailsButton}
         unitLabel={unitLabel}
+        showThreshold={showThreshold}
+        threshold={threshold}
       />
 
       <LayoutToggle 
@@ -67,6 +73,8 @@ export const DashboardCharts = ({
         onExportChart={onExportChart}
         useViewDetailsButton={useViewDetailsButton}
         unitLabel={unitLabel}
+        showThreshold={showThreshold}
+        threshold={threshold}
       />
     </>
   );

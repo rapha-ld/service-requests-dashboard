@@ -22,6 +22,9 @@ const ClientMAU = () => {
   const [selectedProject, setSelectedProject] = useState<string>("all");
   const chartRefs = useRef<{ [key: string]: any }>({});
 
+  // Monthly user limit - same as in Overview
+  const USER_LIMIT = 25000;
+  
   // Error handling wrapper for state setters
   const safeSetSelectedProject = (project: string) => {
     try {
@@ -92,12 +95,14 @@ const ClientMAU = () => {
           sortedGroups={sortedGroups}
           viewType={viewType}
           chartType={chartType}
-          maxValue={maxValue}
+          maxValue={Math.max(maxValue, USER_LIMIT)}
           grouping="environment"
           chartRefs={chartRefs}
           onExportChart={() => {}}
           useViewDetailsButton={false}
           unitLabel="users"
+          showThreshold={true}
+          threshold={USER_LIMIT}
         />
       </div>
     </div>

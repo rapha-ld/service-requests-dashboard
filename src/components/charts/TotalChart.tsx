@@ -10,6 +10,8 @@ interface TotalChartProps {
   onExportChart: (title: string) => void;
   useViewDetailsButton: boolean;
   unitLabel: string;
+  showThreshold?: boolean;
+  threshold?: number;
 }
 
 export const TotalChart = ({
@@ -20,7 +22,9 @@ export const TotalChart = ({
   chartRef,
   onExportChart,
   useViewDetailsButton,
-  unitLabel
+  unitLabel,
+  showThreshold = false,
+  threshold
 }: TotalChartProps) => {
   const maxValue = viewType === 'cumulative' 
     ? Math.max(...data.reduce((acc, curr, index) => {
@@ -30,6 +34,9 @@ export const TotalChart = ({
       }, [] as number[]))
     : Math.max(...data.map(d => d.value));
 
+  // If threshold is provided, ensure maxValue is at least the threshold
+  const effectiveMaxValue = threshold && threshold > maxValue ? threshold : maxValue;
+
   return (
     <div className="mb-6">
       <SmallMultiple
@@ -38,12 +45,14 @@ export const TotalChart = ({
         color="#2AB4FF"
         unit={unitLabel}
         viewType={viewType}
-        maxValue={maxValue}
+        maxValue={effectiveMaxValue}
         chartType={chartType}
         className="w-full"
         chartRef={chartRef}
         onExport={onExportChart}
         useViewDetails={useViewDetailsButton}
+        showThreshold={showThreshold}
+        threshold={threshold}
       />
     </div>
   );

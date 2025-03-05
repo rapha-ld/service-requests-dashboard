@@ -12,6 +12,7 @@ interface ChartComponentProps {
   maxValue: number;
   unit: string;
   showThreshold?: boolean;
+  threshold?: number;
   chartRef: React.MutableRefObject<any>;
 }
 
@@ -22,6 +23,7 @@ export const ChartComponent = ({
   maxValue,
   unit,
   showThreshold = false,
+  threshold,
   chartRef
 }: ChartComponentProps) => {
   const average = calculateAverage(data);
@@ -113,13 +115,14 @@ export const ChartComponent = ({
             }}
           />
         )}
-        {showThreshold && (
+        {showThreshold && threshold && (
           <ReferenceLine 
-            y={maxValue}
+            y={threshold}
             stroke="#DB2251"
             strokeWidth={1.5}
+            strokeDasharray="3 3"
             label={{
-              value: `Limit: ${maxValue.toLocaleString()}${unit}`,
+              value: `Limit: ${threshold.toLocaleString()}${unit}`,
               fill: '#DB2251',
               fontSize: 10,
               position: 'insideTopRight',
