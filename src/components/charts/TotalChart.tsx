@@ -13,6 +13,7 @@ interface TotalChartProps {
   showThreshold?: boolean;
   threshold?: number;
   showTitle?: boolean;
+  chartHeight?: number;
 }
 
 export const TotalChart = ({
@@ -26,7 +27,8 @@ export const TotalChart = ({
   unitLabel,
   showThreshold = false,
   threshold,
-  showTitle = true
+  showTitle = true,
+  chartHeight = 192 // Default height
 }: TotalChartProps) => {
   const maxValue = viewType === 'cumulative' 
     ? Math.max(...data.reduce((acc, curr, index) => {
@@ -55,6 +57,7 @@ export const TotalChart = ({
         useViewDetails={useViewDetailsButton}
         showThreshold={showThreshold}
         threshold={threshold}
+        chartHeight={chartHeight}
       />
     </div>
   );

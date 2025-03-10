@@ -47,6 +47,9 @@ export const DashboardCharts = ({
   
   // Only show the threshold on the Total chart when viewType is cumulative
   const shouldShowThreshold = showThreshold && viewType === 'cumulative';
+  
+  // Apply doubled height when "All dimensions" is selected
+  const chartHeight = grouping === 'all' ? 384 : 192; // 192 * 2 = 384
 
   return (
     <>
@@ -62,6 +65,7 @@ export const DashboardCharts = ({
         showThreshold={shouldShowThreshold}
         threshold={threshold}
         showTitle={grouping !== 'all'} // Hide title when "All dimensions" is selected
+        chartHeight={chartHeight} // Pass the height value based on grouping
       />
 
       {!showOnlyTotal && (

@@ -20,6 +20,7 @@ interface SmallMultipleProps {
   chartRef?: React.MutableRefObject<any>;
   onExport?: (title: string) => void;
   useViewDetails?: boolean;
+  chartHeight?: number;
 }
 
 export const SmallMultiple = ({ 
@@ -35,7 +36,8 @@ export const SmallMultiple = ({
   threshold,
   chartRef,
   onExport,
-  useViewDetails = true
+  useViewDetails = true,
+  chartHeight = 192
 }: SmallMultipleProps) => {
   const internalChartRef = useRef<any>(null);
   const effectiveChartRef = chartRef || internalChartRef;
@@ -57,7 +59,7 @@ export const SmallMultiple = ({
   return (
     <div className={cn("bg-card dark:bg-card/80 p-4 rounded-lg shadow-sm animate-fade-in", className)}>
       <ChartTitle title={title} useViewDetails={useViewDetails} />
-      <div className="h-[192px]">
+      <div style={{ height: `${chartHeight}px` }}>
         <ChartComponent
           data={data}
           viewType={viewType}
