@@ -1,15 +1,16 @@
+
 import { ArrowUpDown, BarChart3, LineChart } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 
 interface DashboardHeaderProps {
-  grouping: 'environment' | 'relayId' | 'userAgent';
+  grouping: 'all' | 'environment' | 'relayId' | 'userAgent';
   viewType: 'net-new' | 'cumulative';
   chartType: 'area' | 'bar' | 'line';
   selectedMonth: number;
   sortDirection: 'desc' | 'asc';
-  onGroupingChange: (value: 'environment' | 'relayId' | 'userAgent') => void;
+  onGroupingChange: (value: 'all' | 'environment' | 'relayId' | 'userAgent') => void;
   onViewTypeChange: (value: 'net-new' | 'cumulative') => void;
   onChartTypeChange: (value: 'area' | 'bar' | 'line') => void;
   onSortDirectionChange: () => void;
@@ -53,12 +54,13 @@ export const DashboardHeader = ({
       {showGrouping && (
         <Select
           value={grouping}
-          onValueChange={(value) => onGroupingChange(value as 'environment' | 'relayId' | 'userAgent')}
+          onValueChange={(value) => onGroupingChange(value as 'all' | 'environment' | 'relayId' | 'userAgent')}
         >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select grouping" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="all">All dimensions</SelectItem>
             <SelectItem value="environment">Environment</SelectItem>
             <SelectItem value="relayId">Relay ID</SelectItem>
             <SelectItem value="userAgent">User Agent</SelectItem>

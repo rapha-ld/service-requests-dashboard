@@ -17,13 +17,14 @@ interface DashboardChartsProps {
   viewType: 'net-new' | 'cumulative';
   chartType: 'area' | 'bar' | 'line';
   maxValue: number;
-  grouping: 'environment' | 'relayId' | 'userAgent';
+  grouping: 'all' | 'environment' | 'relayId' | 'userAgent';
   chartRefs: React.MutableRefObject<{ [key: string]: any }>;
   onExportChart: (title: string) => void;
   useViewDetailsButton?: boolean;
   unitLabel?: string;
   showThreshold?: boolean;
   threshold?: number;
+  showOnlyTotal?: boolean;
 }
 
 export const DashboardCharts = ({
@@ -38,7 +39,8 @@ export const DashboardCharts = ({
   useViewDetailsButton = true,
   unitLabel = "reqs",
   showThreshold = false,
-  threshold
+  threshold,
+  showOnlyTotal = false
 }: DashboardChartsProps) => {
   const [layoutMode, setLayoutMode] = useState<'compact' | 'expanded'>('compact');
   const totalTitle = getTotalTitle(grouping);
@@ -61,24 +63,28 @@ export const DashboardCharts = ({
         threshold={threshold}
       />
 
-      <LayoutToggle 
-        layoutMode={layoutMode}
-        setLayoutMode={setLayoutMode}
-      />
+      {!showOnlyTotal && (
+        <>
+          <LayoutToggle 
+            layoutMode={layoutMode}
+            setLayoutMode={setLayoutMode}
+          />
 
-      <ChartGrid
-        sortedGroups={sortedGroups}
-        layoutMode={layoutMode}
-        viewType={viewType}
-        chartType={chartType}
-        maxValue={maxValue}
-        chartRefs={chartRefs}
-        onExportChart={onExportChart}
-        useViewDetailsButton={useViewDetailsButton}
-        unitLabel={unitLabel}
-        showThreshold={false} // Never show threshold on individual charts
-        threshold={threshold}
-      />
+          <ChartGrid
+            sortedGroups={sortedGroups}
+            layoutMode={layoutMode}
+            viewType={viewType}
+            chartType={chartType}
+            maxValue={maxValue}
+            chartRefs={chartRefs}
+            onExportChart={onExportChart}
+            useViewDetailsButton={useViewDetailsButton}
+            unitLabel={unitLabel}
+            showThreshold={false} // Never show threshold on individual charts
+            threshold={threshold}
+          />
+        </>
+      )}
     </>
   );
 };

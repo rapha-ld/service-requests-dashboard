@@ -9,7 +9,7 @@ import { getTotalValue, calculatePercentChange } from "@/utils/dataTransformers"
 import { format, subMonths } from "date-fns";
 import { useRef } from "react";
 
-type GroupingType = 'environment' | 'relayId' | 'userAgent';
+type GroupingType = 'all' | 'environment' | 'relayId' | 'userAgent';
 type TimeRangeType = 'month-to-date' | 'last-12-months';
 
 const Dashboard = () => {
@@ -27,6 +27,47 @@ const Dashboard = () => {
   const { data: serviceData } = useQuery({
     queryKey: ['service-data', currentDate.toISOString(), grouping, timeRange],
     queryFn: () => {
+      // For 'all' we don't need detailed data as we're only showing the top chart
+      if (grouping === 'all') {
+        const current = getMockData('environment');
+        const previous = getMockData('environment');
+        
+        // Transform data for last 12 months
+        if (timeRange === 'last-12-months') {
+          const last12MonthsData = Object.fromEntries(
+            Object.entries(current).map(([key, data]) => [
+              key,
+              Array.from({ length: 12 }, (_, i) => ({
+                day: format(subMonths(new Date(), i), 'MMM'),
+                value: Math.floor(Math.random() * 1000)
+              })).reverse()
+            ])
+          );
+          return {
+            current: last12MonthsData,
+            previous,
+            currentTotals: Object.fromEntries(
+              Object.entries(last12MonthsData).map(([key, data]) => [key, getTotalValue(data)])
+            ),
+            previousTotals: Object.fromEntries(
+              Object.entries(previous).map(([key, data]) => [key, getTotalValue(data)])
+            )
+          };
+        }
+
+        return {
+          current,
+          previous,
+          currentTotals: Object.fromEntries(
+            Object.entries(current).map(([key, data]) => [key, getTotalValue(data)])
+          ),
+          previousTotals: Object.fromEntries(
+            Object.entries(previous).map(([key, data]) => [key, getTotalValue(data)])
+          )
+        };
+      }
+      
+      // Original logic for other groupings
       const current = getMockData(grouping);
       const previous = getMockData(grouping);
 
@@ -116,7 +157,7 @@ const Dashboard = () => {
           onTimeRangeChange={setTimeRange}
         />
         
-        <DashboardSummary groups={sortedGroups} />
+        {grouping !== 'all' && <DashboardSummary groups={sortedGroups} />}
         
         <DashboardCharts
           allEnvironmentsData={allEnvironmentsData}
@@ -128,6 +169,7 @@ const Dashboard = () => {
           chartRefs={chartRefs}
           onExportChart={() => {}}
           useViewDetailsButton={false}
+          showOnlyTotal={grouping === 'all'}
         />
       </div>
     </div>
