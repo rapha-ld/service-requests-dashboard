@@ -60,12 +60,32 @@ export const getAllEnvironmentsData = (
   timeRange: 'month-to-date' | 'last-12-months',
   sortedGroups: ChartGroup[]
 ) => {
-  return grouping === 'all'
-    ? sortedGroups[0]?.data || []
-    : Object.values(serviceData.current)[0].map((_, index: number) => ({
-        day: timeRange === 'last-12-months' 
-          ? Object.values(serviceData.current)[0][index].day
-          : (index + 1).toString(),
-        value: Object.values(serviceData.current).reduce((sum, data: any) => sum + data[index].value, 0)
-      }));
+  if (grouping === 'all') {
+    // Make sure we're properly accessing the data array
+    return sortedGroups[0]?.data || [];
+  } else {
+    // Access serviceData.current safely as an object with indexable properties
+    const currentData = serviceData.current as Record<string, Array<{ day: string; value: number }>>;
+    const firstKey = Object.keys(currentData)[0];
+    
+    if (!firstKey || !currentData[firstKey] || !Array.isArray(currentData[firstKey])) {
+      return [];
+    }
+    
+    return currentData[firstKey].map((_, index: number) => {
+      const day = timeRange === 'last-12-months' 
+        ? currentData[firstKey][index].day
+        : (index + 1).toString();
+        
+      // Safely sum all values at this index across all entries in current
+      const value = Object.values(currentData).reduce((sum, data) => {
+        if (Array.isArray(data) && data[index] && typeof data[index].value === 'number') {
+          return sum + data[index].value;
+        }
+        return sum;
+      }, 0);
+      
+      return { day, value };
+    });
+  }
 };
