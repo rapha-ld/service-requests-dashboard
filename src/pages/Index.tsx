@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
@@ -27,15 +26,30 @@ const Dashboard = () => {
   const { data: serviceData } = useQuery({
     queryKey: ['service-data', currentDate.toISOString(), grouping, timeRange],
     queryFn: () => {
-      // For 'all' we don't need detailed data as we're only showing the top chart
       if (grouping === 'all') {
-        const current = getMockData('environment');
-        const previous = getMockData('environment');
+        const environmentData = getMockData('environment');
+        const relayIdData = getMockData('relayId');
+        const userAgentData = getMockData('userAgent');
         
-        // Transform data for last 12 months
+        const combineData = (dataSets: Record<string, Array<{ day: string; value: number }>>[]) => {
+          const firstDataSet = dataSets[0];
+          const firstKey = Object.keys(firstDataSet)[0];
+          const template = firstDataSet[firstKey].map(item => ({ day: item.day, value: 0 }));
+          
+          dataSets.forEach(dataSet => {
+            Object.values(dataSet).forEach(dimensionData => {
+              dimensionData.forEach((dayData, index) => {
+                template[index].value += dayData.value;
+              });
+            });
+          });
+          
+          return { total: template };
+        };
+        
         if (timeRange === 'last-12-months') {
-          const last12MonthsData = Object.fromEntries(
-            Object.entries(current).map(([key, data]) => [
+          const environmentLast12Months = Object.fromEntries(
+            Object.entries(environmentData).map(([key, data]) => [
               key,
               Array.from({ length: 12 }, (_, i) => ({
                 day: format(subMonths(new Date(), i), 'MMM'),
@@ -43,35 +57,58 @@ const Dashboard = () => {
               })).reverse()
             ])
           );
+          
+          const relayIdLast12Months = Object.fromEntries(
+            Object.entries(relayIdData).map(([key, data]) => [
+              key,
+              Array.from({ length: 12 }, (_, i) => ({
+                day: format(subMonths(new Date(), i), 'MMM'),
+                value: Math.floor(Math.random() * 1000)
+              })).reverse()
+            ])
+          );
+          
+          const userAgentLast12Months = Object.fromEntries(
+            Object.entries(userAgentData).map(([key, data]) => [
+              key,
+              Array.from({ length: 12 }, (_, i) => ({
+                day: format(subMonths(new Date(), i), 'MMM'),
+                value: Math.floor(Math.random() * 1000)
+              })).reverse()
+            ])
+          );
+          
+          const combined = combineData([environmentLast12Months, relayIdLast12Months, userAgentLast12Months]);
+          
           return {
-            current: last12MonthsData,
-            previous,
-            currentTotals: Object.fromEntries(
-              Object.entries(last12MonthsData).map(([key, data]) => [key, getTotalValue(data)])
-            ),
-            previousTotals: Object.fromEntries(
-              Object.entries(previous).map(([key, data]) => [key, getTotalValue(data)])
-            )
+            current: combined,
+            previous: combined,
+            currentTotals: {
+              total: getTotalValue(combined.total)
+            },
+            previousTotals: {
+              total: getTotalValue(combined.total)
+            }
           };
         }
-
+        
+        const combined = combineData([environmentData, relayIdData, userAgentData]);
+        
         return {
-          current,
-          previous,
-          currentTotals: Object.fromEntries(
-            Object.entries(current).map(([key, data]) => [key, getTotalValue(data)])
-          ),
-          previousTotals: Object.fromEntries(
-            Object.entries(previous).map(([key, data]) => [key, getTotalValue(data)])
-          )
+          current: combined,
+          previous: combined,
+          currentTotals: {
+            total: getTotalValue(combined.total)
+          },
+          previousTotals: {
+            total: getTotalValue(combined.total)
+          }
         };
       }
       
-      // Original logic for other groupings
       const current = getMockData(grouping);
       const previous = getMockData(grouping);
 
-      // Transform data for last 12 months
       if (timeRange === 'last-12-months') {
         const last12MonthsData = Object.fromEntries(
           Object.entries(current).map(([key, data]) => [
@@ -130,12 +167,14 @@ const Dashboard = () => {
         env.data.reduce((sum, item) => sum + item.value, 0)
       ));
 
-  const allEnvironmentsData = Object.values(serviceData.current)[0].map((_, index) => ({
-    day: timeRange === 'last-12-months' 
-      ? Object.values(serviceData.current)[0][index].day
-      : (index + 1).toString(),
-    value: Object.values(serviceData.current).reduce((sum, data) => sum + data[index].value, 0)
-  }));
+  const allEnvironmentsData = grouping === 'all'
+    ? sortedGroups[0]?.data || []
+    : Object.values(serviceData.current)[0].map((_, index) => ({
+        day: timeRange === 'last-12-months' 
+          ? Object.values(serviceData.current)[0][index].day
+          : (index + 1).toString(),
+        value: Object.values(serviceData.current).reduce((sum, data) => sum + data[index].value, 0)
+      }));
 
   return (
     <div className="min-h-screen bg-background p-6">
