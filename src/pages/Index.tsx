@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
@@ -16,7 +17,7 @@ const Dashboard = () => {
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
   const [viewType, setViewType] = useState<'net-new' | 'cumulative'>('net-new');
   const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>('area');
-  const [grouping, setGrouping] = useState<GroupingType>('environment');
+  const [grouping, setGrouping] = useState<GroupingType>('all'); // Changed default from 'environment' to 'all'
   const [timeRange, setTimeRange] = useState<TimeRangeType>('month-to-date');
   const chartRefs = useRef<{ [key: string]: any }>({});
 
