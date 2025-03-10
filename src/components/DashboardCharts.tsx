@@ -61,6 +61,7 @@ export const DashboardCharts = ({
         unitLabel={unitLabel}
         showThreshold={shouldShowThreshold}
         threshold={threshold}
+        showTitle={grouping !== 'all'} // Hide title when "All dimensions" is selected
       />
 
       {!showOnlyTotal && (
