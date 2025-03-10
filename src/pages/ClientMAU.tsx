@@ -52,6 +52,11 @@ const ClientMAU = () => {
     setChartType(newViewType === 'net-new' ? 'bar' : 'area');
   };
   
+  // Handle chart type change
+  const handleChartTypeChange = (newChartType: 'area' | 'bar' | 'line') => {
+    setChartType(newChartType);
+  };
+  
   // Error handling wrapper for state setters
   const safeSetSelectedProject = (project: string) => {
     try {
@@ -129,6 +134,7 @@ const ClientMAU = () => {
         
         <MAUDashboardControls
           viewType={viewType}
+          chartType={chartType}
           selectedMonth={selectedMonth}
           sortDirection={sortDirection}
           timeRange={timeRange}
@@ -136,6 +142,7 @@ const ClientMAU = () => {
           dataType={dataType}
           setSelectedProject={safeSetSelectedProject}
           onViewTypeChange={handleViewTypeChange}
+          onChartTypeChange={handleChartTypeChange}
           onSortDirectionChange={() => setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc')}
           onMonthChange={(value) => setSelectedMonth(parseInt(value))}
           onTimeRangeChange={handleTimeRangeChange}
