@@ -17,7 +17,7 @@ const ClientMAU = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
   const [viewType, setViewType] = useState<'net-new' | 'cumulative'>('net-new');
-  const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>('bar'); // Changed default to bar
+  const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>('bar'); // Default to bar
   const [timeRange, setTimeRange] = useState<TimeRangeType>('month-to-date');
   const [selectedProject, setSelectedProject] = useState<string>("all");
   const [dataType, setDataType] = useState<'mau' | 'connections'>('mau');

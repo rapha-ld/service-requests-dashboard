@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown, BarChart3, LineChart } from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TimeRangeType } from "@/hooks/useMAUData";
 import { ProjectSelector } from "@/components/mau/ProjectSelector";
@@ -66,41 +66,6 @@ export const MAUDashboardControls = ({
         onDataTypeChange={onDataTypeChange}
       />
       
-      <div className="flex">
-        <Button
-          variant={chartType === 'area' ? 'default' : 'outline'}
-          onClick={() => onChartTypeChange('area')}
-          className={`rounded-r-none ${
-            chartType === 'area' 
-              ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
-              : ''
-          }`}
-        >
-          <LineChart className="h-4 w-4 mr-2" />
-          Area
-        </Button>
-        <Button
-          variant={chartType === 'bar' ? 'default' : 'outline'}
-          onClick={() => onChartTypeChange('bar')}
-          className={`rounded-l-none border-l-0 ${
-            chartType === 'bar' 
-              ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
-              : ''
-          }`}
-        >
-          <BarChart3 className="h-4 w-4 mr-2" />
-          Bar
-        </Button>
-      </div>
-      <Button
-        variant="outline"
-        onClick={onSortDirectionChange}
-        className="h-10"
-        title={sortDirection === 'desc' ? "Sort ascending" : "Sort descending"}
-      >
-        <ArrowUpDown className="h-4 w-4 text-primary" />
-        Sort
-      </Button>
       <div className="flex">
         <Button
           variant={timeRange === 'month-to-date' ? 'default' : 'outline'}
@@ -171,7 +136,16 @@ export const MAUDashboardControls = ({
           </Button>
         </div>
       )}
+      
+      <Button
+        variant="outline"
+        onClick={onSortDirectionChange}
+        className="h-10 ml-2"
+        title={sortDirection === 'desc' ? "Sort ascending" : "Sort descending"}
+      >
+        <ArrowUpDown className="h-4 w-4 text-primary" />
+        Sort
+      </Button>
     </div>
   );
 };
-

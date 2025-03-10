@@ -64,19 +64,6 @@ export const DashboardHeader = ({
         </Select>
       )}
       
-      {/* Only show sort button when not "All dimensions" */}
-      {grouping !== 'all' && (
-        <Button
-          variant="outline"
-          onClick={onSortDirectionChange}
-          className="h-10"
-          title={sortDirection === 'desc' ? "Sort ascending" : "Sort descending"}
-        >
-          <ArrowUpDown className="h-4 w-4 text-primary" />
-          Sort
-        </Button>
-      )}
-      
       <div className="flex">
         <Button
           variant={timeRange === 'month-to-date' ? 'default' : 'outline'}
@@ -148,6 +135,19 @@ export const DashboardHeader = ({
             Cumulative
           </Button>
         </div>
+      )}
+      
+      {/* Only show sort button when not "All dimensions" */}
+      {grouping !== 'all' && (
+        <Button
+          variant="outline"
+          onClick={onSortDirectionChange}
+          className="h-10 ml-2"
+          title={sortDirection === 'desc' ? "Sort ascending" : "Sort descending"}
+        >
+          <ArrowUpDown className="h-4 w-4 text-primary" />
+          Sort
+        </Button>
       )}
     </div>
   );
