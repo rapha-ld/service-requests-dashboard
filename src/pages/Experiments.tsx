@@ -1,6 +1,6 @@
 
 import { useQuery } from "@tanstack/react-query";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
@@ -17,6 +17,21 @@ const Experiments = () => {
   const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>('area');
   const [timeRange, setTimeRange] = useState<TimeRangeType>('month-to-date');
   const chartRefs = useRef<{ [key: string]: any }>({});
+
+  // Effect to reset viewType to 'net-new' when timeRange is 'last-12-months'
+  useEffect(() => {
+    if (timeRange === 'last-12-months') {
+      setViewType('net-new');
+    }
+  }, [timeRange]);
+  
+  // Handle time range change
+  const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
+    setTimeRange(newTimeRange);
+    if (newTimeRange === 'last-12-months') {
+      setViewType('net-new');
+    }
+  };
 
   const currentDate = new Date(new Date().getFullYear(), selectedMonth);
   const previousDate = new Date(new Date().getFullYear(), selectedMonth - 1);
@@ -134,7 +149,7 @@ const Experiments = () => {
           onSortDirectionChange={() => setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc')}
           onMonthChange={(value) => setSelectedMonth(parseInt(value))}
           timeRange={timeRange}
-          onTimeRangeChange={setTimeRange}
+          onTimeRangeChange={handleTimeRangeChange}
           showGrouping={false} // Hide the grouping dropdown
         />
         
@@ -158,3 +173,4 @@ const Experiments = () => {
 };
 
 export default Experiments;
+

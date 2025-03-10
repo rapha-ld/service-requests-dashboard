@@ -1,5 +1,5 @@
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
@@ -15,6 +15,21 @@ export const ServiceRequestsDashboard = () => {
   const [grouping, setGrouping] = useState<GroupingType>('all');
   const [timeRange, setTimeRange] = useState<TimeRangeType>('month-to-date');
   const chartRefs = useRef<{ [key: string]: any }>({});
+  
+  // Effect to reset viewType to 'net-new' when timeRange is 'last-12-months'
+  useEffect(() => {
+    if (timeRange === 'last-12-months') {
+      setViewType('net-new');
+    }
+  }, [timeRange]);
+  
+  // Handle time range change
+  const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
+    setTimeRange(newTimeRange);
+    if (newTimeRange === 'last-12-months') {
+      setViewType('net-new');
+    }
+  };
   
   // Fetch data using custom hook
   const { data: serviceData } = useServiceData(selectedMonth, grouping, timeRange);
@@ -47,7 +62,7 @@ export const ServiceRequestsDashboard = () => {
           onSortDirectionChange={() => setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc')}
           onMonthChange={(value) => setSelectedMonth(parseInt(value))}
           timeRange={timeRange}
-          onTimeRangeChange={setTimeRange}
+          onTimeRangeChange={handleTimeRangeChange}
         />
         
         {grouping !== 'all' && <DashboardSummary groups={sortedGroups} />}
@@ -68,3 +83,4 @@ export const ServiceRequestsDashboard = () => {
     </div>
   );
 };
+

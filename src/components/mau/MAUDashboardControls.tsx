@@ -68,30 +68,6 @@ export const MAUDashboardControls = ({
       
       <div className="flex">
         <Button
-          variant={viewType === 'net-new' ? 'default' : 'outline'}
-          onClick={() => onViewTypeChange('net-new')}
-          className={`rounded-r-none ${
-            viewType === 'net-new' 
-              ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
-              : ''
-          }`}
-        >
-          Net New
-        </Button>
-        <Button
-          variant={viewType === 'cumulative' ? 'default' : 'outline'}
-          onClick={() => onViewTypeChange('cumulative')}
-          className={`rounded-l-none border-l-0 ${
-            viewType === 'cumulative' 
-              ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
-              : ''
-          }`}
-        >
-          Cumulative
-        </Button>
-      </div>
-      <div className="flex">
-        <Button
           variant={chartType === 'area' ? 'default' : 'outline'}
           onClick={() => onChartTypeChange('area')}
           className={`rounded-r-none ${
@@ -167,6 +143,35 @@ export const MAUDashboardControls = ({
         </Select>
       )}
       <div className="flex-grow" />
+      
+      {/* Only show Net New/Cumulative toggle when in Month-to-date view */}
+      {timeRange === 'month-to-date' && (
+        <div className="flex">
+          <Button
+            variant={viewType === 'net-new' ? 'default' : 'outline'}
+            onClick={() => onViewTypeChange('net-new')}
+            className={`rounded-r-none ${
+              viewType === 'net-new' 
+                ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
+                : ''
+            }`}
+          >
+            Net New
+          </Button>
+          <Button
+            variant={viewType === 'cumulative' ? 'default' : 'outline'}
+            onClick={() => onViewTypeChange('cumulative')}
+            className={`rounded-l-none border-l-0 ${
+              viewType === 'cumulative' 
+                ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
+                : ''
+            }`}
+          >
+            Cumulative
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
+

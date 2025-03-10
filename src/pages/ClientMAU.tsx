@@ -1,4 +1,5 @@
-import { useState, useRef } from "react";
+
+import { useState, useRef, useEffect } from "react";
 import { MAUHeader } from "@/components/mau/MAUHeader";
 import { MAUDashboardControls } from "@/components/mau/MAUDashboardControls";
 import { LoadingState } from "@/components/mau/LoadingState";
@@ -24,6 +25,21 @@ const ClientMAU = () => {
 
   // Monthly user limit - same as in Overview
   const USER_LIMIT = 25000;
+  
+  // Effect to reset viewType to 'net-new' when timeRange is 'last-12-months'
+  useEffect(() => {
+    if (timeRange === 'last-12-months') {
+      setViewType('net-new');
+    }
+  }, [timeRange]);
+  
+  // Handle time range change
+  const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
+    setTimeRange(newTimeRange);
+    if (newTimeRange === 'last-12-months') {
+      setViewType('net-new');
+    }
+  };
   
   // Error handling wrapper for state setters
   const safeSetSelectedProject = (project: string) => {
@@ -113,7 +129,7 @@ const ClientMAU = () => {
           onChartTypeChange={setChartType}
           onSortDirectionChange={() => setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc')}
           onMonthChange={(value) => setSelectedMonth(parseInt(value))}
-          onTimeRangeChange={setTimeRange}
+          onTimeRangeChange={handleTimeRangeChange}
           onDataTypeChange={setDataType}
         />
         
@@ -139,3 +155,4 @@ const ClientMAU = () => {
 };
 
 export default ClientMAU;
+
