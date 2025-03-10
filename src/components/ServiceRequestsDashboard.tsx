@@ -11,7 +11,7 @@ export const ServiceRequestsDashboard = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
   const [viewType, setViewType] = useState<ViewType>('net-new');
-  const [chartType, setChartType] = useState<ChartType>('area');
+  const [chartType, setChartType] = useState<ChartType>('bar'); // Changed default to bar
   const [grouping, setGrouping] = useState<GroupingType>('all');
   const [timeRange, setTimeRange] = useState<TimeRangeType>('month-to-date');
   const chartRefs = useRef<{ [key: string]: any }>({});
@@ -23,12 +23,23 @@ export const ServiceRequestsDashboard = () => {
     }
   }, [timeRange]);
   
+  // Effect to set chart type based on view type
+  useEffect(() => {
+    setChartType(viewType === 'net-new' ? 'bar' : 'area');
+  }, [viewType]);
+  
   // Handle time range change
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
     setTimeRange(newTimeRange);
     if (newTimeRange === 'last-12-months') {
       setViewType('net-new');
     }
+  };
+  
+  // Handle view type change
+  const handleViewTypeChange = (newViewType: ViewType) => {
+    setViewType(newViewType);
+    setChartType(newViewType === 'net-new' ? 'bar' : 'area');
   };
   
   // Fetch data using custom hook
@@ -53,12 +64,10 @@ export const ServiceRequestsDashboard = () => {
         <DashboardHeader
           grouping={grouping}
           viewType={viewType}
-          chartType={chartType}
           selectedMonth={selectedMonth}
           sortDirection={sortDirection}
           onGroupingChange={setGrouping}
-          onViewTypeChange={setViewType}
-          onChartTypeChange={setChartType}
+          onViewTypeChange={handleViewTypeChange}
           onSortDirectionChange={() => setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc')}
           onMonthChange={(value) => setSelectedMonth(parseInt(value))}
           timeRange={timeRange}
@@ -83,4 +92,3 @@ export const ServiceRequestsDashboard = () => {
     </div>
   );
 };
-

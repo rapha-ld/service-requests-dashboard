@@ -14,7 +14,7 @@ const Experiments = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
   const [viewType, setViewType] = useState<'net-new' | 'cumulative'>('net-new');
-  const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>('area');
+  const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>('bar'); // Changed default to bar
   const [timeRange, setTimeRange] = useState<TimeRangeType>('month-to-date');
   const chartRefs = useRef<{ [key: string]: any }>({});
 
@@ -25,12 +25,23 @@ const Experiments = () => {
     }
   }, [timeRange]);
   
+  // Effect to set chart type based on view type
+  useEffect(() => {
+    setChartType(viewType === 'net-new' ? 'bar' : 'area');
+  }, [viewType]);
+  
   // Handle time range change
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
     setTimeRange(newTimeRange);
     if (newTimeRange === 'last-12-months') {
       setViewType('net-new');
     }
+  };
+  
+  // Handle view type change
+  const handleViewTypeChange = (newViewType: 'net-new' | 'cumulative') => {
+    setViewType(newViewType);
+    setChartType(newViewType === 'net-new' ? 'bar' : 'area');
   };
 
   const currentDate = new Date(new Date().getFullYear(), selectedMonth);
@@ -140,12 +151,10 @@ const Experiments = () => {
         <DashboardHeader
           grouping="environment" 
           viewType={viewType}
-          chartType={chartType}
           selectedMonth={selectedMonth}
           sortDirection={sortDirection}
           onGroupingChange={() => {}} // Not used in Experiments
-          onViewTypeChange={setViewType}
-          onChartTypeChange={setChartType}
+          onViewTypeChange={handleViewTypeChange}
           onSortDirectionChange={() => setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc')}
           onMonthChange={(value) => setSelectedMonth(parseInt(value))}
           timeRange={timeRange}
@@ -173,4 +182,3 @@ const Experiments = () => {
 };
 
 export default Experiments;
-

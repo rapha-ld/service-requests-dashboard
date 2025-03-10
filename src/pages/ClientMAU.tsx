@@ -17,7 +17,7 @@ const ClientMAU = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
   const [viewType, setViewType] = useState<'net-new' | 'cumulative'>('net-new');
-  const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>('area');
+  const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>('bar'); // Changed default to bar
   const [timeRange, setTimeRange] = useState<TimeRangeType>('month-to-date');
   const [selectedProject, setSelectedProject] = useState<string>("all");
   const [dataType, setDataType] = useState<'mau' | 'connections'>('mau');
@@ -33,12 +33,23 @@ const ClientMAU = () => {
     }
   }, [timeRange]);
   
+  // Effect to set chart type based on view type
+  useEffect(() => {
+    setChartType(viewType === 'net-new' ? 'bar' : 'area');
+  }, [viewType]);
+  
   // Handle time range change
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
     setTimeRange(newTimeRange);
     if (newTimeRange === 'last-12-months') {
       setViewType('net-new');
     }
+  };
+  
+  // Handle view type change
+  const handleViewTypeChange = (newViewType: 'net-new' | 'cumulative') => {
+    setViewType(newViewType);
+    setChartType(newViewType === 'net-new' ? 'bar' : 'area');
   };
   
   // Error handling wrapper for state setters
@@ -118,15 +129,13 @@ const ClientMAU = () => {
         
         <MAUDashboardControls
           viewType={viewType}
-          chartType={chartType}
           selectedMonth={selectedMonth}
           sortDirection={sortDirection}
           timeRange={timeRange}
           selectedProject={selectedProject}
           dataType={dataType}
           setSelectedProject={safeSetSelectedProject}
-          onViewTypeChange={setViewType}
-          onChartTypeChange={setChartType}
+          onViewTypeChange={handleViewTypeChange}
           onSortDirectionChange={() => setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc')}
           onMonthChange={(value) => setSelectedMonth(parseInt(value))}
           onTimeRangeChange={handleTimeRangeChange}
@@ -155,4 +164,3 @@ const ClientMAU = () => {
 };
 
 export default ClientMAU;
-

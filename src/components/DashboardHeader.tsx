@@ -1,5 +1,5 @@
 
-import { ArrowUpDown, BarChart3, LineChart } from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
@@ -7,12 +7,10 @@ import { format } from "date-fns";
 interface DashboardHeaderProps {
   grouping: 'all' | 'environment' | 'relayId' | 'userAgent';
   viewType: 'net-new' | 'cumulative';
-  chartType: 'area' | 'bar' | 'line';
   selectedMonth: number;
   sortDirection: 'desc' | 'asc';
   onGroupingChange: (value: 'all' | 'environment' | 'relayId' | 'userAgent') => void;
   onViewTypeChange: (value: 'net-new' | 'cumulative') => void;
-  onChartTypeChange: (value: 'area' | 'bar' | 'line') => void;
   onSortDirectionChange: () => void;
   onMonthChange: (value: string) => void;
   timeRange: 'month-to-date' | 'last-12-months';
@@ -23,12 +21,10 @@ interface DashboardHeaderProps {
 export const DashboardHeader = ({
   grouping,
   viewType,
-  chartType,
   selectedMonth,
   sortDirection,
   onGroupingChange,
   onViewTypeChange,
-  onChartTypeChange,
   onSortDirectionChange,
   onMonthChange,
   timeRange,
@@ -68,33 +64,6 @@ export const DashboardHeader = ({
         </Select>
       )}
       
-      <div className="flex">
-        <Button
-          variant={chartType === 'area' ? 'default' : 'outline'}
-          onClick={() => onChartTypeChange('area')}
-          className={`rounded-r-none ${
-            chartType === 'area' 
-              ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
-              : ''
-          }`}
-        >
-          <LineChart className="h-4 w-4 mr-2" />
-          Area
-        </Button>
-        <Button
-          variant={chartType === 'bar' ? 'default' : 'outline'}
-          onClick={() => onChartTypeChange('bar')}
-          className={`rounded-l-none border-l-0 ${
-            chartType === 'bar' 
-              ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
-              : ''
-          }`}
-        >
-          <BarChart3 className="h-4 w-4 mr-2" />
-          Bar
-        </Button>
-      </div>
-      
       {/* Only show sort button when not "All dimensions" */}
       {grouping !== 'all' && (
         <Button
@@ -132,6 +101,7 @@ export const DashboardHeader = ({
           Last 12 Months
         </Button>
       </div>
+      
       {timeRange === 'month-to-date' && (
         <Select
           value={selectedMonth.toString()}
@@ -149,6 +119,7 @@ export const DashboardHeader = ({
           </SelectContent>
         </Select>
       )}
+      
       <div className="flex-grow" />
       
       {/* Only show Net New/Cumulative toggle when in Month-to-date view */}
@@ -181,4 +152,3 @@ export const DashboardHeader = ({
     </div>
   );
 };
-
