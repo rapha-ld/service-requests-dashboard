@@ -16,7 +16,7 @@ export const getTitleRoute = (title: string): string => {
   } else if (normalizedTitle.includes('server')) {
     return '/server';
   } else if (normalizedTitle.includes('service')) {
-    return '/';
+    return '/service-requests';
   }
   
   return '/overview';
