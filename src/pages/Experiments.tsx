@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { useState, useRef, useEffect } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
@@ -14,23 +13,20 @@ const Experiments = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
   const [viewType, setViewType] = useState<'net-new' | 'cumulative'>('net-new');
-  const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>('bar'); // Changed default to bar
+  const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>('bar');
   const [timeRange, setTimeRange] = useState<TimeRangeType>('month-to-date');
   const chartRefs = useRef<{ [key: string]: any }>({});
 
-  // Effect to reset viewType to 'net-new' when timeRange is 'last-12-months'
   useEffect(() => {
     if (timeRange === 'last-12-months') {
       setViewType('net-new');
     }
   }, [timeRange]);
   
-  // Effect to set chart type based on view type
   useEffect(() => {
     setChartType(viewType === 'net-new' ? 'bar' : 'area');
   }, [viewType]);
   
-  // Handle time range change
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
     setTimeRange(newTimeRange);
     if (newTimeRange === 'last-12-months') {
@@ -38,7 +34,6 @@ const Experiments = () => {
     }
   };
   
-  // Handle view type change
   const handleViewTypeChange = (newViewType: 'net-new' | 'cumulative') => {
     setViewType(newViewType);
     setChartType(newViewType === 'net-new' ? 'bar' : 'area');
@@ -50,17 +45,15 @@ const Experiments = () => {
   const { data: serviceData } = useQuery({
     queryKey: ['experiment-data', currentDate.toISOString(), timeRange],
     queryFn: () => {
-      const current = getMockData('environment'); // Using environment as base but we'll rename the keys
+      const current = getMockData('environment');
       const previous = getMockData('environment');
 
-      // Rename keys to environment-style naming for experiments
       const experimentNames = [
         'Development', 'Staging', 'Production', 
         'QA', 'Integration', 'UAT', 
         'Training', 'Demo', 'Sandbox'
       ];
       
-      // Create new objects with experiment names as keys
       const currentExperiments: Record<string, any> = {};
       const previousExperiments: Record<string, any> = {};
       
@@ -76,7 +69,6 @@ const Experiments = () => {
         }
       });
 
-      // Transform data for last 12 months
       if (timeRange === 'last-12-months') {
         const last12MonthsData = Object.fromEntries(
           Object.entries(currentExperiments).map(([key, data]) => [
@@ -100,7 +92,6 @@ const Experiments = () => {
         };
       }
       
-      // Transform data for rolling 30 days
       if (timeRange === 'rolling-30-day') {
         const rolling30DayData = Object.fromEntries(
           Object.entries(currentExperiments).map(([key, data]) => [
@@ -141,7 +132,7 @@ const Experiments = () => {
 
   const groups = Object.entries(serviceData.current).map(([id, data]) => ({
     id,
-    title: id, // Using the environment name directly
+    title: id,
     value: serviceData.currentTotals[id],
     data,
     percentChange: calculatePercentChange(
@@ -160,10 +151,12 @@ const Experiments = () => {
         env.data.reduce((sum, item) => sum + item.value, 0)
       ));
 
-  const allExperimentsData = Object.values(serviceData.current)[0].map((_, index) => ({
-    day: ['last-12-months', 'rolling-30-day'].includes(timeRange)
-      ? Object.values(serviceData.current)[0][index].day
-      : (index + 1).toString(),
+  const allExperimentsData = Object.values(serviceData.current)[0].map((dataPoint, index) => ({
+    day: timeRange === 'rolling-30-day'
+      ? dataPoint.day
+      : timeRange === 'last-12-months'
+        ? Object.values(serviceData.current)[0][index].day
+        : (index + 1).toString(),
     value: Object.values(serviceData.current).reduce((sum, data) => sum + data[index].value, 0)
   }));
 
@@ -194,11 +187,11 @@ const Experiments = () => {
           viewType={viewType}
           chartType={chartType}
           maxValue={maxValue}
-          grouping="environment" // We need to pass this but it won't be used visibly
+          grouping="environment"
           chartRefs={chartRefs}
           onExportChart={() => {}}
-          unitLabel="keys" // Change unit from "reqs" to "keys"
-          useViewDetailsButton={false} // Set to false to remove view details buttons
+          unitLabel="keys"
+          useViewDetailsButton={false}
         />
       </div>
     </div>
