@@ -1,4 +1,6 @@
 
+import { GroupingType } from "@/types/serviceData";
+
 export const generateMockMonthlyData = (baseValue: number, date: Date) => {
   const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
   return Array.from({ length: daysInMonth }, (_, i) => ({
@@ -38,4 +40,3 @@ export const getMockData = (grouping: 'environment' | 'relayId' | 'userAgent') =
       };
   }
 };
-

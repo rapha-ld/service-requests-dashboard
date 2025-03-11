@@ -2,7 +2,7 @@
 import { getMockData } from "./mockDataGenerator";
 import { getTotalValue } from "./dataTransformers";
 import { generateLast12MonthsData, generateRolling30DayData, combineDataSets, processCombinedData } from "./timeRangeDataGenerators";
-import { TimeRangeType } from "@/types/serviceData";
+import { TimeRangeType, GroupingType } from "@/types/serviceData";
 
 // Handle 'all' dimensions data
 export const handleAllDimensionsData = (timeRange: TimeRangeType) => {
@@ -33,9 +33,10 @@ export const handleAllDimensionsData = (timeRange: TimeRangeType) => {
 };
 
 // Handle specific dimension data
-export const handleSpecificDimensionData = (grouping: string, timeRange: TimeRangeType) => {
-  const current = getMockData(grouping);
-  const previous = getMockData(grouping);
+export const handleSpecificDimensionData = (grouping: GroupingType, timeRange: TimeRangeType) => {
+  // Convert the grouping string to the correct type for getMockData
+  const current = getMockData(grouping as 'environment' | 'relayId' | 'userAgent');
+  const previous = getMockData(grouping as 'environment' | 'relayId' | 'userAgent');
 
   if (timeRange === 'last-12-months') {
     const last12MonthsData = generateLast12MonthsData(current);
