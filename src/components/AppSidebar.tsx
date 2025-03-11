@@ -5,7 +5,7 @@ import {
   Stethoscope, 
   LayoutDashboard, 
   Users, 
-  Flask, 
+  BeakerIcon, 
   Download,
   Network,
   Server as ServerIcon,
@@ -42,7 +42,7 @@ export function AppSidebar() {
     {
       title: "Experiments",
       url: "/experiments",
-      icon: Flask,
+      icon: BeakerIcon,
     },
     {
       title: "Data Export",
