@@ -55,10 +55,10 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar>
+    <Sidebar variant="floating">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-sm font-semibold tracking-wide">Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {sidebarItems.map((item) => (
@@ -67,8 +67,9 @@ export function AppSidebar() {
                     isActive={isActive(item.route)}
                     onClick={() => navigate(item.route)}
                     tooltip={item.title}
+                    className="font-medium"
                   >
-                    <item.icon />
+                    <item.icon className="size-5" />
                     <span>{item.title}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

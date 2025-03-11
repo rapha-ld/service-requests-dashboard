@@ -29,7 +29,9 @@ const App = () => (
             <AppSidebar />
             <SidebarInset>
               <div className="w-full max-w-none mx-0 px-0">
-                <NavigationTabs />
+                <div className="fixed top-0 w-full z-10 bg-background border-b">
+                  <NavigationTabs />
+                </div>
                 <div className="p-6 pt-20">
                   <Routes>
                     <Route path="/" element={<Navigate to="/overview" replace />} />
