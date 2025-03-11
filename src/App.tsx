@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Overview from "./pages/Overview";
 import ClientMAU from "./pages/ClientMAU";
+import ClientConnections from "./pages/ClientConnections";
 import Experiments from "./pages/Experiments";
 import DataExport from "./pages/DataExport";
 import Server from "./pages/Server";
@@ -29,6 +30,7 @@ const App = () => (
               <Route path="/service-requests" element={<Index />} />
               <Route path="/overview" element={<Overview />} />
               <Route path="/client-mau" element={<ClientMAU />} />
+              <Route path="/client-connections" element={<ClientConnections />} />
               <Route path="/experiments" element={<Experiments />} />
               <Route path="/data-export" element={<DataExport />} />
               <Route path="/server" element={<Server />} />

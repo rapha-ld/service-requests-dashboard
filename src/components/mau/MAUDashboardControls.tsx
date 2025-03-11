@@ -4,7 +4,6 @@ import { ArrowUpDown } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TimeRangeType } from "@/hooks/useMAUData";
 import { ProjectSelector } from "@/components/mau/ProjectSelector";
-import { DataTypeToggle } from "@/components/mau/DataTypeToggle";
 import { format } from "date-fns";
 
 interface MAUDashboardControlsProps {
@@ -14,14 +13,12 @@ interface MAUDashboardControlsProps {
   sortDirection: 'desc' | 'asc';
   timeRange: TimeRangeType;
   selectedProject: string;
-  dataType: 'mau' | 'connections';
   setSelectedProject: (value: string) => void;
   onViewTypeChange: (value: 'net-new' | 'cumulative') => void;
   onChartTypeChange: (value: 'area' | 'bar' | 'line') => void;
   onSortDirectionChange: () => void;
   onMonthChange: (value: string) => void;
   onTimeRangeChange: (value: TimeRangeType) => void;
-  onDataTypeChange: (value: 'mau' | 'connections') => void;
 }
 
 export const MAUDashboardControls = ({
@@ -31,14 +28,12 @@ export const MAUDashboardControls = ({
   sortDirection,
   timeRange,
   selectedProject,
-  dataType,
   setSelectedProject,
   onViewTypeChange,
   onChartTypeChange,
   onSortDirectionChange,
   onMonthChange,
-  onTimeRangeChange,
-  onDataTypeChange
+  onTimeRangeChange
 }: MAUDashboardControlsProps) => {
   // Generate abbreviated month options with year
   const getMonthOptions = () => {
@@ -59,11 +54,6 @@ export const MAUDashboardControls = ({
       <ProjectSelector 
         selectedProject={selectedProject}
         setSelectedProject={setSelectedProject}
-      />
-      
-      <DataTypeToggle
-        dataType={dataType}
-        onDataTypeChange={onDataTypeChange}
       />
       
       <div className="flex">

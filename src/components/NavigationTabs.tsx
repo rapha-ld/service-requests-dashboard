@@ -15,7 +15,8 @@ import { Button } from "@/components/ui/button";
 
 const ALL_TABS = [
   { id: "overview", label: "Overview", path: "/overview" },
-  { id: "client-mau", label: "Client", path: "/client-mau" },
+  { id: "client-mau", label: "Client MAU", path: "/client-mau" },
+  { id: "client-connections", label: "Client Connections", path: "/client-connections" },
   { id: "experiments", label: "Experiments", path: "/experiments" },
   { id: "data-export", label: "Data Export", path: "/data-export" },
   { id: "server", label: "Server", path: "/server" },

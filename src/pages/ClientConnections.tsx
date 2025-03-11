@@ -12,7 +12,7 @@ import {
   calculateMaxValue
 } from "@/utils/mauDataTransformers";
 
-const ClientMAU = () => {
+const ClientConnections = () => {
   // State management
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
@@ -22,9 +22,9 @@ const ClientMAU = () => {
   const [selectedProject, setSelectedProject] = useState<string>("all");
   const chartRefs = useRef<{ [key: string]: any }>({});
 
-  // Monthly user limit - same as in Overview
-  const USER_LIMIT = 25000;
-  
+  // Connection multiplier
+  const connectionMultiplier = 4;
+
   // Effect to reset viewType to 'net-new' when timeRange is 'last-12-months'
   useEffect(() => {
     if (timeRange === 'last-12-months') {
@@ -86,7 +86,17 @@ const ClientMAU = () => {
   const safePreviousTotals = safeData?.previousTotals || {};
 
   // Transform the data into chart groups
-  const groups = transformDataToChartGroups(safeCurrent, safeCurrentTotals, safePreviousTotals);
+  const baseGroups = transformDataToChartGroups(safeCurrent, safeCurrentTotals, safePreviousTotals);
+  
+  // Create connections data by applying multiplier to MAU data
+  const groups = baseGroups.map(group => ({
+    ...group,
+    data: group.data.map(item => ({
+      ...item,
+      value: Math.floor(item.value * connectionMultiplier)
+    })),
+    value: Math.floor(group.value * connectionMultiplier)
+  }));
   
   // Sort the groups
   const sortedGroups = [...groups].sort((a, b) => 
@@ -96,16 +106,16 @@ const ClientMAU = () => {
   // Calculate max value for the charts
   const maxValue = calculateMaxValue(sortedGroups, viewType);
   
-  // Determine if we should show the threshold based on project selection
-  const showThreshold = selectedProject === "all";
-
-  // Prepare the combined data for all environments
-  let allEnvironmentsData = getLast12MonthsData(safeCurrent, timeRange);
+  // Prepare the combined data for all environments with connection multiplier
+  let allEnvironmentsData = getLast12MonthsData(safeCurrent, timeRange).map(item => ({
+    day: item.day,
+    value: Math.floor(item.value * connectionMultiplier)
+  }));
 
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
-        <MAUHeader title="Client MAU" />
+        <MAUHeader title="Client Connections" />
         
         <MAUDashboardControls
           viewType={viewType}
@@ -129,18 +139,17 @@ const ClientMAU = () => {
           sortedGroups={sortedGroups}
           viewType={viewType}
           chartType={chartType}
-          maxValue={Math.max(maxValue, USER_LIMIT)}
+          maxValue={maxValue}
           grouping="environment"
           chartRefs={chartRefs}
           onExportChart={() => {}}
           useViewDetailsButton={false}
-          unitLabel="users"
-          showThreshold={showThreshold}
-          threshold={USER_LIMIT}
+          unitLabel="connections"
+          showThreshold={false}
         />
       </div>
     </div>
   );
 };
 
-export default ClientMAU;
+export default ClientConnections;

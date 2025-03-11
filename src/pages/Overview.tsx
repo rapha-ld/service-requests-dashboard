@@ -27,6 +27,16 @@ const Overview = () => {
       detailsLink: "/client-mau"
     },
     {
+      title: "Client Connections",
+      value: 73800,
+      unit: "connections",
+      limit: 100000,
+      percentUsed: 73.8, // 73800/100000 * 100
+      status: "moderate" as const,
+      chartData: generateDailyData(73800, 'steady'),
+      detailsLink: "/client-connections"
+    },
+    {
       title: "Experiment Events",
       value: 325765,
       unit: "",
