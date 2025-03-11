@@ -69,6 +69,17 @@ export const MAUDashboardControls = ({
           Month-to-date
         </Button>
         <Button
+          variant={timeRange === 'rolling-30-day' ? 'default' : 'outline'}
+          onClick={() => onTimeRangeChange('rolling-30-day')}
+          className={`rounded-none border-l-0 ${
+            timeRange === 'rolling-30-day' 
+              ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
+              : ''
+          }`}
+        >
+          Rolling 30 Day
+        </Button>
+        <Button
           variant={timeRange === 'last-12-months' ? 'default' : 'outline'}
           onClick={() => onTimeRangeChange('last-12-months')}
           className={`rounded-l-none border-l-0 ${
@@ -99,8 +110,8 @@ export const MAUDashboardControls = ({
       )}
       <div className="flex-grow" />
       
-      {/* Only show Net New/Cumulative toggle when in Month-to-date view */}
-      {timeRange === 'month-to-date' && (
+      {/* Only show Net New/Cumulative toggle when not in Last 12 Months view */}
+      {timeRange !== 'last-12-months' && (
         <div className="flex">
           <Button
             variant={viewType === 'net-new' ? 'default' : 'outline'}

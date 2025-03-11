@@ -6,9 +6,9 @@ import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
 import { getMockData } from "@/utils/mockDataGenerator";
 import { getTotalValue, calculatePercentChange } from "@/utils/dataTransformers";
-import { format, subMonths } from "date-fns";
+import { format, subMonths, subDays } from "date-fns";
 
-type TimeRangeType = 'month-to-date' | 'last-12-months';
+type TimeRangeType = 'month-to-date' | 'last-12-months' | 'rolling-30-day';
 
 const Experiments = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
@@ -99,6 +99,30 @@ const Experiments = () => {
           )
         };
       }
+      
+      // Transform data for rolling 30 days
+      if (timeRange === 'rolling-30-day') {
+        const rolling30DayData = Object.fromEntries(
+          Object.entries(currentExperiments).map(([key, data]) => [
+            key,
+            Array.from({ length: 30 }, (_, i) => ({
+              day: format(subDays(new Date(), 29 - i), 'MMM d'),
+              value: Math.floor(Math.random() * 500)
+            }))
+          ])
+        );
+        
+        return {
+          current: rolling30DayData,
+          previous: previousExperiments,
+          currentTotals: Object.fromEntries(
+            Object.entries(rolling30DayData).map(([key, data]) => [key, getTotalValue(data)])
+          ),
+          previousTotals: Object.fromEntries(
+            Object.entries(previousExperiments).map(([key, data]) => [key, getTotalValue(data)])
+          )
+        };
+      }
 
       return {
         current: currentExperiments,
@@ -137,7 +161,7 @@ const Experiments = () => {
       ));
 
   const allExperimentsData = Object.values(serviceData.current)[0].map((_, index) => ({
-    day: timeRange === 'last-12-months' 
+    day: ['last-12-months', 'rolling-30-day'].includes(timeRange)
       ? Object.values(serviceData.current)[0][index].day
       : (index + 1).toString(),
     value: Object.values(serviceData.current).reduce((sum, data) => sum + data[index].value, 0)
