@@ -8,7 +8,7 @@ interface ChartSearchProps {
   placeholder?: string;
 }
 
-export const ChartSearch = ({ onSearch, placeholder = "Search charts..." }: ChartSearchProps) => {
+export const ChartSearch = ({ onSearch, placeholder = "Search..." }: ChartSearchProps) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
