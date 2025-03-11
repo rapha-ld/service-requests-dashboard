@@ -56,8 +56,8 @@ export const ChartComponent = ({
       <ChartComponent ref={chartRef} data={transformedData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
         <defs>
           <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#6E6F96" stopOpacity={1} />
-            <stop offset="100%" stopColor="#6E6F96" stopOpacity={0.3} />
+            <stop offset="0%" stopColor="#30459B" stopOpacity={1} />
+            <stop offset="100%" stopColor="#30459B" stopOpacity={0.3} />
           </linearGradient>
         </defs>
         <XAxis 
@@ -83,7 +83,7 @@ export const ChartComponent = ({
           <Area
             type="monotone"
             dataKey="value"
-            stroke="#6E6F96"
+            stroke="#30459B"
             fill="url(#colorGradient)"
             strokeWidth={2}
             connectNulls={true}
@@ -92,7 +92,7 @@ export const ChartComponent = ({
         {chartType === 'bar' && (
           <Bar
             dataKey="value"
-            fill="#6E6F96"
+            fill="#30459B"
             radius={[1.5, 1.5, 0, 0]}
           />
         )}
@@ -100,7 +100,7 @@ export const ChartComponent = ({
           <Line
             type="monotone"
             dataKey="value"
-            stroke="#6E6F96"
+            stroke="#30459B"
             strokeWidth={2}
             dot={false}
             connectNulls={true}
@@ -141,4 +141,3 @@ export const ChartComponent = ({
     </ResponsiveContainer>
   );
 };
-

@@ -145,8 +145,8 @@ export const SummaryCard = ({
               <AreaChart data={transformedChartData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
                 <defs>
                   <linearGradient id={`colorGradient-${title.replace(/\s+/g, '')}`} x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#6E6F96" stopOpacity={1} />
-                    <stop offset="100%" stopColor="#6E6F96" stopOpacity={0.3} />
+                    <stop offset="0%" stopColor="#30459B" stopOpacity={1} />
+                    <stop offset="100%" stopColor="#30459B" stopOpacity={0.3} />
                   </linearGradient>
                 </defs>
                 <XAxis 
@@ -171,7 +171,7 @@ export const SummaryCard = ({
                 <Area
                   type="monotone"
                   dataKey="value"
-                  stroke="#6E6F96"
+                  stroke="#30459B"
                   fill={`url(#colorGradient-${title.replace(/\s+/g, '')})`}
                   strokeWidth={2}
                   connectNulls={true}
