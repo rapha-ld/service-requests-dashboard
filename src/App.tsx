@@ -15,6 +15,8 @@ import ClientConnections from "./pages/ClientConnections";
 import Experiments from "./pages/Experiments";
 import DataExport from "./pages/DataExport";
 import Server from "./pages/Server";
+import Details from "./pages/Details";
+import Diagnostics from "./pages/Diagnostics";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +44,8 @@ const App = () => (
                     <Route path="/experiments" element={<Experiments />} />
                     <Route path="/data-export" element={<DataExport />} />
                     <Route path="/server" element={<Server />} />
+                    <Route path="/details" element={<Details />} />
+                    <Route path="/diagnostics" element={<Diagnostics />} />
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>

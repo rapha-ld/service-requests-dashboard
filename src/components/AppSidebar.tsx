@@ -15,19 +15,19 @@ import {
 
 const sidebarItems = [
   {
-    title: "Plan Details",
+    title: "Details",
     icon: LayoutDashboard,
-    route: "/overview",
+    route: "/details",
   },
   {
-    title: "Plan Usage",
+    title: "Usage",
     icon: Activity,
     route: "/overview",
   },
   {
     title: "Diagnostics",
     icon: Stethoscope,
-    route: "/client-connections",
+    route: "/diagnostics",
   },
 ];
 
@@ -58,7 +58,7 @@ export function AppSidebar() {
     <Sidebar variant="floating">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-sm font-semibold tracking-wide">Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-sm font-semibold tracking-wide">Plan</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {sidebarItems.map((item) => (
