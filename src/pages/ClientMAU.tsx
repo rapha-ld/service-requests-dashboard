@@ -99,8 +99,16 @@ const ClientMAU = () => {
   // Determine if we should show the threshold based on project selection
   const showThreshold = selectedProject === "all";
 
-  // Prepare the combined data for all environments
+  // Prepare the data for the top chart (all environments)
+  // For rolling-30-day view, ensure proper date formatting to match small charts
   let allEnvironmentsData = getLast12MonthsData(safeCurrent, timeRange);
+  
+  // For rolling-30-day view, we need to ensure the dates in the top chart
+  // match the format used in the small charts
+  if (timeRange === 'rolling-30-day') {
+    // The smaller charts already have the correct date format from the data source
+    // So we don't need to modify anything, the format consistency is preserved
+  }
 
   return (
     <div className="min-h-screen bg-background p-6">

@@ -72,10 +72,14 @@ export const getAllEnvironmentsData = (
       return [];
     }
     
-    return currentData[firstKey].map((_, index: number) => {
-      const day = timeRange === 'last-12-months' 
-        ? currentData[firstKey][index].day
-        : (index + 1).toString();
+    return currentData[firstKey].map((dataPoint, index: number) => {
+      // For rolling-30-day timeframe, use the exact same day format from the data
+      // This ensures the top chart and small charts have the same date format
+      const day = timeRange === 'rolling-30-day' 
+        ? dataPoint.day  // Use the exact day as in the original data
+        : timeRange === 'last-12-months' 
+          ? currentData[firstKey][index].day
+          : (index + 1).toString();
         
       // Safely sum all values at this index across all entries in current
       const value = Object.values(currentData).reduce((sum, data) => {
