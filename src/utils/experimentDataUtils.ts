@@ -53,17 +53,22 @@ export function getExperimentsTotalData(
     return [];
   }
   
-  return serviceData.current[firstKey].map((dataPoint: any, index: number) => ({
-    day: timeRange === 'rolling-30-day'
-      ? dataPoint.day
-      : timeRange === 'last-12-months'
-        ? serviceData.current[firstKey][index].day
-        : (index + 1).toString(),
-    value: Object.values(serviceData.current).reduce((sum: number, data: any) => {
+  return serviceData.current[firstKey].map((dataPoint: any, index: number) => {
+    // Calculate the total value by summing up values from all environments
+    const totalValue = Object.values(serviceData.current).reduce((sum: number, data: any) => {
       if (Array.isArray(data) && data[index] && typeof data[index].value === 'number') {
         return sum + data[index].value;
       }
       return sum;
-    }, 0)
-  }));
+    }, 0);
+
+    return {
+      day: timeRange === 'rolling-30-day'
+        ? dataPoint.day
+        : timeRange === 'last-12-months'
+          ? serviceData.current[firstKey][index].day
+          : (index + 1).toString(),
+      value: totalValue as number // Ensure the value is explicitly typed as number
+    };
+  });
 }
