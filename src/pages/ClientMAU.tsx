@@ -11,7 +11,6 @@ import {
   getLast12MonthsData, 
   calculateMaxValue
 } from "@/utils/mauDataTransformers";
-import { generateDailyData } from "@/utils/chartDataGenerator";
 
 const ClientMAU = () => {
   // State management
@@ -25,9 +24,6 @@ const ClientMAU = () => {
 
   // Monthly user limit - same as in Overview
   const USER_LIMIT = 25000;
-  
-  // Client MAU value from the Overview page - ensures the same value is used on both pages
-  const CLIENT_MAU_VALUE = 18450;
   
   // Effect to reset viewType to 'net-new' when timeRange is 'last-12-months'
   useEffect(() => {
@@ -103,10 +99,8 @@ const ClientMAU = () => {
   // Determine if we should show the threshold based on project selection
   const showThreshold = selectedProject === "all";
 
-  // Use the exact same chart data as shown in the Overview page when viewing "all" projects
-  let allEnvironmentsData = selectedProject === "all" 
-    ? generateDailyData(CLIENT_MAU_VALUE, 'steady')
-    : getLast12MonthsData(safeCurrent, timeRange);
+  // Prepare the combined data for all environments
+  let allEnvironmentsData = getLast12MonthsData(safeCurrent, timeRange);
 
   return (
     <div className="min-h-screen bg-background p-6">
