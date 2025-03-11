@@ -16,7 +16,7 @@ export const LayoutToggle = ({ layoutMode, setLayoutMode }: LayoutToggleProps) =
         title="3 charts per row"
         className={`rounded-r-none ${
           layoutMode === 'compact' 
-            ? 'dark:bg-[#0B144D] dark:border-[#7084FF] dark:text-white bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
+            ? 'dark:bg-[#0B144D] dark:border-[#7084FF] dark:text-white bg-[#F6F8FF] border-[#425EFF] text-[#425EFF] border-2' 
             : ''
         }`}
       >
@@ -28,7 +28,7 @@ export const LayoutToggle = ({ layoutMode, setLayoutMode }: LayoutToggleProps) =
         title="6 charts per row"
         className={`rounded-l-none border-l-0 ${
           layoutMode === 'expanded' 
-            ? 'dark:bg-[#0B144D] dark:border-[#7084FF] dark:text-white bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
+            ? 'dark:bg-[#0B144D] dark:border-[#7084FF] dark:text-white bg-[#F6F8FF] border-[#425EFF] text-[#425EFF] border-2' 
             : ''
         }`}
       >
