@@ -1,5 +1,7 @@
 
 import { SmallMultiple } from "@/components/SmallMultiple";
+import { ChartSearch } from "@/components/charts/ChartSearch";
+import { useState } from "react";
 
 interface ChartGroup {
   id: string;
@@ -36,12 +38,26 @@ export const ChartGrid = ({
   threshold,
   individualMaxValues = false
 }: ChartGridProps) => {
+  const [filteredGroups, setFilteredGroups] = useState(sortedGroups);
+
+  // Handle search filtering
+  const handleSearch = (term: string) => {
+    if (!term.trim()) {
+      setFilteredGroups(sortedGroups);
+    } else {
+      const filtered = sortedGroups.filter(group => 
+        group.title.toLowerCase().includes(term.toLowerCase())
+      );
+      setFilteredGroups(filtered);
+    }
+  };
+
   // Calculate the shared maximum value for all charts based on the highest value chart
   const calculateSharedMaxValue = () => {
-    if (sortedGroups.length === 0) return maxValue;
+    if (filteredGroups.length === 0) return maxValue;
     
     // For each chart, determine its maximum value based on the view type
-    const chartMaxValues = sortedGroups.map(group => {
+    const chartMaxValues = filteredGroups.map(group => {
       if (viewType === 'net-new') {
         return Math.max(...group.data.map(d => d.value), 0);
       } else {
@@ -58,28 +74,38 @@ export const ChartGrid = ({
   const sharedMaxValue = calculateSharedMaxValue();
 
   return (
-    <div className={`grid grid-cols-1 gap-4 ${
-      layoutMode === 'compact' 
-        ? 'md:grid-cols-2 lg:grid-cols-3' 
-        : 'md:grid-cols-3 lg:grid-cols-6'
-    }`}>
-      {sortedGroups.map(group => (
-        <SmallMultiple
-          key={group.id}
-          title={group.title}
-          data={group.data}
-          color="#2AB4FF"
-          unit={unitLabel}
-          viewType={viewType}
-          maxValue={sharedMaxValue}
-          chartType={chartType}
-          chartRef={chartRefs.current[group.title]}
-          onExport={onExportChart}
-          useViewDetails={useViewDetailsButton}
-          showThreshold={showThreshold}
-          threshold={threshold}
-        />
-      ))}
-    </div>
+    <>
+      <ChartSearch onSearch={handleSearch} />
+      
+      <div className={`grid grid-cols-1 gap-4 ${
+        layoutMode === 'compact' 
+          ? 'md:grid-cols-2 lg:grid-cols-3' 
+          : 'md:grid-cols-3 lg:grid-cols-6'
+      }`}>
+        {filteredGroups.map(group => (
+          <SmallMultiple
+            key={group.id}
+            title={group.title}
+            data={group.data}
+            color="#2AB4FF"
+            unit={unitLabel}
+            viewType={viewType}
+            maxValue={sharedMaxValue}
+            chartType={chartType}
+            chartRef={chartRefs.current[group.title]}
+            onExport={onExportChart}
+            useViewDetails={useViewDetailsButton}
+            showThreshold={showThreshold}
+            threshold={threshold}
+          />
+        ))}
+      </div>
+      
+      {filteredGroups.length === 0 && (
+        <div className="text-center py-6 text-muted-foreground">
+          No charts match your search criteria.
+        </div>
+      )}
+    </>
   );
 };

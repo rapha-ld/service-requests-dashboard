@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TotalChart } from "@/components/charts/TotalChart";
 import { LayoutToggle } from "@/components/charts/LayoutToggle";
 import { ChartGrid } from "@/components/charts/ChartGrid";
@@ -70,10 +70,12 @@ export const DashboardCharts = ({
 
       {!showOnlyTotal && (
         <>
-          <LayoutToggle 
-            layoutMode={layoutMode}
-            setLayoutMode={setLayoutMode}
-          />
+          <div className="flex justify-between items-center mb-4">
+            <LayoutToggle 
+              layoutMode={layoutMode}
+              setLayoutMode={setLayoutMode}
+            />
+          </div>
 
           <ChartGrid
             sortedGroups={sortedGroups}
