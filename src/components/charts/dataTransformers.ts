@@ -1,3 +1,19 @@
+import { format } from 'date-fns';
+
+export const getRequestStatus = (value: number) => {
+  if (value <= 200) return 'good';
+  if (value <= 400) return 'moderate';
+  return 'poor';
+};
+
+export const getTotalValue = (data: Array<{ day: string; value: number }>) => {
+  return data.reduce((sum, item) => sum + item.value, 0);
+};
+
+export const calculatePercentChange = (currentValue: number, previousValue: number) => {
+  if (previousValue === 0) return 0;
+  return ((currentValue - previousValue) / previousValue) * 100;
+};
 
 // Transform raw data to cumulative values if needed
 export const transformData = (
@@ -12,6 +28,21 @@ export const transformData = (
         day: curr.day,
         value: null
       }];
+    }
+    
+    // For rolling 30-day view, check if we're crossing a month boundary
+    if (index > 0) {
+      const prevDate = new Date(formatTooltipDate(acc[index - 1].day));
+      const currDate = new Date(formatTooltipDate(curr.day));
+      
+      // If the current day is in a different month than the previous day,
+      // start cumulative sum from current value
+      if (prevDate.getMonth() !== currDate.getMonth()) {
+        return [...acc, {
+          day: curr.day,
+          value: curr.value
+        }];
+      }
     }
     
     const previousItem = index > 0 ? acc[index - 1] : null;
@@ -30,4 +61,16 @@ export const calculateAverage = (data: Array<{ day: string; value: number | null
   return nonNullValues.length > 0 
     ? nonNullValues.reduce((sum, value) => sum + value, 0) / nonNullValues.length 
     : 0;
+};
+
+// Format date for tooltip display
+export const formatTooltipDate = (day: string) => {
+  if (day.includes(' ')) return day;
+  
+  if (!isNaN(parseInt(day))) {
+    const date = new Date(new Date().getFullYear(), 0, parseInt(day));
+    return format(date, 'MMM dd, yyyy');
+  }
+  
+  return day;
 };
