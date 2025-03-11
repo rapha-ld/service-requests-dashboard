@@ -57,7 +57,7 @@ export const calculateMaxValue = (
 export const getAllEnvironmentsData = (
   grouping: 'all' | 'environment' | 'relayId' | 'userAgent',
   serviceData: any,
-  timeRange: 'month-to-date' | 'last-12-months',
+  timeRange: 'month-to-date' | 'last-12-months' | 'rolling-30-day',
   sortedGroups: ChartGroup[]
 ) => {
   if (grouping === 'all') {
