@@ -45,7 +45,7 @@ export function calculateMaxValue(
 export function getExperimentsTotalData(
   serviceData: any,
   timeRange: TimeRangeType
-) {
+): Array<{ day: string; value: number }> {
   if (!serviceData || !serviceData.current) return [];
   
   const firstKey = Object.keys(serviceData.current)[0];
