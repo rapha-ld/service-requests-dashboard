@@ -29,7 +29,7 @@ const App = () => (
             <AppSidebar />
             <SidebarInset>
               <div className="w-full max-w-none mx-0 px-0">
-                <div className="fixed top-0 w-full z-10 bg-background border-b">
+                <div className="fixed top-0 right-0 w-[calc(100%-var(--sidebar-width))] z-10 bg-background border-b">
                   <NavigationTabs />
                 </div>
                 <div className="p-6 pt-20">

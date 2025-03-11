@@ -5,6 +5,7 @@ import { Sun, Moon } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTheme } from "@/hooks/useTheme";
 import { Button } from "@/components/ui/button";
+import { useSidebar } from "@/components/ui/sidebar";
 
 const ALL_TABS = [
   { id: "overview", label: "Overview", path: "/overview" },
@@ -19,12 +20,13 @@ const ALL_TABS = [
 export function NavigationTabs() {
   const location = useLocation();
   const { theme, toggleTheme } = useTheme();
+  const { state } = useSidebar();
   
   const currentPath = location.pathname;
   const activeTab = ALL_TABS.find(tab => tab.path === currentPath)?.id || "service-requests";
 
   return (
-    <div className="fixed top-0 left-0 right-0 flex w-full items-center border-b bg-background z-10">
+    <div className="flex w-full items-center border-b bg-background">
       <Tabs value={activeTab} className="w-full">
         <TabsList className="h-14 px-0 bg-transparent justify-start">
           {ALL_TABS.map((tab) => (
