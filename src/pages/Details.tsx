@@ -4,16 +4,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 export default function Details() {
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-3xl font-bold">Plan Details</h1>
+      <h1 className="text-3xl font-bold">Billing</h1>
       <Card>
         <CardHeader>
-          <CardTitle>Details</CardTitle>
+          <CardTitle>Billing</CardTitle>
           <CardDescription>
-            Plan details page content will be displayed here.
+            Billing page content will be displayed here.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <p>This is an empty placeholder for the Plan Details page.</p>
+          <p>This is an empty placeholder for the Billing page.</p>
         </CardContent>
       </Card>
     </div>

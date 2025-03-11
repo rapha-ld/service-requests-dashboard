@@ -15,7 +15,7 @@ import {
 
 const sidebarItems = [
   {
-    title: "Details",
+    title: "Billing",
     icon: LayoutDashboard,
     route: "/details",
   },
