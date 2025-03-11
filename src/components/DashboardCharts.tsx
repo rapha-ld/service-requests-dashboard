@@ -69,28 +69,20 @@ export const DashboardCharts = ({
       />
 
       {!showOnlyTotal && (
-        <>
-          <div className="flex justify-between items-center mb-4">
-            <LayoutToggle 
-              layoutMode={layoutMode}
-              setLayoutMode={setLayoutMode}
-            />
-          </div>
-
-          <ChartGrid
-            sortedGroups={sortedGroups}
-            layoutMode={layoutMode}
-            viewType={viewType}
-            chartType={chartType}
-            maxValue={maxValue}
-            chartRefs={chartRefs}
-            onExportChart={onExportChart}
-            useViewDetailsButton={useViewDetailsButton}
-            unitLabel={unitLabel}
-            showThreshold={false} // Never show threshold on individual charts
-            threshold={threshold}
-          />
-        </>
+        <ChartGrid
+          sortedGroups={sortedGroups}
+          layoutMode={layoutMode}
+          viewType={viewType}
+          chartType={chartType}
+          maxValue={maxValue}
+          chartRefs={chartRefs}
+          onExportChart={onExportChart}
+          useViewDetailsButton={useViewDetailsButton}
+          unitLabel={unitLabel}
+          showThreshold={false} // Never show threshold on individual charts
+          threshold={threshold}
+          onLayoutModeChange={setLayoutMode}
+        />
       )}
     </>
   );

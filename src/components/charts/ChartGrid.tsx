@@ -1,6 +1,7 @@
 
 import { SmallMultiple } from "@/components/SmallMultiple";
 import { ChartSearch } from "@/components/charts/ChartSearch";
+import { LayoutToggle } from "@/components/charts/LayoutToggle";
 import { useState } from "react";
 
 interface ChartGroup {
@@ -22,6 +23,7 @@ interface ChartGridProps {
   showThreshold?: boolean;
   threshold?: number;
   individualMaxValues?: boolean;
+  onLayoutModeChange: (mode: 'compact' | 'expanded') => void;
 }
 
 export const ChartGrid = ({
@@ -36,7 +38,8 @@ export const ChartGrid = ({
   unitLabel,
   showThreshold = false,
   threshold,
-  individualMaxValues = false
+  individualMaxValues = false,
+  onLayoutModeChange
 }: ChartGridProps) => {
   const [filteredGroups, setFilteredGroups] = useState(sortedGroups);
 
@@ -75,7 +78,13 @@ export const ChartGrid = ({
 
   return (
     <>
-      <ChartSearch onSearch={handleSearch} />
+      <div className="flex items-center justify-between mb-4">
+        <ChartSearch onSearch={handleSearch} />
+        <LayoutToggle 
+          layoutMode={layoutMode}
+          setLayoutMode={onLayoutModeChange}
+        />
+      </div>
       
       <div className={`grid grid-cols-1 gap-4 ${
         layoutMode === 'compact' 
