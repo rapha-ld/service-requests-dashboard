@@ -23,39 +23,6 @@ export function NavigationTabs() {
   const currentPath = location.pathname;
   const activeTab = ALL_TABS.find(tab => tab.path === currentPath)?.id || "service-requests";
 
-  return (
-    <div className="fixed top-0 left-0 right-0 flex w-full items-center border-b bg-background z-10">
-      <Tabs value={activeTab} className="w-full">
-        <TabsList className="h-14 px-0 bg-transparent justify-start">
-          {ALL_TABS.map((tab) => (
-            <TabsTrigger
-              key={tab.id}
-              value={tab.id}
-              className="h-full px-6 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
-              asChild
-            >
-              <Link to={tab.path}>{tab.label}</Link>
-            </TabsTrigger>
-          ))}
-        </TabsList>
-      </Tabs>
-      
-      <div className="flex-shrink-0 mr-2 flex items-center">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={toggleTheme}
-          className="rounded-full"
-          title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
-        >
-          {theme === 'light' ? (
-            <Sun className="h-4 w-4" />
-          ) : (
-            <Moon className="h-4 w-4" />
-          )}
-          <span className="sr-only">Toggle theme</span>
-        </Button>
-      </div>
-    </div>
-  );
+  // Not using the top navigation bar anymore since we have a sidebar
+  return null;
 }
