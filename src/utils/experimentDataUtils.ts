@@ -2,7 +2,7 @@
 import { calculatePercentChange } from "@/utils/dataTransformers";
 import { TimeRangeType } from "@/hooks/useExperimentData";
 
-interface ExperimentGroup {
+export interface ExperimentGroup {
   id: string;
   title: string;
   value: number;
@@ -17,7 +17,7 @@ export function processExperimentData(serviceData: any, sortDirection: 'desc' | 
     id,
     title: id,
     value: serviceData.currentTotals[id],
-    data,
+    data: data as Array<{ day: string; value: number }>,
     percentChange: calculatePercentChange(
       serviceData.currentTotals[id],
       serviceData.previousTotals[id]
@@ -48,12 +48,22 @@ export function getExperimentsTotalData(
 ) {
   if (!serviceData || !serviceData.current) return [];
   
-  return Object.values(serviceData.current)[0].map((dataPoint: any, index: number) => ({
+  const firstKey = Object.keys(serviceData.current)[0];
+  if (!firstKey || !Array.isArray(serviceData.current[firstKey])) {
+    return [];
+  }
+  
+  return serviceData.current[firstKey].map((dataPoint: any, index: number) => ({
     day: timeRange === 'rolling-30-day'
       ? dataPoint.day
       : timeRange === 'last-12-months'
-        ? Object.values(serviceData.current)[0][index].day
+        ? serviceData.current[firstKey][index].day
         : (index + 1).toString(),
-    value: Object.values(serviceData.current).reduce((sum: number, data: any) => sum + data[index].value, 0)
+    value: Object.values(serviceData.current).reduce((sum: number, data: any) => {
+      if (Array.isArray(data) && data[index] && typeof data[index].value === 'number') {
+        return sum + data[index].value;
+      }
+      return sum;
+    }, 0)
   }));
 }

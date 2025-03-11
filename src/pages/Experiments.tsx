@@ -4,7 +4,12 @@ import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
 import { ExperimentHeader } from "@/components/experiments/ExperimentHeader";
 import { useExperimentData, TimeRangeType } from "@/hooks/useExperimentData";
-import { processExperimentData, calculateMaxValue, getExperimentsTotalData } from "@/utils/experimentDataUtils";
+import { 
+  processExperimentData, 
+  calculateMaxValue, 
+  getExperimentsTotalData,
+  ExperimentGroup 
+} from "@/utils/experimentDataUtils";
 
 const Experiments = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
@@ -42,7 +47,7 @@ const Experiments = () => {
   if (!serviceData) return null;
 
   const { sortedGroups } = processExperimentData(serviceData, sortDirection);
-  const maxValue = calculateMaxValue(sortedGroups, viewType);
+  const maxValue = calculateMaxValue(sortedGroups as ExperimentGroup[], viewType);
   const allExperimentsData = getExperimentsTotalData(serviceData, timeRange);
 
   return (
@@ -61,11 +66,11 @@ const Experiments = () => {
           onTimeRangeChange={handleTimeRangeChange}
         />
         
-        <DashboardSummary groups={sortedGroups} />
+        <DashboardSummary groups={sortedGroups as ExperimentGroup[]} />
         
         <DashboardCharts
           allEnvironmentsData={allExperimentsData}
-          sortedGroups={sortedGroups}
+          sortedGroups={sortedGroups as any[]}
           viewType={viewType}
           chartType={chartType}
           maxValue={maxValue}
