@@ -1,7 +1,7 @@
 
 import { useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { Sun, Moon } from "lucide-react";
+import { Sun, Moon, Construction } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTheme } from "@/hooks/useTheme";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ const USAGE_TABS = [
 ];
 
 const DIAGNOSTICS_TABS = [
+  { id: "diagnostics-overview", label: "Overview", path: "/diagnostics-overview" },
   { id: "client-connections", label: "Client Connections", path: "/client-connections" },
   { id: "server-mau", label: "Server MAU", path: "/server-mau" },
   { id: "peak-server-connections", label: "Peak Server SDK Connections", path: "/peak-server-connections" },
