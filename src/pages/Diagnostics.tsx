@@ -7,9 +7,9 @@ export default function Diagnostics() {
   const location = useLocation();
   
   useEffect(() => {
-    // If we're on exactly /diagnostics, redirect to diagnostics-overview
+    // If we're on exactly /diagnostics, redirect to client-connections
     if (location.pathname === "/diagnostics") {
-      navigate("/diagnostics-overview");
+      navigate("/client-connections");
     }
   }, [location.pathname, navigate]);
 
