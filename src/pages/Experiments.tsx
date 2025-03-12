@@ -11,6 +11,9 @@ import {
   ExperimentGroup 
 } from "@/utils/experimentDataUtils";
 
+// Experiment events threshold from Overview page
+const EXPERIMENT_EVENTS_THRESHOLD = 500000;
+
 const Experiments = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
@@ -79,6 +82,8 @@ const Experiments = () => {
           onExportChart={() => {}}
           unitLabel="keys"
           useViewDetailsButton={false}
+          showThreshold={true}
+          threshold={EXPERIMENT_EVENTS_THRESHOLD}
         />
       </div>
     </div>
