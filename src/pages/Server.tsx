@@ -31,7 +31,7 @@ const Server = () => {
   if (!serviceData) return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl font-semibold text-foreground mb-6">Server</h1>
+        <h1 className="text-2xl font-semibold text-foreground mb-6 text-left pl-0">Server</h1>
         <p className="text-muted-foreground">Loading server data...</p>
       </div>
     </div>
@@ -49,7 +49,7 @@ const Server = () => {
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl font-semibold text-foreground mb-6">Server</h1>
+        <h1 className="text-2xl font-semibold text-foreground mb-6 text-left pl-0">Server</h1>
         
         <DashboardHeader
           grouping={grouping}
