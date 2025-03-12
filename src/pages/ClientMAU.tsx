@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { MAUHeader } from "@/components/mau/MAUHeader";
 import { MAUDashboardControls } from "@/components/mau/MAUDashboardControls";
@@ -24,14 +23,14 @@ const ClientMAU = () => {
   const [selectedProject, setSelectedProject] = useState<string>("all");
   const chartRefs = useRef<{ [key: string]: any }>({});
 
-  // Effect to ensure correct view type based on time range
+  // Modify the useEffect to respect user's selection for viewType
   useEffect(() => {
+    // Only set view type for last-12-months automatically
+    // Don't force cumulative for other time ranges
     if (timeRange === 'last-12-months') {
       setViewType('net-new');
-    } else if ((timeRange === 'month-to-date' || timeRange === 'rolling-30-day') && viewType !== 'cumulative') {
-      setViewType('cumulative');
     }
-  }, [timeRange, viewType]);
+  }, [timeRange]);
   
   // Effect to set chart type based on view type
   useEffect(() => {
@@ -43,12 +42,11 @@ const ClientMAU = () => {
     setTimeRange(newTimeRange);
     if (newTimeRange === 'last-12-months') {
       setViewType('net-new');
-    } else {
-      setViewType('cumulative');
     }
+    // Don't force cumulative for other ranges - let user choose
   };
   
-  // Handle view type change
+  // Handle view type change - simplify to respect user's choice
   const handleViewTypeChange = (newViewType: 'net-new' | 'cumulative') => {
     setViewType(newViewType);
     setChartType(newViewType === 'net-new' ? 'bar' : 'area');
