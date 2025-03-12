@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -18,7 +19,7 @@ interface MAUDashboardControlsProps {
   onSortDirectionChange: () => void;
   onMonthChange: (value: string) => void;
   onTimeRangeChange: (value: TimeRangeType) => void;
-  hideModeToggle?: boolean; // New prop to hide the mode toggle
+  hideModeToggle?: boolean;
 }
 
 export const MAUDashboardControls = ({
@@ -34,7 +35,7 @@ export const MAUDashboardControls = ({
   onSortDirectionChange,
   onMonthChange,
   onTimeRangeChange,
-  hideModeToggle = false // Default to showing the toggle
+  hideModeToggle = false
 }: MAUDashboardControlsProps) => {
   // Generate abbreviated month options with year
   const getMonthOptions = () => {
@@ -112,30 +113,30 @@ export const MAUDashboardControls = ({
       )}
       <div className="flex-grow" />
       
-      {/* Only show Net New/Cumulative toggle when not in Last 12 Months view and hideModeToggle is false */}
+      {/* Only show Cumulative/Net New toggle when not in Last 12 Months view and hideModeToggle is false */}
       {timeRange !== 'last-12-months' && !hideModeToggle && (
         <div className="flex">
           <Button
-            variant={viewType === 'net-new' ? 'default' : 'outline'}
-            onClick={() => onViewTypeChange('net-new')}
-            className={`rounded-r-none ${
-              viewType === 'net-new' 
-                ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
-                : ''
-            }`}
-          >
-            Net New
-          </Button>
-          <Button
             variant={viewType === 'cumulative' ? 'default' : 'outline'}
             onClick={() => onViewTypeChange('cumulative')}
-            className={`rounded-l-none border-l-0 ${
+            className={`rounded-r-none ${
               viewType === 'cumulative' 
                 ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
                 : ''
             }`}
           >
             Cumulative
+          </Button>
+          <Button
+            variant={viewType === 'net-new' ? 'default' : 'outline'}
+            onClick={() => onViewTypeChange('net-new')}
+            className={`rounded-l-none border-l-0 ${
+              viewType === 'net-new' 
+                ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
+                : ''
+            }`}
+          >
+            Net New
           </Button>
         </div>
       )}

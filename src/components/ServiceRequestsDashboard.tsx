@@ -11,8 +11,8 @@ export const ServiceRequestsDashboard = () => {
   // State hooks
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
-  const [viewType, setViewType] = useState<ViewType>('net-new');
-  const [chartType, setChartType] = useState<ChartType>('bar'); // Changed default to bar
+  const [viewType, setViewType] = useState<ViewType>('cumulative'); // Changed default to cumulative
+  const [chartType, setChartType] = useState<ChartType>('area'); // Changed default to area for cumulative view
   const [grouping, setGrouping] = useState<GroupingType>('all');
   const [timeRange, setTimeRange] = useState<TimeRangeType>('month-to-date');
   const chartRefs = useRef<{ [key: string]: any }>({});

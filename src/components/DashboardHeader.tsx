@@ -16,7 +16,7 @@ interface DashboardHeaderProps {
   timeRange: 'month-to-date' | 'last-12-months' | 'rolling-30-day';
   onTimeRangeChange: (value: 'month-to-date' | 'last-12-months' | 'rolling-30-day') => void;
   showGrouping?: boolean;
-  showViewTypeToggle?: boolean; // New prop to control visibility of view type toggle
+  showViewTypeToggle?: boolean;
 }
 
 export const DashboardHeader = ({
@@ -31,7 +31,7 @@ export const DashboardHeader = ({
   timeRange,
   onTimeRangeChange,
   showGrouping = true,
-  showViewTypeToggle = true, // Default to showing the toggle
+  showViewTypeToggle = true,
 }: DashboardHeaderProps) => {
   // Generate abbreviated month options with year
   const getMonthOptions = () => {
@@ -122,30 +122,30 @@ export const DashboardHeader = ({
       
       <div className="flex-grow" />
       
-      {/* Only show Net New/Cumulative toggle when not in Last 12 Months view and showViewTypeToggle is true */}
+      {/* Only show Cumulative/Net New toggle when not in Last 12 Months view and showViewTypeToggle is true */}
       {timeRange !== 'last-12-months' && showViewTypeToggle && (
         <div className="flex">
           <Button
-            variant={viewType === 'net-new' ? 'default' : 'outline'}
-            onClick={() => onViewTypeChange('net-new')}
-            className={`rounded-r-none ${
-              viewType === 'net-new' 
-                ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
-                : ''
-            }`}
-          >
-            Net New
-          </Button>
-          <Button
             variant={viewType === 'cumulative' ? 'default' : 'outline'}
             onClick={() => onViewTypeChange('cumulative')}
-            className={`rounded-l-none border-l-0 ${
+            className={`rounded-r-none ${
               viewType === 'cumulative' 
                 ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
                 : ''
             }`}
           >
             Cumulative
+          </Button>
+          <Button
+            variant={viewType === 'net-new' ? 'default' : 'outline'}
+            onClick={() => onViewTypeChange('net-new')}
+            className={`rounded-l-none border-l-0 ${
+              viewType === 'net-new' 
+                ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
+                : ''
+            }`}
+          >
+            Net New
           </Button>
         </div>
       )}
