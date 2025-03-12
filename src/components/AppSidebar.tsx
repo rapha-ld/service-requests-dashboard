@@ -55,7 +55,7 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar variant="floating">
+    <Sidebar variant="floating" className="!rounded-none border-r border-border !bg-white">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="text-sm font-semibold tracking-wide text-muted-foreground">Plan</SidebarGroupLabel>

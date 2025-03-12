@@ -45,7 +45,9 @@
 /* Add styles for sidebar */
 [data-sidebar="sidebar"] {
   z-index: 30;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: none !important;
+  background-color: white !important;
+  border-radius: 0 !important;
 }
 
 /* Make tab width responsive to sidebar collapsing */
