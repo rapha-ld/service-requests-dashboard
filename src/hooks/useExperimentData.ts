@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { getMockData } from "@/utils/mockDataGenerator";
 import { getTotalValue } from "@/utils/dataTransformers";
@@ -58,13 +57,20 @@ export function useExperimentData(timeRange: TimeRangeType, currentDate: Date) {
       }
       
       if (timeRange === 'rolling-30-day') {
+        const today = new Date();
+        
         const rolling30DayData = Object.fromEntries(
           Object.entries(currentExperiments).map(([key, data]) => [
             key,
-            Array.from({ length: 30 }, (_, i) => ({
-              day: format(subDays(new Date(), 29 - i), 'MMM d'),
-              value: Math.floor(Math.random() * 500)
-            }))
+            Array.from({ length: 30 }, (_, i) => {
+              const date = subDays(today, 29 - i);
+              const isFutureDate = date > today;
+              
+              return {
+                day: format(date, 'MMM d'),
+                value: isFutureDate ? null : Math.floor(Math.random() * 500)
+              };
+            })
           ])
         );
         
@@ -73,6 +79,44 @@ export function useExperimentData(timeRange: TimeRangeType, currentDate: Date) {
           previous: previousExperiments,
           currentTotals: Object.fromEntries(
             Object.entries(rolling30DayData).map(([key, data]) => [key, getTotalValue(data)])
+          ),
+          previousTotals: Object.fromEntries(
+            Object.entries(previousExperiments).map(([key, data]) => [key, getTotalValue(data)])
+          )
+        };
+      }
+
+      if (timeRange === 'month-to-date') {
+        const today = new Date();
+        const currentYear = today.getFullYear();
+        const currentMonth = today.getMonth();
+        const startDate = new Date(currentYear, currentMonth, 1);
+        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+        const currentDay = today.getDate();
+        
+        const monthToDateData = Object.fromEntries(
+          Object.entries(currentExperiments).map(([key, data]) => [
+            key,
+            Array.from({ length: daysInMonth }, (_, i) => {
+              const day = i + 1;
+              const isFutureDate = day > currentDay;
+              
+              return {
+                day: format(new Date(currentYear, currentMonth, day), 'MMM d'),
+                value: isFutureDate ? null : Math.floor(Math.random() * 300)
+              };
+            })
+          ])
+        );
+        
+        return {
+          current: monthToDateData,
+          previous: previousExperiments,
+          currentTotals: Object.fromEntries(
+            Object.entries(monthToDateData).map(([key, data]) => [
+              key, 
+              getTotalValue(data.filter(item => item.value !== null))
+            ])
           ),
           previousTotals: Object.fromEntries(
             Object.entries(previousExperiments).map(([key, data]) => [key, getTotalValue(data)])

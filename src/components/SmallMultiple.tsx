@@ -1,4 +1,3 @@
-
 import { useRef } from 'react';
 import { cn } from "@/lib/utils";
 import { Download } from 'lucide-react';
@@ -56,12 +55,15 @@ export const SmallMultiple = ({
     effectiveMaxValue = 10; // Minimum scale when there's no data
   }
 
+  // Filter out null values for better visualization
+  const validData = data.filter(item => item.value !== null);
+
   return (
     <div className={cn("bg-card dark:bg-card/80 p-4 rounded-lg shadow-sm animate-fade-in", className)}>
       <ChartTitle title={title} useViewDetails={useViewDetails} />
       <div style={{ height: `${chartHeight}px` }}>
         <ChartComponent
-          data={data}
+          data={data}  // Keep all data including nulls for proper date ranges
           viewType={viewType}
           chartType={chartType}
           maxValue={effectiveMaxValue}

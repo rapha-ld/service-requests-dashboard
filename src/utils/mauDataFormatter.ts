@@ -9,16 +9,23 @@ const CLIENT_MAU_VALUE = 18450;
 
 export const formatRolling30DayData = (currentData: EnvironmentsMap, safeProject: string) => {
   const rolling30DayData: EnvironmentsMap = {};
+  const today = new Date();
   
-  const dateStrings = Array.from({ length: 30 }, (_, i) => 
-    format(subDays(new Date(), 29 - i), 'MMM d')
-  );
+  const dateStrings = Array.from({ length: 30 }, (_, i) => {
+    const date = subDays(today, 29 - i);
+    return format(date, 'MMM d');
+  });
   
   Object.keys(currentData).forEach(key => {
-    rolling30DayData[key] = dateStrings.map(day => ({
-      day,
-      value: Math.floor((CLIENT_MAU_VALUE / 30) * (0.8 + Math.random() * 0.4))
-    }));
+    rolling30DayData[key] = dateStrings.map((day, index) => {
+      const date = subDays(today, 29 - index);
+      const isFutureDate = date > today;
+      
+      return {
+        day,
+        value: isFutureDate ? null : Math.floor((CLIENT_MAU_VALUE / 30) * (0.8 + Math.random() * 0.4))
+      };
+    });
   });
 
   return rolling30DayData;

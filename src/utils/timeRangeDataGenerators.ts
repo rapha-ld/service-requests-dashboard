@@ -1,4 +1,3 @@
-
 import { format, subMonths, subDays } from "date-fns";
 import { getTotalValue } from "./dataTransformers";
 import { TimeRangeType, GroupingType } from "@/types/serviceData";
@@ -18,13 +17,20 @@ export const generateLast12MonthsData = (currentData: Record<string, any[]>) => 
 
 // Generate data for rolling 30 days view
 export const generateRolling30DayData = (currentData: Record<string, any[]>) => {
+  const today = new Date();
+  
   return Object.fromEntries(
     Object.entries(currentData).map(([key, data]) => [
       key,
-      Array.from({ length: 30 }, (_, i) => ({
-        day: format(subDays(new Date(), 29 - i), 'MMM d'),
-        value: Math.floor(Math.random() * 500)
-      }))
+      Array.from({ length: 30 }, (_, i) => {
+        const date = subDays(today, 29 - i);
+        const isFutureDate = date > today;
+        
+        return {
+          day: format(date, 'MMM d'),
+          value: isFutureDate ? null : Math.floor(Math.random() * 500)
+        };
+      })
     ])
   );
 };
