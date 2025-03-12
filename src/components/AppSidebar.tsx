@@ -1,5 +1,5 @@
 
-import { LayoutDashboard, Activity, Stethoscope } from "lucide-react";
+import { CreditCard, Activity, Stethoscope } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getTitleRoute } from "@/utils/routeMappers";
 import {
@@ -16,7 +16,7 @@ import {
 const sidebarItems = [
   {
     title: "Billing",
-    icon: LayoutDashboard,
+    icon: CreditCard,
     route: "/details",
   },
   {
