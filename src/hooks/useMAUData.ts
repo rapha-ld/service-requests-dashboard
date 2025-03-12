@@ -118,9 +118,14 @@ export const useMAUData = (
         if (timeRange === 'rolling-30-day') {
           const rolling30DayData: EnvironmentsMap = {};
           
+          // Generate consistent date strings for all environments to ensure they match
+          const dateStrings = Array.from({ length: 30 }, (_, i) => 
+            format(subDays(new Date(), 29 - i), 'MMM d')
+          );
+          
           Object.keys(currentData).forEach(key => {
-            rolling30DayData[key] = Array.from({ length: 30 }, (_, i) => ({
-              day: format(subDays(new Date(), 29 - i), 'MMM d'),
+            rolling30DayData[key] = dateStrings.map(day => ({
+              day,
               value: Math.floor(Math.random() * 1000)
             }));
           });
@@ -128,16 +133,37 @@ export const useMAUData = (
           // If we're showing "all" projects, ensure the total 30-day data is proportional
           if (safeProject === "all") {
             const totalDailyValue = CLIENT_MAU_VALUE / 30;
+            
+            // Create the "all projects" total data with exactly the same dates
+            rolling30DayData["total"] = dateStrings.map((day, idx) => ({
+              day,
+              value: 0 // Will be calculated below
+            }));
+            
+            // Calculate values for individual environments and sum for total
             Object.keys(rolling30DayData).forEach(env => {
-              const envCount = Object.keys(rolling30DayData).length;
+              if (env === "total") return; // Skip the total for now
+              
+              const envCount = Object.keys(rolling30DayData).length - 1; // -1 to exclude "total"
               const envValue = totalDailyValue / envCount;
               
-              rolling30DayData[env] = rolling30DayData[env].map((day, idx) => ({
-                day: day.day,
+              rolling30DayData[env] = dateStrings.map((day, idx) => {
                 // Add some variation while keeping a reasonable pattern
-                value: Math.round(envValue * (0.8 + (idx / 30) * 0.4))
-              }));
+                const value = Math.round(envValue * (0.8 + (idx / 30) * 0.4));
+                
+                // Add to the total for this day
+                if (rolling30DayData["total"] && rolling30DayData["total"][idx]) {
+                  rolling30DayData["total"][idx].value += value;
+                }
+                
+                return { day, value };
+              });
             });
+            
+            // Remove the artificial "total" entry if it was created just for calculation
+            if (!currentData["total"]) {
+              delete rolling30DayData["total"];
+            }
           }
 
           // Calculate totals for each environment

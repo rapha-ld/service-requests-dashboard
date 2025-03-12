@@ -31,7 +31,8 @@ export const getCombinedEnvironmentsData = (safeCurrent: EnvironmentsMap): Envir
     
     if (firstEnvData && firstEnvData.length > 0) {
       allEnvironmentsData = firstEnvData.map((_, index) => {
-        const day = (index + 1).toString();
+        // Use the exact same day string from the original data
+        const day = firstEnvData[index]?.day || (index + 1).toString();
           
         const value = Object.values(safeCurrent).reduce((sum, data) => {
           if (!data || !data[index]) return sum;
@@ -68,9 +69,9 @@ export const getLast12MonthsData = (safeCurrent: EnvironmentsMap, timeRange: str
     
     if (firstEnvData && firstEnvData.length > 0) {
       allEnvironmentsData = firstEnvData.map((_, index) => {
-        const day = timeRange === 'last-12-months' 
-          ? (firstEnvData[index]?.day || `Month ${index + 1}`)
-          : (index + 1).toString();
+        // Use the exact same day string from the original data to ensure consistency
+        const day = firstEnvData[index]?.day || 
+                  (timeRange === 'last-12-months' ? `Month ${index + 1}` : (index + 1).toString());
           
         const value = Object.values(safeCurrent).reduce((sum, data) => {
           if (!data || !data[index]) return sum;
