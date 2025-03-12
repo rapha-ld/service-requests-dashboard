@@ -73,6 +73,7 @@ export const ServiceRequestsDashboard = () => {
           onMonthChange={(value) => setSelectedMonth(parseInt(value))}
           timeRange={timeRange}
           onTimeRangeChange={handleTimeRangeChange}
+          showViewTypeToggle={false} // Add this to hide the toggle
         />
         
         {grouping !== 'all' && <DashboardSummary groups={sortedGroups} />}

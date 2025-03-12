@@ -45,7 +45,7 @@ const ClientConnections = () => {
     }
   };
   
-  // Handle view type change
+  // Handle view type change (hidden from UI but still used internally)
   const handleViewTypeChange = (newViewType: 'net-new' | 'cumulative') => {
     setViewType(newViewType);
     setChartType(newViewType === 'net-new' ? 'bar' : 'area');
@@ -130,6 +130,7 @@ const ClientConnections = () => {
           onSortDirectionChange={() => setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc')}
           onMonthChange={(value) => setSelectedMonth(parseInt(value))}
           onTimeRangeChange={handleTimeRangeChange}
+          hideModeToggle={true} // Add this prop to hide the Net New/Cumulative toggle
         />
         
         <DashboardSummary groups={sortedGroups} />

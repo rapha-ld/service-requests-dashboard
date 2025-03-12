@@ -19,6 +19,7 @@ interface MAUDashboardControlsProps {
   onSortDirectionChange: () => void;
   onMonthChange: (value: string) => void;
   onTimeRangeChange: (value: TimeRangeType) => void;
+  hideModeToggle?: boolean; // New prop to hide the mode toggle
 }
 
 export const MAUDashboardControls = ({
@@ -33,7 +34,8 @@ export const MAUDashboardControls = ({
   onChartTypeChange,
   onSortDirectionChange,
   onMonthChange,
-  onTimeRangeChange
+  onTimeRangeChange,
+  hideModeToggle = false // Default to showing the toggle
 }: MAUDashboardControlsProps) => {
   // Generate abbreviated month options with year
   const getMonthOptions = () => {
@@ -110,8 +112,8 @@ export const MAUDashboardControls = ({
       )}
       <div className="flex-grow" />
       
-      {/* Only show Net New/Cumulative toggle when not in Last 12 Months view */}
-      {timeRange !== 'last-12-months' && (
+      {/* Only show Net New/Cumulative toggle when not in Last 12 Months view and hideModeToggle is false */}
+      {timeRange !== 'last-12-months' && !hideModeToggle && (
         <div className="flex">
           <Button
             variant={viewType === 'net-new' ? 'default' : 'outline'}

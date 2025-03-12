@@ -16,6 +16,7 @@ interface DashboardHeaderProps {
   timeRange: 'month-to-date' | 'last-12-months' | 'rolling-30-day';
   onTimeRangeChange: (value: 'month-to-date' | 'last-12-months' | 'rolling-30-day') => void;
   showGrouping?: boolean;
+  showViewTypeToggle?: boolean; // New prop to control visibility of view type toggle
 }
 
 export const DashboardHeader = ({
@@ -30,6 +31,7 @@ export const DashboardHeader = ({
   timeRange,
   onTimeRangeChange,
   showGrouping = true,
+  showViewTypeToggle = true, // Default to showing the toggle
 }: DashboardHeaderProps) => {
   // Generate abbreviated month options with year
   const getMonthOptions = () => {
@@ -120,8 +122,8 @@ export const DashboardHeader = ({
       
       <div className="flex-grow" />
       
-      {/* Only show Net New/Cumulative toggle when not in Last 12 Months view */}
-      {timeRange !== 'last-12-months' && (
+      {/* Only show Net New/Cumulative toggle when not in Last 12 Months view and showViewTypeToggle is true */}
+      {timeRange !== 'last-12-months' && showViewTypeToggle && (
         <div className="flex">
           <Button
             variant={viewType === 'net-new' ? 'default' : 'outline'}
