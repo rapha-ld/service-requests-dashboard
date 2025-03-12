@@ -1,5 +1,6 @@
 import { calculatePercentChange, getTotalValue } from "./dataTransformers";
 import { ChartGroup, EnvironmentData, EnvironmentsMap, MAUDataResult } from "@/types/mauTypes";
+import { generateMockMonthlyData } from "./mockDataGenerator";
 
 // Transform the data into chart groups
 export const transformDataToChartGroups = (
