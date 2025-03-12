@@ -53,7 +53,7 @@ const Experiments = () => {
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl font-semibold text-foreground mb-6 text-left pl-0">Experiment Keys</h1>
+        <h1 className="text-2xl font-semibold text-foreground mb-6 text-left pl-0">Experiment Events</h1>
         
         <ExperimentHeader
           viewType={viewType}
