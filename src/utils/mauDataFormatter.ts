@@ -6,6 +6,8 @@ import { getTotalValue } from "./dataTransformers";
 
 // Client MAU value from the Overview page
 const CLIENT_MAU_VALUE = 18450;
+// User limit threshold
+const USER_LIMIT = 25000;
 
 export const formatRolling30DayData = (currentData: EnvironmentsMap, safeProject: string) => {
   const rolling30DayData: EnvironmentsMap = {};
@@ -97,4 +99,87 @@ export const calculateMAUTotals = (data: EnvironmentsMap) => {
   return Object.fromEntries(
     Object.entries(data).map(([key, envData]) => [key, getTotalValue(envData)])
   );
+};
+
+// New function to limit data to the current date (March 12 for MTD view)
+export const limitDataToCurrentDate = (data: EnvironmentsMap): EnvironmentsMap => {
+  const result: EnvironmentsMap = {};
+  const currentDate = new Date(2024, 2, 12); // March 12, 2024
+  
+  Object.keys(data).forEach(env => {
+    result[env] = data[env].map(dayData => {
+      // Parse the date from the day string
+      const dateParts = dayData.day.split(' ');
+      if (dateParts.length !== 2) return dayData; // Not in the expected format
+      
+      const month = getMonthNumber(dateParts[0]);
+      const day = parseInt(dateParts[1], 10);
+      
+      // Create a date object for comparison
+      const dataDate = new Date(2024, month, day);
+      
+      // If the date is after the current date, set value to null
+      return {
+        day: dayData.day,
+        value: dataDate > currentDate ? null : dayData.value
+      };
+    });
+  });
+  
+  return result;
+};
+
+// Helper function to convert month abbreviation to month number
+const getMonthNumber = (monthAbbr: string): number => {
+  const months = {
+    'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5,
+    'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
+  };
+  return months[monthAbbr as keyof typeof months] || 0;
+};
+
+// New function to ensure data doesn't exceed the threshold
+export const capEnvironmentsData = (data: EnvironmentsMap, threshold: number = USER_LIMIT): EnvironmentsMap => {
+  // First, calculate the total for each day across all environments
+  const dailyTotals: { [key: string]: number } = {};
+  
+  // Get all unique day values
+  const allDays = new Set<string>();
+  Object.values(data).forEach(envData => {
+    envData.forEach(dayData => allDays.add(dayData.day));
+  });
+  
+  // Calculate daily totals across environments
+  allDays.forEach(day => {
+    let total = 0;
+    Object.values(data).forEach(envData => {
+      const dayData = envData.find(d => d.day === day);
+      if (dayData && dayData.value !== null) {
+        total += dayData.value;
+      }
+    });
+    dailyTotals[day] = total;
+  });
+  
+  // Cap the data proportionally if it exceeds the threshold
+  const result: EnvironmentsMap = {};
+  
+  Object.keys(data).forEach(env => {
+    result[env] = data[env].map(dayData => {
+      if (dayData.value === null) return dayData;
+      
+      const total = dailyTotals[dayData.day];
+      if (total > threshold) {
+        // Scale down proportionally
+        const scaleFactor = threshold / total;
+        return {
+          day: dayData.day,
+          value: Math.round(dayData.value * scaleFactor)
+        };
+      }
+      return dayData;
+    });
+  });
+  
+  return result;
 };

@@ -11,7 +11,9 @@ import {
   formatLast12MonthsData,
   scaleDataToClientMAU,
   adjustRolling30DayData,
-  calculateMAUTotals
+  calculateMAUTotals,
+  limitDataToCurrentDate,
+  capEnvironmentsData
 } from "@/utils/mauDataFormatter";
 
 export const useMAUData = (
@@ -48,6 +50,16 @@ export const useMAUData = (
           processedCurrentData = formatLast12MonthsData(currentData, safeProject);
         } else if (timeRange === 'rolling-30-day') {
           processedCurrentData = formatRolling30DayData(currentData, safeProject);
+        }
+
+        // Apply date limitation for Month-to-Date view
+        if (timeRange === 'month-to-date') {
+          processedCurrentData = limitDataToCurrentDate(processedCurrentData);
+        }
+        
+        // Cap the data at the threshold if it's the "all" project
+        if (safeProject === "all") {
+          processedCurrentData = capEnvironmentsData(processedCurrentData);
         }
 
         const currentTotals = calculateMAUTotals(processedCurrentData);
