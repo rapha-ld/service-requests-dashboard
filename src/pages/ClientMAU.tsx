@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { MAUHeader } from "@/components/mau/MAUHeader";
 import { MAUDashboardControls } from "@/components/mau/MAUDashboardControls";
@@ -12,19 +11,18 @@ import {
   calculateMaxValue
 } from "@/utils/mauDataTransformers";
 
+const USER_LIMIT = 25000;
+
 const ClientMAU = () => {
   // State management
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
-  const [viewType, setViewType] = useState<'net-new' | 'cumulative'>('cumulative'); // Changed default to cumulative
-  const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>('area'); // Changed default to area for cumulative view
+  const [viewType, setViewType] = useState<'net-new' | 'cumulative'>('cumulative');
+  const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>('area');
   const [timeRange, setTimeRange] = useState<TimeRangeType>('month-to-date');
   const [selectedProject, setSelectedProject] = useState<string>("all");
   const chartRefs = useRef<{ [key: string]: any }>({});
 
-  // Monthly user limit - same as in Overview
-  const USER_LIMIT = 25000;
-  
   // Effect to reset viewType to 'net-new' when timeRange is 'last-12-months'
   useEffect(() => {
     if (timeRange === 'last-12-months') {
@@ -101,9 +99,6 @@ const ClientMAU = () => {
 
   // Prepare the data for the top chart (all environments)
   let allEnvironmentsData = getLast12MonthsData(safeCurrent, timeRange);
-  
-  // For rolling-30-day view, we don't need any additional date formatting
-  // since both the top chart and small charts now use the same date format from the data source
 
   return (
     <div className="min-h-screen bg-background p-6">

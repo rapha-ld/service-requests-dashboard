@@ -16,6 +16,10 @@ import {
   capEnvironmentsData
 } from "@/utils/mauDataFormatter";
 
+// Client MAU value and limits from Overview page
+const CLIENT_MAU_VALUE = 18450;
+const USER_LIMIT = 25000;
+
 export const useMAUData = (
   selectedMonth: number,
   selectedProject: string,
@@ -59,7 +63,7 @@ export const useMAUData = (
         
         // Cap the data at the threshold if it's the "all" project
         if (safeProject === "all") {
-          processedCurrentData = capEnvironmentsData(processedCurrentData);
+          processedCurrentData = capEnvironmentsData(processedCurrentData, USER_LIMIT);
         }
 
         const currentTotals = calculateMAUTotals(processedCurrentData);

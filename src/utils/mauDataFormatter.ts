@@ -1,4 +1,3 @@
-
 import { format, subMonths, subDays } from "date-fns";
 import { EnvironmentsMap, MAUDataResult } from "@/types/mauTypes";
 import { getMockMAUData } from "./mauDataGenerator";
@@ -101,7 +100,7 @@ export const calculateMAUTotals = (data: EnvironmentsMap) => {
   );
 };
 
-// New function to limit data to the current date (March 12 for MTD view)
+// Function to limit data to the current date (March 12 for MTD view)
 export const limitDataToCurrentDate = (data: EnvironmentsMap): EnvironmentsMap => {
   const result: EnvironmentsMap = {};
   const currentDate = new Date(2024, 2, 12); // March 12, 2024
@@ -138,7 +137,7 @@ const getMonthNumber = (monthAbbr: string): number => {
   return months[monthAbbr as keyof typeof months] || 0;
 };
 
-// New function to ensure data doesn't exceed the threshold
+// Function to ensure data doesn't exceed the threshold
 export const capEnvironmentsData = (data: EnvironmentsMap, threshold: number = USER_LIMIT): EnvironmentsMap => {
   // First, calculate the total for each day across all environments
   const dailyTotals: { [key: string]: number } = {};
@@ -146,7 +145,11 @@ export const capEnvironmentsData = (data: EnvironmentsMap, threshold: number = U
   // Get all unique day values
   const allDays = new Set<string>();
   Object.values(data).forEach(envData => {
-    envData.forEach(dayData => allDays.add(dayData.day));
+    envData.forEach(dayData => {
+      if (dayData.day) {
+        allDays.add(dayData.day);
+      }
+    });
   });
   
   // Calculate daily totals across environments
