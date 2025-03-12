@@ -1,5 +1,5 @@
 
-import { LayoutDashboard, Activity, Stethoscope, Network, Server, FileSearch } from "lucide-react";
+import { LayoutDashboard, Activity, Stethoscope } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getTitleRoute } from "@/utils/routeMappers";
 import {
@@ -28,23 +28,6 @@ const sidebarItems = [
     title: "Diagnostics",
     icon: Stethoscope,
     route: "/diagnostics",
-    subItems: [
-      {
-        title: "Client Connections",
-        icon: Network,
-        route: "/client-connections",
-      },
-      {
-        title: "Server",
-        icon: Server, 
-        route: "/server",
-      },
-      {
-        title: "Service Requests",
-        icon: FileSearch,
-        route: "/service-requests",
-      },
-    ],
   },
 ];
 
@@ -61,9 +44,8 @@ export function AppSidebar() {
       return true;
     }
     
-    if (route === "/diagnostics" && 
-       (location.pathname === "/diagnostics" || 
-        location.pathname === "/client-connections" || 
+    if (route === "/client-connections" && 
+       (location.pathname === "/client-connections" || 
         location.pathname === "/server" || 
         location.pathname === "/service-requests")) {
       return true;
@@ -76,7 +58,7 @@ export function AppSidebar() {
     <Sidebar variant="floating">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-sm font-semibold tracking-wide text-muted-foreground">Plan</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-sm font-semibold tracking-wide">Plan</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {sidebarItems.map((item) => (
@@ -90,23 +72,6 @@ export function AppSidebar() {
                     <item.icon className="size-5" />
                     <span>{item.title}</span>
                   </SidebarMenuButton>
-                  
-                  {item.subItems && item.subItems.length > 0 && (
-                    <div className="pl-7 mt-1 space-y-1">
-                      {item.subItems.map((subItem) => (
-                        <SidebarMenuButton
-                          key={subItem.title}
-                          isActive={location.pathname === subItem.route}
-                          onClick={() => navigate(subItem.route)}
-                          tooltip={subItem.title}
-                          className="font-medium"
-                        >
-                          <subItem.icon className="size-4" />
-                          <span>{subItem.title}</span>
-                        </SidebarMenuButton>
-                      ))}
-                    </div>
-                  )}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
