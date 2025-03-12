@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { TimeRangeType } from "@/hooks/useMAUData";
 import { ProjectSelector } from "@/components/mau/ProjectSelector";
 import { format } from "date-fns";
+import { useEffect } from "react";
 
 interface MAUDashboardControlsProps {
   viewType: 'net-new' | 'cumulative';
@@ -37,8 +38,12 @@ export const MAUDashboardControls = ({
   onTimeRangeChange,
   hideModeToggle = false
 }: MAUDashboardControlsProps) => {
-  // Remove the effect that was forcing cumulative view
-  // This was causing the toggle to flash and return to cumulative
+  // Effect to set view type to 'cumulative' when timeRange is 'month-to-date' or 'rolling-30-day'
+  useEffect(() => {
+    if ((timeRange === 'month-to-date' || timeRange === 'rolling-30-day') && viewType !== 'cumulative') {
+      onViewTypeChange('cumulative');
+    }
+  }, [timeRange, viewType, onViewTypeChange]);
   
   // Generate abbreviated month options with year
   const getMonthOptions = () => {
@@ -116,7 +121,7 @@ export const MAUDashboardControls = ({
       )}
       <div className="flex-grow" />
       
-      {/* Show toggle for all time ranges except last-12-months and when hideModeToggle is false */}
+      {/* Only show Cumulative/Net New toggle when not in Last 12 Months view and hideModeToggle is false */}
       {timeRange !== 'last-12-months' && !hideModeToggle && (
         <div className="flex">
           <Button
