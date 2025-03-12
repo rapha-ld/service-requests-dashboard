@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { DashboardSummary } from "@/components/DashboardSummary";
@@ -17,12 +16,14 @@ export const ServiceRequestsDashboard = () => {
   const [timeRange, setTimeRange] = useState<TimeRangeType>('month-to-date');
   const chartRefs = useRef<{ [key: string]: any }>({});
   
-  // Effect to reset viewType to 'net-new' when timeRange is 'last-12-months'
+  // Effect to set viewType to 'cumulative' when timeRange is 'month-to-date' or 'rolling-30-day'
   useEffect(() => {
-    if (timeRange === 'last-12-months') {
+    if ((timeRange === 'month-to-date' || timeRange === 'rolling-30-day') && viewType !== 'cumulative') {
+      setViewType('cumulative');
+    } else if (timeRange === 'last-12-months') {
       setViewType('net-new');
     }
-  }, [timeRange]);
+  }, [timeRange, viewType]);
   
   // Effect to set chart type based on view type
   useEffect(() => {
@@ -34,6 +35,8 @@ export const ServiceRequestsDashboard = () => {
     setTimeRange(newTimeRange);
     if (newTimeRange === 'last-12-months') {
       setViewType('net-new');
+    } else {
+      setViewType('cumulative');
     }
   };
   

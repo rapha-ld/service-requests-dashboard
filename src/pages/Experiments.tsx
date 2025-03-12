@@ -25,8 +25,10 @@ const Experiments = () => {
   useEffect(() => {
     if (timeRange === 'last-12-months') {
       setViewType('net-new');
+    } else if ((timeRange === 'month-to-date' || timeRange === 'rolling-30-day') && viewType !== 'cumulative') {
+      setViewType('cumulative');
     }
-  }, [timeRange]);
+  }, [timeRange, viewType]);
   
   useEffect(() => {
     setChartType(viewType === 'net-new' ? 'bar' : 'area');
@@ -36,6 +38,8 @@ const Experiments = () => {
     setTimeRange(newTimeRange);
     if (newTimeRange === 'last-12-months') {
       setViewType('net-new');
+    } else {
+      setViewType('cumulative');
     }
   };
   
