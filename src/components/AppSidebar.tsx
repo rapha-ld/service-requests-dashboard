@@ -44,8 +44,9 @@ export function AppSidebar() {
       return true;
     }
     
-    if (route === "/client-connections" && 
-       (location.pathname === "/client-connections" || 
+    if (route === "/diagnostics" && 
+       (location.pathname === "/diagnostics" || 
+        location.pathname === "/client-connections" || 
         location.pathname === "/server" || 
         location.pathname === "/service-requests")) {
       return true;
@@ -58,7 +59,7 @@ export function AppSidebar() {
     <Sidebar variant="floating">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-sm font-semibold tracking-wide">Plan</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-sm font-semibold tracking-wide text-muted-foreground">Plan</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {sidebarItems.map((item) => (
