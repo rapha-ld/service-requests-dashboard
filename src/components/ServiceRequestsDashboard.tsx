@@ -10,40 +10,33 @@ export const ServiceRequestsDashboard = () => {
   // State hooks
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
-  const [viewType, setViewType] = useState<ViewType>('cumulative'); // Changed default to cumulative
-  const [chartType, setChartType] = useState<ChartType>('area'); // Changed default to area for cumulative view
+  const [viewType, setViewType] = useState<ViewType>('net-new'); // Changed default to net-new
+  const [chartType, setChartType] = useState<ChartType>('bar'); // Changed default to bar for net-new view
   const [grouping, setGrouping] = useState<GroupingType>('all');
   const [timeRange, setTimeRange] = useState<TimeRangeType>('month-to-date');
   const chartRefs = useRef<{ [key: string]: any }>({});
   
-  // Effect to set viewType to 'cumulative' when timeRange is 'month-to-date' or 'rolling-30-day'
+  // Effect to ensure we stay in net-new view for diagnostic pages
   useEffect(() => {
-    if ((timeRange === 'month-to-date' || timeRange === 'rolling-30-day') && viewType !== 'cumulative') {
-      setViewType('cumulative');
-    } else if (timeRange === 'last-12-months') {
+    if (viewType !== 'net-new') {
       setViewType('net-new');
     }
+    
+    setChartType('bar');
   }, [timeRange, viewType]);
-  
-  // Effect to set chart type based on view type
-  useEffect(() => {
-    setChartType(viewType === 'net-new' ? 'bar' : 'area');
-  }, [viewType]);
   
   // Handle time range change
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
     setTimeRange(newTimeRange);
-    if (newTimeRange === 'last-12-months') {
-      setViewType('net-new');
-    } else {
-      setViewType('cumulative');
-    }
+    // Always keep net-new view for diagnostic pages
+    setViewType('net-new');
   };
   
   // Handle view type change
   const handleViewTypeChange = (newViewType: ViewType) => {
-    setViewType(newViewType);
-    setChartType(newViewType === 'net-new' ? 'bar' : 'area');
+    // For diagnostic pages, always use net-new
+    setViewType('net-new');
+    setChartType('bar');
   };
   
   // Fetch data using custom hook
