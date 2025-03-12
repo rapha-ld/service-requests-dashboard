@@ -22,13 +22,12 @@ const Experiments = () => {
   const [timeRange, setTimeRange] = useState<TimeRangeType>('month-to-date');
   const chartRefs = useRef<{ [key: string]: any }>({});
 
+  // Effect to set view type based on time range, but only for last-12-months
   useEffect(() => {
     if (timeRange === 'last-12-months') {
       setViewType('net-new');
-    } else if ((timeRange === 'month-to-date' || timeRange === 'rolling-30-day') && viewType !== 'cumulative') {
-      setViewType('cumulative');
     }
-  }, [timeRange, viewType]);
+  }, [timeRange]);
   
   useEffect(() => {
     setChartType(viewType === 'net-new' ? 'bar' : 'area');
@@ -38,7 +37,8 @@ const Experiments = () => {
     setTimeRange(newTimeRange);
     if (newTimeRange === 'last-12-months') {
       setViewType('net-new');
-    } else {
+    } else if (newTimeRange !== timeRange) {
+      // Only set to cumulative when changing from a different time range
       setViewType('cumulative');
     }
   };

@@ -5,7 +5,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { TimeRangeType } from "@/hooks/useMAUData";
 import { ProjectSelector } from "@/components/mau/ProjectSelector";
 import { format } from "date-fns";
-import { useEffect } from "react";
 
 interface MAUDashboardControlsProps {
   viewType: 'net-new' | 'cumulative';
@@ -38,12 +37,8 @@ export const MAUDashboardControls = ({
   onTimeRangeChange,
   hideModeToggle = false
 }: MAUDashboardControlsProps) => {
-  // Effect to set view type to 'cumulative' when timeRange is 'month-to-date' or 'rolling-30-day'
-  useEffect(() => {
-    if ((timeRange === 'month-to-date' || timeRange === 'rolling-30-day') && viewType !== 'cumulative') {
-      onViewTypeChange('cumulative');
-    }
-  }, [timeRange, viewType, onViewTypeChange]);
+  // Removed the useEffect that was forcing cumulative view
+  // This allows users to freely toggle between views
   
   // Generate abbreviated month options with year
   const getMonthOptions = () => {
