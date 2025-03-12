@@ -1,3 +1,4 @@
+
 import { LayoutDashboard, Activity, Stethoscope } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getTitleRoute } from "@/utils/routeMappers";
@@ -35,6 +36,7 @@ export function AppSidebar() {
   const navigate = useNavigate();
 
   const isActive = (route: string) => {
+    // Check if we're on a Usage route
     if (route === "/overview" && 
        (location.pathname === "/overview" || 
         location.pathname === "/client-mau" || 
@@ -43,8 +45,10 @@ export function AppSidebar() {
       return true;
     }
     
-    if (route === "/client-connections" && 
-       (location.pathname === "/client-connections" || 
+    // Check if we're on a Diagnostics route
+    if (route === "/diagnostics" && 
+       (location.pathname === "/diagnostics" || 
+        location.pathname === "/client-connections" || 
         location.pathname === "/server" || 
         location.pathname === "/service-requests")) {
       return true;
