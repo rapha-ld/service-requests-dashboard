@@ -76,7 +76,7 @@ export const DashboardHeader = ({
               : ''
           }`}
         >
-          Month-to-date
+          MTD
         </Button>
         <Button
           variant={timeRange === 'rolling-30-day' ? 'default' : 'outline'}
@@ -87,7 +87,7 @@ export const DashboardHeader = ({
               : ''
           }`}
         >
-          Rolling 30 Day
+          30D
         </Button>
         <Button
           variant={timeRange === 'last-12-months' ? 'default' : 'outline'}
@@ -98,7 +98,7 @@ export const DashboardHeader = ({
               : ''
           }`}
         >
-          Last 12 Months
+          12M
         </Button>
       </div>
       

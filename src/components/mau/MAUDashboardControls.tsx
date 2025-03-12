@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -68,7 +67,7 @@ export const MAUDashboardControls = ({
               : ''
           }`}
         >
-          Month-to-date
+          MTD
         </Button>
         <Button
           variant={timeRange === 'rolling-30-day' ? 'default' : 'outline'}
@@ -79,7 +78,7 @@ export const MAUDashboardControls = ({
               : ''
           }`}
         >
-          Rolling 30 Day
+          30D
         </Button>
         <Button
           variant={timeRange === 'last-12-months' ? 'default' : 'outline'}
@@ -90,9 +89,10 @@ export const MAUDashboardControls = ({
               : ''
           }`}
         >
-          Last 12 Months
+          12M
         </Button>
       </div>
+      
       {timeRange === 'month-to-date' && (
         <Select
           value={selectedMonth.toString()}
