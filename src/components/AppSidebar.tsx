@@ -67,9 +67,13 @@ export function AppSidebar() {
                     isActive={isActive(item.route)}
                     onClick={() => navigate(item.route)}
                     tooltip={item.title}
-                    className="font-medium"
+                    className={`font-medium transition-colors ${
+                      isActive(item.route) 
+                        ? "bg-primary/10 text-primary border-l-2 border-primary" 
+                        : ""
+                    }`}
                   >
-                    <item.icon className="size-5" />
+                    <item.icon className={`size-5 ${isActive(item.route) ? "text-primary" : ""}`} />
                     <span>{item.title}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
