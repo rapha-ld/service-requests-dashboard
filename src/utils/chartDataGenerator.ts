@@ -3,10 +3,12 @@
 export const generateDailyData = (targetValue: number, growthPattern: 'steady' | 'exponential' | 'stepwise') => {
   const data = [];
   
-  // Start date: February 1, 2024 (changed from January 24)
+  // Start date: February 1, 2024
   const startDate = new Date(2024, 1, 1);
-  // End date: February 22, 2024 (approx. 22 days)
-  const endDate = new Date(2024, 1, 22);
+  // Today's date
+  const today = new Date();
+  // End date: Either today or February 22, 2024, whichever is earlier
+  const endDate = new Date(Math.min(today.getTime(), new Date(2024, 1, 22).getTime()));
   // Full month end date: February 29, 2024 (for x-axis display only)
   const fullMonthEndDate = new Date(2024, 1, 29);
   
@@ -27,25 +29,21 @@ export const generateDailyData = (targetValue: number, growthPattern: 'steady' |
     let portion;
     switch (growthPattern) {
       case 'exponential':
-        // Exponential growth: smaller portions early, larger portions later
         portion = Math.exp(i / daysWithData * 2) / Math.exp(2);
         break;
       case 'stepwise':
-        // Stepwise growth: random jumps
         const step = Math.floor(i / (daysWithData / 5));
         portion = 0.1 + (step * 0.25) + (Math.random() * 0.1 - 0.05);
         break;
       case 'steady':
       default:
-        // Steady growth with some fluctuation
         portion = 1/daysWithData + (Math.random() * 0.02 - 0.01);
         break;
     }
     
-    // Calculate daily value based on portion and ensure we don't exceed remaining
     let dailyValue = Math.round(targetValue * portion);
     dailyValue = Math.min(dailyValue, remainingValue);
-    dailyValue = Math.max(1, dailyValue); // Ensure at least 1 per day
+    dailyValue = Math.max(1, dailyValue);
     
     dailyValues.push(dailyValue);
     remainingValue -= dailyValue;
@@ -62,7 +60,6 @@ export const generateDailyData = (targetValue: number, growthPattern: 'steady' |
     const currentDate = new Date(startDate);
     currentDate.setDate(startDate.getDate() + i);
     
-    // Format date as "MMM DD" (e.g., "Feb 01")
     const formattedDate = currentDate.toLocaleDateString('en-US', { 
       month: 'short', 
       day: 'numeric' 
@@ -74,20 +71,18 @@ export const generateDailyData = (targetValue: number, growthPattern: 'steady' |
     });
   }
   
-  // Now add empty data points for the rest of the month (after Feb 22)
+  // Add null values for future dates up to the end of the month
   const remainingDays = Math.floor((fullMonthEndDate.getTime() - endDate.getTime()) / (1000 * 60 * 60 * 24));
   
   for (let i = 1; i <= remainingDays; i++) {
     const currentDate = new Date(endDate);
     currentDate.setDate(endDate.getDate() + i);
     
-    // Format date as "MMM DD" (e.g., "Feb 23")
     const formattedDate = currentDate.toLocaleDateString('en-US', { 
       month: 'short', 
       day: 'numeric' 
     });
     
-    // Add data point with null value to show on x-axis but not in the area chart
     data.push({
       day: formattedDate,
       value: null
