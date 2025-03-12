@@ -1,4 +1,5 @@
-import { format, subMonths, subDays } from "date-fns";
+
+import { format, subMonths, subDays, isAfter } from "date-fns";
 import { getTotalValue } from "./dataTransformers";
 import { TimeRangeType, GroupingType } from "@/types/serviceData";
 
@@ -24,7 +25,7 @@ export const generateRolling30DayData = (currentData: Record<string, any[]>) => 
       key,
       Array.from({ length: 30 }, (_, i) => {
         const date = subDays(today, 29 - i);
-        const isFutureDate = date > today;
+        const isFutureDate = isAfter(date, today);
         
         return {
           day: format(date, 'MMM d'),
