@@ -56,3 +56,9 @@
     width: 100% !important;
   }
 }
+
+/* Additional selectors to ensure no shadow on sidebar */
+.group\/sidebar-wrapper div[data-sidebar="sidebar"] {
+  box-shadow: none !important;
+}
+

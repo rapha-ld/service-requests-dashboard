@@ -1,4 +1,3 @@
-
 import { LayoutDashboard, Activity, Stethoscope } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getTitleRoute } from "@/utils/routeMappers";
@@ -58,6 +57,7 @@ export function AppSidebar() {
     <Sidebar 
       variant="floating" 
       className="!rounded-none border-r border-border !bg-white !shadow-none"
+      style={{ boxShadow: 'none' }}
     >
       <SidebarContent>
         <SidebarGroup>
