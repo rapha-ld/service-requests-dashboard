@@ -7,12 +7,15 @@ import { useTheme } from "@/hooks/useTheme";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/components/ui/sidebar";
 
-const ALL_TABS = [
+const USAGE_TABS = [
   { id: "overview", label: "Overview", path: "/overview" },
   { id: "client-mau", label: "Client MAU", path: "/client-mau" },
-  { id: "client-connections", label: "Client Connections", path: "/client-connections" },
   { id: "experiments", label: "Experiments", path: "/experiments" },
   { id: "data-export", label: "Data Export", path: "/data-export" },
+];
+
+const DIAGNOSTICS_TABS = [
+  { id: "client-connections", label: "Client Connections", path: "/client-connections" },
   { id: "server", label: "Server", path: "/server" },
   { id: "service-requests", label: "Service Requests", path: "/service-requests" },
 ];
@@ -23,13 +26,22 @@ export function NavigationTabs() {
   const { state } = useSidebar();
   
   const currentPath = location.pathname;
-  const activeTab = ALL_TABS.find(tab => tab.path === currentPath)?.id || "service-requests";
+  
+  // Determine which tab group to show based on path
+  const isUsagePath = USAGE_TABS.some(tab => tab.path === currentPath);
+  const isDiagnosticsPath = DIAGNOSTICS_TABS.some(tab => tab.path === currentPath);
+  
+  // Get the active tab ID
+  const activeTab = [...USAGE_TABS, ...DIAGNOSTICS_TABS].find(tab => tab.path === currentPath)?.id || "";
+  
+  // Determine which tabs to display
+  const tabsToDisplay = isUsagePath ? USAGE_TABS : isDiagnosticsPath ? DIAGNOSTICS_TABS : [];
 
   return (
     <div className="flex w-full items-center border-b bg-background">
       <Tabs value={activeTab} className="w-full">
         <TabsList className="h-14 px-0 bg-transparent justify-start">
-          {ALL_TABS.map((tab) => (
+          {tabsToDisplay.map((tab) => (
             <TabsTrigger
               key={tab.id}
               value={tab.id}

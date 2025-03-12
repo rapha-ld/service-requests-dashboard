@@ -1,21 +1,17 @@
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
 export default function Diagnostics() {
-  return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-3xl font-bold">Diagnostics</h1>
-      <Card>
-        <CardHeader>
-          <CardTitle>Diagnostics</CardTitle>
-          <CardDescription>
-            Diagnostics page content will be displayed here.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p>This is an empty placeholder for the Diagnostics page.</p>
-        </CardContent>
-      </Card>
-    </div>
-  );
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  useEffect(() => {
+    // If we're on exactly /diagnostics, redirect to client-connections
+    if (location.pathname === "/diagnostics") {
+      navigate("/client-connections");
+    }
+  }, [location.pathname, navigate]);
+
+  return null; // This component just handles redirection
 }

@@ -25,18 +25,31 @@ function AppContent() {
   const location = useLocation();
   const showTabs = location.pathname !== "/details";
 
+  const isUsagePath = [
+    "/overview", 
+    "/client-mau", 
+    "/experiments", 
+    "/data-export"
+  ].includes(location.pathname);
+
+  const isDiagnosticsPath = [
+    "/client-connections", 
+    "/server", 
+    "/service-requests"
+  ].includes(location.pathname);
+
   return (
     <SidebarProvider>
       <div className="flex w-full min-h-screen">
         <AppSidebar />
         <SidebarInset>
           <div className="w-full max-w-none mx-0 px-0">
-            {showTabs && (
+            {showTabs && (isUsagePath || isDiagnosticsPath) && (
               <div className="fixed top-0 right-0 w-[calc(100%-var(--sidebar-width))] z-10 bg-background border-b">
                 <NavigationTabs />
               </div>
             )}
-            <div className={`p-6 ${showTabs ? 'pt-20' : ''}`}>
+            <div className={`p-6 ${showTabs && (isUsagePath || isDiagnosticsPath) ? 'pt-20' : ''}`}>
               <Routes>
                 <Route path="/" element={<Navigate to="/overview" replace />} />
                 <Route path="/service-requests" element={<Index />} />
