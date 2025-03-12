@@ -1,5 +1,5 @@
 import { generateMockMonthlyData } from "./mockDataGenerator";
-import { EnvironmentData, EnvironmentsMap, MAUDataResult } from "@/hooks/useMAUData";
+import { EnvironmentData, EnvironmentsMap, MAUDataResult } from "@/types/mauTypes";
 import { getTotalValue } from "./dataTransformers";
 
 // Generate a list of project names
