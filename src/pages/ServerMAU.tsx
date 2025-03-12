@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
@@ -20,9 +19,8 @@ const ServerMAU = () => {
   // Handle time range change
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
     setTimeRange(newTimeRange);
-    if (newTimeRange === 'last-12-months') {
-      setViewType('net-new');
-    }
+    // Keep view type as net-new regardless of time range for diagnostic pages
+    setViewType('net-new');
   };
   
   // Fetch data using custom hook

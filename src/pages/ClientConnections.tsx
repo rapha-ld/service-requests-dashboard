@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { MAUHeader } from "@/components/mau/MAUHeader";
 import { MAUDashboardControls } from "@/components/mau/MAUDashboardControls";
@@ -25,30 +24,27 @@ const ClientConnections = () => {
   // Connection multiplier
   const connectionMultiplier = 4;
 
-  // Effect to reset viewType to 'net-new' when timeRange is 'last-12-months'
+  // Effect to ensure we stay in net-new view for diagnostic pages
   useEffect(() => {
-    if (timeRange === 'last-12-months') {
+    if (viewType !== 'net-new') {
       setViewType('net-new');
     }
-  }, [timeRange]);
-  
-  // Effect to set chart type based on view type
-  useEffect(() => {
-    setChartType(viewType === 'net-new' ? 'bar' : 'area');
-  }, [viewType]);
+    
+    setChartType('bar');
+  }, [timeRange, viewType]);
   
   // Handle time range change
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
     setTimeRange(newTimeRange);
-    if (newTimeRange === 'last-12-months') {
-      setViewType('net-new');
-    }
+    // Always keep net-new view for diagnostic pages
+    setViewType('net-new');
   };
   
   // Handle view type change (hidden from UI but still used internally)
   const handleViewTypeChange = (newViewType: 'net-new' | 'cumulative') => {
-    setViewType(newViewType);
-    setChartType(newViewType === 'net-new' ? 'bar' : 'area');
+    // For diagnostic pages, always use net-new
+    setViewType('net-new');
+    setChartType('bar');
   };
   
   // Handle chart type change
