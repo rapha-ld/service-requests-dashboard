@@ -11,7 +11,7 @@ export const generateDailyData = (targetValue: number, growthPattern: 'steady' |
   // Start date: 1st day of current month
   const startDate = new Date(currentYear, currentMonth, 1);
   // End date: Today's date
-  const endDate = new Date(today);
+  const endDate = new Date(currentYear, currentMonth, today.getDate());
   // Full month end date: Last day of current month
   const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
   

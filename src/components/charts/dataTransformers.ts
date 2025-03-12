@@ -24,6 +24,7 @@ export const transformData = (
   if (viewType === 'net-new') return data;
   
   return data.reduce((acc, curr, index) => {
+    // Always include the day, but set future dates or null values to null
     if (curr.value === null) {
       return [...acc, {
         day: curr.day,
