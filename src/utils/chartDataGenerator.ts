@@ -3,14 +3,17 @@
 export const generateDailyData = (targetValue: number, growthPattern: 'steady' | 'exponential' | 'stepwise') => {
   const data = [];
   
-  // Start date: February 1, 2024
-  const startDate = new Date(2024, 1, 1);
-  // Today's date
+  // Calculate dates for the current month
   const today = new Date();
-  // End date: Either today or February 22, 2024, whichever is earlier
-  const endDate = new Date(Math.min(today.getTime(), new Date(2024, 1, 22).getTime()));
-  // Full month end date: February 29, 2024 (for x-axis display only)
-  const fullMonthEndDate = new Date(2024, 1, 29);
+  const currentYear = today.getFullYear();
+  const currentMonth = today.getMonth();
+  
+  // Start date: 1st day of current month
+  const startDate = new Date(currentYear, currentMonth, 1);
+  // End date: Today's date
+  const endDate = new Date(today);
+  // Full month end date: Last day of current month
+  const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
   
   // Calculate different growth patterns for daily values
   const daysWithData = Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
@@ -72,7 +75,7 @@ export const generateDailyData = (targetValue: number, growthPattern: 'steady' |
   }
   
   // Add null values for future dates up to the end of the month
-  const remainingDays = Math.floor((fullMonthEndDate.getTime() - endDate.getTime()) / (1000 * 60 * 60 * 24));
+  const remainingDays = Math.floor((lastDayOfMonth.getTime() - endDate.getTime()) / (1000 * 60 * 60 * 24));
   
   for (let i = 1; i <= remainingDays; i++) {
     const currentDate = new Date(endDate);
