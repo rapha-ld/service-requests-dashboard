@@ -49,7 +49,8 @@ export function AppSidebar() {
     if (route === "/diagnostics" && 
        (location.pathname === "/diagnostics" || 
         location.pathname === "/client-connections" || 
-        location.pathname === "/server" || 
+        location.pathname === "/server-mau" || 
+        location.pathname === "/peak-server-connections" || 
         location.pathname === "/service-requests")) {
       return true;
     }

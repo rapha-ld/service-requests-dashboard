@@ -16,8 +16,10 @@ export const getTitleRoute = (title: string): string => {
   // Diagnostics routes
   else if (normalizedTitle.includes('client') && normalizedTitle.includes('connection')) {
     return '/client-connections';
-  } else if (normalizedTitle.includes('server')) {
-    return '/server';
+  } else if (normalizedTitle.includes('server') && normalizedTitle.includes('mau')) {
+    return '/server-mau';
+  } else if (normalizedTitle.includes('peak') && normalizedTitle.includes('server')) {
+    return '/peak-server-connections';
   } else if (normalizedTitle.includes('service')) {
     return '/service-requests';
   }

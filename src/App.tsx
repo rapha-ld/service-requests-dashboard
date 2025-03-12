@@ -14,7 +14,8 @@ import ClientMAU from "./pages/ClientMAU";
 import ClientConnections from "./pages/ClientConnections";
 import Experiments from "./pages/Experiments";
 import DataExport from "./pages/DataExport";
-import Server from "./pages/Server";
+import ServerMAU from "./pages/ServerMAU";
+import PeakServerConnections from "./pages/PeakServerConnections";
 import Details from "./pages/Details";
 import Diagnostics from "./pages/Diagnostics";
 
@@ -34,7 +35,8 @@ function AppContent() {
 
   const isDiagnosticsPath = [
     "/client-connections", 
-    "/server", 
+    "/server-mau", 
+    "/peak-server-connections", 
     "/service-requests"
   ].includes(location.pathname);
 
@@ -58,7 +60,8 @@ function AppContent() {
                 <Route path="/client-connections" element={<ClientConnections />} />
                 <Route path="/experiments" element={<Experiments />} />
                 <Route path="/data-export" element={<DataExport />} />
-                <Route path="/server" element={<Server />} />
+                <Route path="/server-mau" element={<ServerMAU />} />
+                <Route path="/peak-server-connections" element={<PeakServerConnections />} />
                 <Route path="/details" element={<Details />} />
                 <Route path="/diagnostics" element={<Diagnostics />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

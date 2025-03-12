@@ -7,7 +7,7 @@ import { useServiceData } from "@/hooks/useServiceData";
 import { GroupingType, TimeRangeType } from "@/types/serviceData";
 import { processServiceData, calculateMaxValue, getAllEnvironmentsData } from "@/utils/serviceDataUtils";
 
-const Server = () => {
+const ServerMAU = () => {
   // State hooks
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
@@ -31,7 +31,7 @@ const Server = () => {
   if (!serviceData) return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl font-semibold text-foreground mb-6 text-left pl-0">Server</h1>
+        <h1 className="text-2xl font-semibold text-foreground mb-6 text-left pl-0">Server MAU</h1>
         <p className="text-muted-foreground">Loading server data...</p>
       </div>
     </div>
@@ -49,7 +49,7 @@ const Server = () => {
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl font-semibold text-foreground mb-6 text-left pl-0">Server</h1>
+        <h1 className="text-2xl font-semibold text-foreground mb-6 text-left pl-0">Server MAU</h1>
         
         <DashboardHeader
           grouping={grouping}
@@ -62,7 +62,7 @@ const Server = () => {
           onMonthChange={(value) => setSelectedMonth(parseInt(value))}
           timeRange={timeRange}
           onTimeRangeChange={handleTimeRangeChange}
-          showViewTypeToggle={false} // New prop to hide the toggle
+          showViewTypeToggle={false} // Hide the toggle
         />
         
         {grouping !== 'all' && <DashboardSummary groups={sortedGroups} />}
@@ -84,4 +84,4 @@ const Server = () => {
   );
 };
 
-export default Server;
+export default ServerMAU;
