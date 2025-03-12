@@ -32,24 +32,21 @@ export const useMAUData = (
   timeRange: TimeRangeType
 ) => {
   const currentDate = new Date(new Date().getFullYear(), selectedMonth);
-  const safeProject = selectedProject || "all"; // Default to "all" if project is undefined
+  const safeProject = selectedProject || "all";
 
-  // Fetch MAU data with proper error handling
   const { data: mauData, isLoading, error } = useQuery<MAUDataResult>({
     queryKey: ['mau-data', currentDate.toISOString(), safeProject, timeRange],
     queryFn: async () => {
       try {
-        // Get data for the selected project
         const currentData = getMockMAUData(safeProject);
         const previousData = getMockMAUData(safeProject);
         
-        // Ensure we have valid data structures
         if (!currentData || Object.keys(currentData).length === 0) {
           console.error("No current data returned for project", safeProject);
           return createFallbackData();
         }
 
-        // If we're showing "all" projects, ensure the total matches the Overview page
+        // If showing "all" projects, ensure the total matches the Overview page
         if (safeProject === "all") {
           let totalCurrentMAU = 0;
           
@@ -68,6 +65,22 @@ export const useMAUData = (
               value: Math.round(day.value * scalingFactor)
             }));
           });
+
+          // For cumulative view, ensure the final cumulative sum equals CLIENT_MAU_VALUE
+          if (timeRange === 'rolling-30-day') {
+            const daysInPeriod = 30;
+            const targetDailyAverage = CLIENT_MAU_VALUE / daysInPeriod;
+
+            Object.keys(currentData).forEach(env => {
+              const envCount = Object.keys(currentData).length;
+              const envDailyTarget = targetDailyAverage / envCount;
+              
+              currentData[env] = currentData[env].map((day, idx) => ({
+                day: day.day,
+                value: Math.round(envDailyTarget * (0.8 + (idx / daysInPeriod) * 0.4))
+              }));
+            });
+          }
         }
 
         // Handle different time range views
@@ -118,7 +131,6 @@ export const useMAUData = (
         if (timeRange === 'rolling-30-day') {
           const rolling30DayData: EnvironmentsMap = {};
           
-          // Generate consistent date strings for all environments to ensure they match
           const dateStrings = Array.from({ length: 30 }, (_, i) => 
             format(subDays(new Date(), 29 - i), 'MMM d')
           );
@@ -126,45 +138,9 @@ export const useMAUData = (
           Object.keys(currentData).forEach(key => {
             rolling30DayData[key] = dateStrings.map(day => ({
               day,
-              value: Math.floor(Math.random() * 1000)
+              value: Math.floor((CLIENT_MAU_VALUE / 30) * (0.8 + Math.random() * 0.4))
             }));
           });
-
-          // If we're showing "all" projects, ensure the total 30-day data is proportional
-          if (safeProject === "all") {
-            const totalDailyValue = CLIENT_MAU_VALUE / 30;
-            
-            // Create the "all projects" total data with exactly the same dates
-            rolling30DayData["total"] = dateStrings.map((day, idx) => ({
-              day,
-              value: 0 // Will be calculated below
-            }));
-            
-            // Calculate values for individual environments and sum for total
-            Object.keys(rolling30DayData).forEach(env => {
-              if (env === "total") return; // Skip the total for now
-              
-              const envCount = Object.keys(rolling30DayData).length - 1; // -1 to exclude "total"
-              const envValue = totalDailyValue / envCount;
-              
-              rolling30DayData[env] = dateStrings.map((day, idx) => {
-                // Add some variation while keeping a reasonable pattern
-                const value = Math.round(envValue * (0.8 + (idx / 30) * 0.4));
-                
-                // Add to the total for this day
-                if (rolling30DayData["total"] && rolling30DayData["total"][idx]) {
-                  rolling30DayData["total"][idx].value += value;
-                }
-                
-                return { day, value };
-              });
-            });
-            
-            // Remove the artificial "total" entry if it was created just for calculation
-            if (!currentData["total"]) {
-              delete rolling30DayData["total"];
-            }
-          }
 
           // Calculate totals for each environment
           const currentTotals = Object.fromEntries(
@@ -207,7 +183,7 @@ export const useMAUData = (
   });
 
   return {
-    mauData: mauData || createFallbackData(), // Always return valid data structure
+    mauData: mauData || createFallbackData(),
     isLoading,
     error
   };
