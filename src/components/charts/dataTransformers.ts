@@ -1,3 +1,4 @@
+
 import { format } from 'date-fns';
 
 export const getRequestStatus = (value: number) => {
@@ -6,8 +7,8 @@ export const getRequestStatus = (value: number) => {
   return 'poor';
 };
 
-export const getTotalValue = (data: Array<{ day: string; value: number }>) => {
-  return data.reduce((sum, item) => sum + item.value, 0);
+export const getTotalValue = (data: Array<{ day: string; value: number | null }>) => {
+  return data.reduce((sum, item) => sum + (item.value !== null ? item.value : 0), 0);
 };
 
 export const calculatePercentChange = (currentValue: number, previousValue: number) => {

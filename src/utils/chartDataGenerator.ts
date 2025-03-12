@@ -1,3 +1,4 @@
+
 // Generate non-cumulative daily data that will add up to the target value
 export const generateDailyData = (targetValue: number, growthPattern: 'steady' | 'exponential' | 'stepwise') => {
   const data = [];
