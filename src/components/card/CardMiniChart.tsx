@@ -3,6 +3,7 @@ import React from "react";
 import { AreaChart, Area, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { CustomTooltip } from '../charts/CustomTooltip';
 import { formatYAxisTick } from '../charts/formatters';
+import { transformData } from '../charts/dataTransformers';
 
 interface CardMiniChartProps {
   chartData: Array<{ day: string; value: number | null }>;
@@ -79,32 +80,4 @@ export const CardMiniChart: React.FC<CardMiniChartProps> = ({
       </div>
     </>
   );
-};
-
-// Helper function to transform data for the chart
-const transformData = (data: Array<{ day: string; value: number | null }>, viewType: 'cumulative' | 'net-new') => {
-  if (viewType === 'net-new') return data;
-
-  // For cumulative view, we accumulate values
-  return data.reduce((acc: Array<{ day: string; value: number | null }>, curr, index) => {
-    if (index === 0) {
-      acc.push({ ...curr });
-    } else {
-      const prevValue = acc[index - 1].value;
-      const currValue = curr.value;
-      
-      // Handle null values
-      let newValue: number | null = null;
-      if (prevValue !== null && currValue !== null) {
-        newValue = prevValue + currValue;
-      } else if (prevValue !== null) {
-        newValue = prevValue;
-      } else if (currValue !== null) {
-        newValue = currValue;
-      }
-      
-      acc.push({ day: curr.day, value: newValue });
-    }
-    return acc;
-  }, []);
 };
