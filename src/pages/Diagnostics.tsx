@@ -1,74 +1,58 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Network, Server, FileSearch } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
-interface DiagnosticsCardProps {
-  title: string;
-  description: string;
-  icon: React.ComponentType<{ className?: string }>;
-  route: string;
-}
-
-const DiagnosticsCard = ({ title, description, icon: Icon, route }: DiagnosticsCardProps) => {
-  const navigate = useNavigate();
-  
-  return (
-    <Card 
-      className="cursor-pointer hover:bg-accent/50 transition-colors"
-      onClick={() => navigate(route)}
-    >
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-xl font-medium">{title}</CardTitle>
-        <Icon className="size-5 text-muted-foreground" />
-      </CardHeader>
-      <CardContent>
-        <CardDescription className="text-sm text-muted-foreground">
-          {description}
-        </CardDescription>
-      </CardContent>
-    </Card>
-  );
-};
+import { Network, Server, FileSearch } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function Diagnostics() {
-  const diagnosticsTools = [
+  const navigate = useNavigate();
+  
+  const diagnosticOptions = [
     {
       title: "Client Connections",
-      description: "Monitor and analyze client connection metrics and trends.",
+      description: "View client connection statistics and metrics",
       icon: Network,
       route: "/client-connections"
     },
     {
       title: "Server",
-      description: "View server health, performance, and configuration details.",
+      description: "Server monitoring and performance",
       icon: Server,
       route: "/server"
     },
     {
       title: "Service Requests",
-      description: "Track and analyze service requests and response times.",
+      description: "Track and analyze service requests",
       icon: FileSearch,
       route: "/service-requests"
-    },
+    }
   ];
 
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-3xl font-bold">Diagnostics</h1>
-      <p className="text-muted-foreground">
-        Access diagnostic tools to monitor and troubleshoot your application.
-      </p>
+      <p className="text-muted-foreground">Select a diagnostic tool to view detailed metrics and analysis</p>
       
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mt-4">
-        {diagnosticsTools.map((tool) => (
-          <DiagnosticsCard
-            key={tool.title}
-            title={tool.title}
-            description={tool.description}
-            icon={tool.icon}
-            route={tool.route}
-          />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+        {diagnosticOptions.map((option) => (
+          <Card key={option.title} className="overflow-hidden">
+            <CardHeader className="pb-2">
+              <div className="flex items-center gap-2">
+                <option.icon className="h-5 w-5 text-muted-foreground" />
+                <CardTitle className="text-xl">{option.title}</CardTitle>
+              </div>
+              <CardDescription>{option.description}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button 
+                onClick={() => navigate(option.route)} 
+                variant="secondary" 
+                className="w-full"
+              >
+                View Details
+              </Button>
+            </CardContent>
+          </Card>
         ))}
       </div>
     </div>
