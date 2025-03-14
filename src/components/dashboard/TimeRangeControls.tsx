@@ -64,7 +64,7 @@ export const TimeRangeControls = ({
       <Button
         variant={timeRange === 'last-12-months' ? 'default' : 'outline'}
         onClick={() => onTimeRangeChange('last-12-months')}
-        className={`rounded-none rounded-r-md border-l-0 ${
+        className={`rounded-none border-l-0 ${
           timeRange === 'last-12-months' 
             ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
             : ''
@@ -73,7 +73,7 @@ export const TimeRangeControls = ({
         Last 12M
       </Button>
       
-      {/* Custom date range picker moved to the end with rounded corners */}
+      {/* Custom date range picker with rounded right corners */}
       <DateRangePicker 
         dateRange={customDateRange}
         onDateRangeChange={handleCustomDateRangeChange}
