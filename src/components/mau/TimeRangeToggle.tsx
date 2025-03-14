@@ -62,7 +62,7 @@ export const TimeRangeToggle = ({
             <Button
               variant={timeRange === 'last-12-months' ? 'default' : 'outline'}
               onClick={() => onTimeRangeChange('last-12-months')}
-              className={`rounded-none border-l-0 ${
+              className={`rounded-l-none border-l-0 ${
                 timeRange === 'last-12-months' 
                   ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
                   : ''
@@ -73,27 +73,6 @@ export const TimeRangeToggle = ({
           </TooltipTrigger>
           <TooltipContent>
             <p>Last 12 Months</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-      
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant={timeRange === 'custom' ? 'default' : 'outline'}
-              onClick={() => onTimeRangeChange('custom')}
-              className={`rounded-l-none border-l-0 ${
-                timeRange === 'custom' 
-                  ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
-                  : ''
-              }`}
-            >
-              Custom
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Custom Date Range</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

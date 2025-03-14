@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -7,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
+import { format, isSameYear } from "date-fns";
 import { cn } from "@/lib/utils";
 import { DateRange } from "@/types/mauTypes";
 
@@ -161,12 +160,26 @@ export const DateRangePicker = ({
     }
   };
 
-  // Format date range for display
+  // Format date range for display - now with conditional year display
   const formatDateRange = () => {
     if (dateRange?.from && dateRange?.to) {
-      return `${format(dateRange.from, "MMM d, yyyy h:mm a")} - ${format(dateRange.to, "MMM d, yyyy h:mm a")}`;
+      // Check if both dates are in the same year
+      const sameYear = isSameYear(dateRange.from, dateRange.to);
+      // Check if dates are in current year
+      const isCurrentYear = isSameYear(dateRange.from, new Date()) && isSameYear(dateRange.to, new Date());
+      
+      if (sameYear && isCurrentYear) {
+        // If same year and current year, don't show year in the display
+        return `${format(dateRange.from, "MMM d, h:mm a")} - ${format(dateRange.to, "MMM d, h:mm a")}`;
+      } else if (sameYear) {
+        // If same year but not current year, show year only once at the end
+        return `${format(dateRange.from, "MMM d, h:mm a")} - ${format(dateRange.to, "MMM d, h:mm a, yyyy")}`;
+      } else {
+        // If different years, show years for both dates
+        return `${format(dateRange.from, "MMM d, yyyy, h:mm a")} - ${format(dateRange.to, "MMM d, yyyy, h:mm a")}`;
+      }
     }
-    return "Custom Date Range";
+    return "Select Date Range";
   };
 
   return (
@@ -181,11 +194,19 @@ export const DateRangePicker = ({
           }`}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {isSelected ? formatDateRange() : "Custom Date Range"}
+          {isSelected ? formatDateRange() : "Select Date Range"}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <div className="p-4 space-y-4">
+          <div className="space-y-1 mb-1">
+            <p className="text-center font-semibold">
+              {localDateRange?.from ? format(localDateRange.from, "MMMM yyyy") : "Select date"}
+            </p>
+            <p className="text-center text-sm text-muted-foreground">
+              Double-click to change starting date
+            </p>
+          </div>
           <Calendar
             mode="range"
             selected={localDateRange}
