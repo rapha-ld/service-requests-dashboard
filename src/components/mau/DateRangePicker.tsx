@@ -1,15 +1,13 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CalendarIcon } from "lucide-react";
-import { format, isSameYear } from "date-fns";
-import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 import { DateRange } from "@/types/mauTypes";
+import { DatePickerCalendar } from "./DatePickerCalendar";
+import { DateTimeInputs } from "./DateTimeInputs";
+import { formatDateRange } from "@/utils/dateFormatters";
 
 interface DateRangePickerProps {
   dateRange: DateRange | undefined;
@@ -54,31 +52,7 @@ export const DateRangePicker = ({
     
     // If both dates are selected, apply hours and update
     if (range.from && range.to) {
-      const newRange = {
-        from: new Date(range.from),
-        to: new Date(range.to)
-      };
-      
-      // Set hours for from date (convert from 12-hour to 24-hour)
-      const fromHourValue = parseInt(fromHour, 10);
-      const fromHour24 = fromPeriod === 'AM' 
-        ? (fromHourValue === 12 ? 0 : fromHourValue) 
-        : (fromHourValue === 12 ? 12 : fromHourValue + 12);
-      newRange.from.setHours(fromHour24, 0, 0, 0);
-      
-      // Set hours for to date (convert from 12-hour to 24-hour)
-      const toHourValue = parseInt(toHour, 10);
-      const toHour24 = toPeriod === 'AM' 
-        ? (toHourValue === 12 ? 0 : toHourValue) 
-        : (toHourValue === 12 ? 12 : toHourValue + 12);
-      newRange.to.setHours(toHour24, 59, 59, 999);
-      
-      onDateRangeChange(newRange);
-      
-      // Change time range to custom if callback provided
-      if (onTimeRangeTypeChange) {
-        onTimeRangeTypeChange();
-      }
+      updateDateRangeWithHours(fromHour, fromPeriod, toHour, toPeriod, range);
     }
   };
   
@@ -135,12 +109,14 @@ export const DateRangePicker = ({
     fromHourValue: string, 
     fromPeriodValue: 'AM' | 'PM', 
     toHourValue: string, 
-    toPeriodValue: 'AM' | 'PM'
+    toPeriodValue: 'AM' | 'PM',
+    baseRange?: DateRange
   ) => {
-    if (localDateRange?.from && localDateRange?.to) {
+    if ((baseRange || localDateRange)?.from && (baseRange || localDateRange)?.to) {
+      const rangeToUse = baseRange || localDateRange;
       const newRange = {
-        from: new Date(localDateRange.from),
-        to: new Date(localDateRange.to)
+        from: new Date(rangeToUse!.from!),
+        to: new Date(rangeToUse!.to!)
       };
       
       // Convert from 12-hour to 24-hour format
@@ -158,29 +134,12 @@ export const DateRangePicker = ({
       newRange.to.setHours(toHour24, 59, 59, 999);
       
       onDateRangeChange(newRange);
-    }
-  };
-
-  // Format date range for display - now with conditional year display
-  const formatDateRange = () => {
-    if (dateRange?.from && dateRange?.to) {
-      // Check if both dates are in the same year
-      const sameYear = isSameYear(dateRange.from, dateRange.to);
-      // Check if dates are in current year
-      const isCurrentYear = isSameYear(dateRange.from, new Date()) && isSameYear(dateRange.to, new Date());
       
-      if (sameYear && isCurrentYear) {
-        // If same year and current year, don't show year in the display
-        return `${format(dateRange.from, "MMM d, h:mm a")} - ${format(dateRange.to, "MMM d, h:mm a")}`;
-      } else if (sameYear) {
-        // If same year but not current year, show year only once at the end
-        return `${format(dateRange.from, "MMM d, h:mm a")} - ${format(dateRange.to, "MMM d, h:mm a, yyyy")}`;
-      } else {
-        // If different years, show years for both dates
-        return `${format(dateRange.from, "MMM d, yyyy, h:mm a")} - ${format(dateRange.to, "MMM d, yyyy, h:mm a")}`;
+      // Change time range to custom if callback provided
+      if (baseRange && onTimeRangeTypeChange) {
+        onTimeRangeTypeChange();
       }
     }
-    return "Custom";
   };
 
   return (
@@ -195,72 +154,25 @@ export const DateRangePicker = ({
           }`}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {isSelected ? formatDateRange() : "Custom"}
+          {isSelected ? formatDateRange(dateRange) : "Custom"}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <div className="p-4 space-y-4">
-          <div className="space-y-1 mb-1">
-            <p className="text-center font-semibold">
-              {localDateRange?.from ? format(localDateRange.from, "MMMM yyyy") : "Select date"}
-            </p>
-            <p className="text-center text-sm text-muted-foreground">
-              Double-click to change starting date
-            </p>
-          </div>
-          <Calendar
-            mode="range"
-            selected={localDateRange}
-            onSelect={handleDateRangeChange}
-            initialFocus
-            className={cn("p-3 pointer-events-auto")}
+          <DatePickerCalendar 
+            localDateRange={localDateRange} 
+            onDateRangeChange={handleDateRangeChange} 
           />
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label className="mb-2 block">From:</Label>
-              <div className="flex items-center gap-2">
-                <Input
-                  type="number"
-                  min="1"
-                  max="12"
-                  value={fromHour}
-                  onChange={handleFromHourChange}
-                  className="w-16"
-                />
-                <Select value={fromPeriod} onValueChange={handleFromPeriodChange}>
-                  <SelectTrigger className="w-20">
-                    <SelectValue placeholder="AM/PM" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="AM">AM</SelectItem>
-                    <SelectItem value="PM">PM</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div>
-              <Label className="mb-2 block">To:</Label>
-              <div className="flex items-center gap-2">
-                <Input
-                  type="number"
-                  min="1"
-                  max="12"
-                  value={toHour}
-                  onChange={handleToHourChange}
-                  className="w-16"
-                />
-                <Select value={toPeriod} onValueChange={handleToPeriodChange}>
-                  <SelectTrigger className="w-20">
-                    <SelectValue placeholder="AM/PM" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="AM">AM</SelectItem>
-                    <SelectItem value="PM">PM</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
+          <DateTimeInputs 
+            fromHour={fromHour}
+            fromPeriod={fromPeriod}
+            toHour={toHour}
+            toPeriod={toPeriod}
+            handleFromHourChange={handleFromHourChange}
+            handleToHourChange={handleToHourChange}
+            handleFromPeriodChange={handleFromPeriodChange}
+            handleToPeriodChange={handleToPeriodChange}
+          />
         </div>
       </PopoverContent>
     </Popover>
