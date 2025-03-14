@@ -35,7 +35,7 @@ export const ExperimentHeader = ({
   const showViewType = timeRange !== 'last-12-months' && timeRange !== 'rolling-30-day';
 
   return (
-    <div className="flex gap-2 items-center mb-6 flex-wrap">
+    <div className="flex gap-4 items-center mb-6 flex-wrap">
       <TimeRangeControls 
         timeRange={timeRange}
         onTimeRangeChange={onTimeRangeChange}

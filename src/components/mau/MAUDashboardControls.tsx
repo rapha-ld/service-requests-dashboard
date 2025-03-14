@@ -47,7 +47,7 @@ export const MAUDashboardControls = ({
   const showViewType = timeRange !== 'last-12-months' && timeRange !== 'rolling-30-day' && !hideModeToggle;
 
   return (
-    <div className="flex gap-2 items-center mb-6 flex-wrap">
+    <div className="flex gap-4 items-center mb-6 flex-wrap">
       <ProjectSelector 
         selectedProject={selectedProject}
         setSelectedProject={setSelectedProject}
