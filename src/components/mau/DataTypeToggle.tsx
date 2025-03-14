@@ -17,7 +17,7 @@ export const DataTypeToggle = ({
         onClick={() => onDataTypeChange('mau')}
         className={`rounded-r-none ${
           dataType === 'mau' 
-            ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
+            ? 'bg-[#F6F8FF] border-[#425EFF] text-[#425EFF] border-2' 
             : ''
         }`}
       >
@@ -28,7 +28,7 @@ export const DataTypeToggle = ({
         onClick={() => onDataTypeChange('connections')}
         className={`rounded-l-none border-l-0 ${
           dataType === 'connections' 
-            ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
+            ? 'bg-[#F6F8FF] border-[#425EFF] text-[#425EFF] border-2' 
             : ''
         }`}
       >
