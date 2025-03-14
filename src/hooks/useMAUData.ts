@@ -13,7 +13,8 @@ import {
   adjustRolling30DayData,
   calculateMAUTotals,
   limitDataToCurrentDate,
-  capEnvironmentsData
+  capEnvironmentsData,
+  formatCustomDateRangeData
 } from "@/utils/mauDataFormatter";
 
 // Client MAU value and limits from Overview page
@@ -55,15 +56,19 @@ export const useMAUData = (
           processedCurrentData = formatLast12MonthsData(currentData, safeProject);
         } else if (timeRange === 'rolling-30-day') {
           processedCurrentData = formatRolling30DayData(currentData, safeProject);
+        } else if (timeRange === 'custom' && customDateRange?.from && customDateRange?.to) {
+          processedCurrentData = formatCustomDateRangeData(currentData, customDateRange.from, customDateRange.to);
+        } else if (timeRange === 'month-to-date') {
+          processedCurrentData = limitDataToCurrentDate(processedCurrentData, 
+            new Date(new Date().getFullYear(), selectedMonth, new Date().getDate()));
         }
 
-        // Apply date limitation for Month-to-Date view or custom date
-        if (timeRange === 'month-to-date' || timeRange === 'custom') {
-          processedCurrentData = limitDataToCurrentDate(processedCurrentData, 
-            timeRange === 'custom' && customDateRange?.to ? customDateRange.to : undefined);
+        if (timeRange === 'custom' && customDateRange?.from && customDateRange?.to) {
+          if (safeProject === "all") {
+            processedCurrentData = capEnvironmentsData(processedCurrentData, USER_LIMIT);
+          }
         }
         
-        // Cap the data at the threshold if it's the "all" project
         if (safeProject === "all") {
           processedCurrentData = capEnvironmentsData(processedCurrentData, USER_LIMIT);
         }

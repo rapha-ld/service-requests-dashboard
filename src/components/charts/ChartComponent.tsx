@@ -51,6 +51,17 @@ export const ChartComponent = ({
     DataComponent = Line;
   }
 
+  // Calculate appropriate interval for x-axis ticks based on data length
+  const calculateXAxisInterval = () => {
+    const dataLength = transformedData.length;
+    if (dataLength <= 7) return 0; // Show all ticks for small datasets
+    if (dataLength <= 14) return 1; // Show every other tick
+    if (dataLength <= 30) return 2; // Show every third tick
+    return Math.floor(dataLength / 10); // For larger datasets
+  };
+
+  const xAxisInterval = calculateXAxisInterval();
+
   return (
     <ResponsiveContainer width="100%" height="100%">
       <ChartComponent ref={chartRef} data={transformedData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
@@ -63,10 +74,16 @@ export const ChartComponent = ({
         <XAxis 
           dataKey="day" 
           tick={{ fontSize: 10 }}
-          interval="preserveStart"
+          interval={xAxisInterval}
           tickLine={false}
           stroke="currentColor"
           className="text-muted-foreground"
+          // Ensure the axis always shows the first and last data points
+          ticks={transformedData.length > 0 ? 
+            [transformedData[0].day, 
+             ...transformedData.slice(1, -1).filter((_, i) => (i + 1) % (xAxisInterval + 1) === 0).map(d => d.day),
+             transformedData[transformedData.length - 1].day] 
+            : []}
         />
         <YAxis 
           tick={{ fontSize: 10 }}

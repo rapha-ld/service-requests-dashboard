@@ -1,4 +1,5 @@
-import { format, subMonths, subDays } from "date-fns";
+
+import { format, subMonths, subDays, parseISO, isWithinInterval } from "date-fns";
 import { EnvironmentsMap, MAUDataResult } from "@/types/mauTypes";
 import { getMockMAUData } from "./mauDataGenerator";
 import { getTotalValue } from "./dataTransformers";
@@ -103,8 +104,8 @@ export const calculateMAUTotals = (data: EnvironmentsMap) => {
 // Function to limit data to the current date or a specified end date
 export const limitDataToCurrentDate = (data: EnvironmentsMap, endDate?: Date): EnvironmentsMap => {
   const result: EnvironmentsMap = {};
-  // Use provided end date or default to March 12, 2024
-  const currentDate = endDate || new Date(2024, 2, 12); // March 12, 2024
+  // Use provided end date or default to current date
+  const currentDate = endDate || new Date();
   
   Object.keys(data).forEach(env => {
     result[env] = data[env].map(dayData => {
@@ -116,7 +117,7 @@ export const limitDataToCurrentDate = (data: EnvironmentsMap, endDate?: Date): E
       const day = parseInt(dateParts[1], 10);
       
       // Create a date object for comparison
-      const dataDate = new Date(2024, month, day);
+      const dataDate = new Date(currentDate.getFullYear(), month, day);
       
       // If the date is after the current date, set value to null
       return {
@@ -131,11 +132,11 @@ export const limitDataToCurrentDate = (data: EnvironmentsMap, endDate?: Date): E
 
 // Helper function to convert month abbreviation to month number
 const getMonthNumber = (monthAbbr: string): number => {
-  const months = {
+  const months: {[key: string]: number} = {
     'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5,
     'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
   };
-  return months[monthAbbr as keyof typeof months] || 0;
+  return months[monthAbbr] || 0;
 };
 
 // Function to ensure data doesn't exceed the threshold
@@ -183,6 +184,33 @@ export const capEnvironmentsData = (data: EnvironmentsMap, threshold: number = U
       }
       return dayData;
     });
+  });
+  
+  return result;
+};
+
+// Function to format data for custom date range
+export const formatCustomDateRangeData = (data: EnvironmentsMap, startDate: Date, endDate: Date): EnvironmentsMap => {
+  const result: EnvironmentsMap = {};
+  
+  // Generate dates between start and end date
+  const dateRange: Date[] = [];
+  let currentDate = new Date(startDate);
+  
+  while (currentDate <= endDate) {
+    dateRange.push(new Date(currentDate));
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+  
+  // Format dates to match chart format
+  const formattedDates = dateRange.map(date => format(date, 'MMM d'));
+  
+  // Create data for each environment
+  Object.keys(data).forEach(env => {
+    result[env] = formattedDates.map(day => ({
+      day,
+      value: Math.floor(Math.random() * 3000) + 1000 // Random value for demonstration
+    }));
   });
   
   return result;
