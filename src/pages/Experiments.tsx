@@ -10,6 +10,7 @@ import {
   getExperimentsTotalData,
   ExperimentGroup 
 } from "@/utils/experimentDataUtils";
+import { DateRange } from "@/types/mauTypes";
 
 // Experiment events threshold from Overview page
 const EXPERIMENT_EVENTS_THRESHOLD = 500000;
@@ -20,6 +21,10 @@ const Experiments = () => {
   const [viewType, setViewType] = useState<'net-new' | 'cumulative'>('cumulative'); 
   const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>('area'); 
   const [timeRange, setTimeRange] = useState<TimeRangeType>('month-to-date');
+  const [customDateRange, setCustomDateRange] = useState<DateRange>({
+    from: new Date(),
+    to: new Date()
+  });
   const chartRefs = useRef<{ [key: string]: any }>({});
 
   // Effect to set view type based on time range, but only for last-12-months
@@ -43,13 +48,21 @@ const Experiments = () => {
     }
   };
   
+  const handleCustomDateRangeChange = (dateRange: DateRange) => {
+    setCustomDateRange(dateRange);
+  };
+  
   const handleViewTypeChange = (newViewType: 'net-new' | 'cumulative') => {
     setViewType(newViewType);
     setChartType(newViewType === 'net-new' ? 'bar' : 'area');
   };
 
   const currentDate = new Date(new Date().getFullYear(), selectedMonth);
-  const { data: serviceData } = useExperimentData(timeRange, currentDate);
+  const { data: serviceData } = useExperimentData(
+    timeRange, 
+    currentDate,
+    timeRange === 'custom' ? customDateRange : undefined
+  );
 
   if (!serviceData) return null;
 
@@ -71,6 +84,8 @@ const Experiments = () => {
           onSortDirectionChange={() => setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc')}
           onMonthChange={(value) => setSelectedMonth(parseInt(value))}
           onTimeRangeChange={handleTimeRangeChange}
+          customDateRange={customDateRange}
+          onCustomDateRangeChange={handleCustomDateRangeChange}
         />
         
         <DashboardSummary groups={sortedGroups as ExperimentGroup[]} />

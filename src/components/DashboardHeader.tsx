@@ -4,6 +4,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { DateRangePicker } from "@/components/mau/DateRangePicker";
+import { DateRange } from "@/types/mauTypes";
 
 interface DashboardHeaderProps {
   grouping: 'all' | 'environment' | 'relayId' | 'userAgent';
@@ -14,10 +16,12 @@ interface DashboardHeaderProps {
   onViewTypeChange: (value: 'net-new' | 'cumulative') => void;
   onSortDirectionChange: () => void;
   onMonthChange: (value: string) => void;
-  timeRange: 'month-to-date' | 'last-12-months' | 'rolling-30-day';
-  onTimeRangeChange: (value: 'month-to-date' | 'last-12-months' | 'rolling-30-day') => void;
+  timeRange: 'month-to-date' | 'last-12-months' | 'rolling-30-day' | 'custom';
+  onTimeRangeChange: (value: 'month-to-date' | 'last-12-months' | 'rolling-30-day' | 'custom') => void;
   showGrouping?: boolean;
   showViewTypeToggle?: boolean;
+  customDateRange?: DateRange;
+  onCustomDateRangeChange?: (dateRange: DateRange) => void;
 }
 
 export const DashboardHeader = ({
@@ -33,6 +37,8 @@ export const DashboardHeader = ({
   onTimeRangeChange,
   showGrouping = true,
   showViewTypeToggle = true,
+  customDateRange,
+  onCustomDateRangeChange
 }: DashboardHeaderProps) => {
   // Generate abbreviated month options with year
   const getMonthOptions = () => {
@@ -47,6 +53,15 @@ export const DashboardHeader = ({
   };
 
   const monthOptions = getMonthOptions();
+
+  // Handle custom date range selection
+  const handleCustomDateRangeChange = (dateRange: DateRange) => {
+    if (onCustomDateRangeChange) {
+      onCustomDateRangeChange(dateRange);
+      // Set time range to custom when date range is changed
+      onTimeRangeChange('custom');
+    }
+  };
 
   return (
     <div className="flex gap-2 items-center mb-6 flex-wrap">
@@ -67,14 +82,22 @@ export const DashboardHeader = ({
         </Select>
       )}
       
-      <div className="flex">
+      <div className="flex flex-wrap gap-0">
+        {/* Date Range Picker - Should always be visible */}
+        <DateRangePicker 
+          dateRange={customDateRange}
+          onDateRangeChange={handleCustomDateRangeChange}
+          isSelected={timeRange === 'custom'}
+          onTimeRangeTypeChange={() => onTimeRangeChange('custom')}
+        />
+        
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
                 variant={timeRange === 'month-to-date' ? 'default' : 'outline'}
                 onClick={() => onTimeRangeChange('month-to-date')}
-                className={`rounded-r-none ${
+                className={`rounded-none border-l-0 ${
                   timeRange === 'month-to-date' 
                     ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
                     : ''

@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from "react";
 import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
@@ -5,6 +6,7 @@ import { DashboardHeader } from "@/components/DashboardHeader";
 import { useServiceData } from "@/hooks/useServiceData";
 import { GroupingType, TimeRangeType } from "@/types/serviceData";
 import { processServiceData, calculateMaxValue, getAllEnvironmentsData } from "@/utils/serviceDataUtils";
+import { DateRange } from "@/types/mauTypes";
 
 const ServerMAU = () => {
   // State hooks
@@ -14,6 +16,10 @@ const ServerMAU = () => {
   const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>('bar');
   const [grouping, setGrouping] = useState<GroupingType>('all');
   const [timeRange, setTimeRange] = useState<TimeRangeType>('month-to-date');
+  const [customDateRange, setCustomDateRange] = useState<DateRange>({
+    from: new Date(),
+    to: new Date()
+  });
   const chartRefs = useRef<{ [key: string]: any }>({});
   
   // Handle time range change
@@ -23,8 +29,18 @@ const ServerMAU = () => {
     setViewType('net-new');
   };
   
+  // Handle custom date range change
+  const handleCustomDateRangeChange = (dateRange: DateRange) => {
+    setCustomDateRange(dateRange);
+  };
+  
   // Fetch data using custom hook
-  const { data: serviceData } = useServiceData(selectedMonth, grouping, timeRange);
+  const { data: serviceData } = useServiceData(
+    selectedMonth, 
+    grouping, 
+    timeRange,
+    timeRange === 'custom' ? customDateRange : undefined
+  );
 
   if (!serviceData) return (
     <div className="min-h-screen bg-background p-6">
@@ -61,6 +77,8 @@ const ServerMAU = () => {
           timeRange={timeRange}
           onTimeRangeChange={handleTimeRangeChange}
           showViewTypeToggle={false} // Hide the toggle
+          customDateRange={customDateRange}
+          onCustomDateRangeChange={handleCustomDateRangeChange}
         />
         
         {grouping !== 'all' && <DashboardSummary groups={sortedGroups} />}
