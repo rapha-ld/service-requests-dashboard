@@ -49,11 +49,27 @@ export const DateRangePicker = ({
   const handleDateRangeChange = (range: DateRange | undefined) => {
     if (!range) return;
     
+    // Just update the local state, don't apply changes immediately
+    // This allows the user to complete their selection without the popover closing
     setLocalDateRange(range);
     
-    // If both dates are selected, apply hours and update
+    // Only apply hours and update after clicking "Apply" button
+    // or when both dates are selected and user clicks outside
     if (range.from && range.to) {
-      updateDateRangeWithHours(fromHour, fromPeriod, toHour, toPeriod, range);
+      // If both dates are selected, update the time inputs
+      updateHoursFromDateRange(range);
+    }
+  };
+  
+  // Update hour inputs when date range changes
+  const updateHoursFromDateRange = (range: DateRange) => {
+    if (range.from) {
+      setFromHour(format(range.from, 'h'));
+      setFromPeriod(range.from.getHours() >= 12 ? 'PM' : 'AM');
+    }
+    if (range.to) {
+      setToHour(format(range.to, 'h'));
+      setToPeriod(range.to.getHours() >= 12 ? 'PM' : 'AM');
     }
   };
   
@@ -70,9 +86,6 @@ export const DateRangePicker = ({
     }
     
     setFromHour(newHour);
-    
-    // Update date range with new hour if we have a selected range
-    updateDateRangeWithHours(newHour, fromPeriod, toHour, toPeriod);
   };
   
   const handleToHourChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,47 +100,35 @@ export const DateRangePicker = ({
     }
     
     setToHour(newHour);
-    
-    // Update date range with new hour if we have a selected range
-    updateDateRangeWithHours(fromHour, fromPeriod, newHour, toPeriod);
   };
   
   // Handle period changes (AM/PM)
   const handleFromPeriodChange = (value: string) => {
     const period = value as 'AM' | 'PM';
     setFromPeriod(period);
-    updateDateRangeWithHours(fromHour, period, toHour, toPeriod);
   };
   
   const handleToPeriodChange = (value: string) => {
     const period = value as 'AM' | 'PM';
     setToPeriod(period);
-    updateDateRangeWithHours(fromHour, fromPeriod, toHour, period);
   };
   
-  // Helper function to update date range with hours
-  const updateDateRangeWithHours = (
-    fromHourValue: string, 
-    fromPeriodValue: 'AM' | 'PM', 
-    toHourValue: string, 
-    toPeriodValue: 'AM' | 'PM',
-    baseRange?: DateRange
-  ) => {
-    if ((baseRange || localDateRange)?.from && (baseRange || localDateRange)?.to) {
-      const rangeToUse = baseRange || localDateRange;
+  // Apply the selected date range with the current hours
+  const applyDateRange = () => {
+    if (localDateRange?.from && localDateRange?.to) {
       const newRange = {
-        from: new Date(rangeToUse!.from!),
-        to: new Date(rangeToUse!.to!)
+        from: new Date(localDateRange.from),
+        to: new Date(localDateRange.to)
       };
       
       // Convert from 12-hour to 24-hour format
-      const fromHour12 = parseInt(fromHourValue, 10);
-      const fromHour24 = fromPeriodValue === 'AM' 
+      const fromHour12 = parseInt(fromHour, 10);
+      const fromHour24 = fromPeriod === 'AM' 
         ? (fromHour12 === 12 ? 0 : fromHour12) 
         : (fromHour12 === 12 ? 12 : fromHour12 + 12);
       
-      const toHour12 = parseInt(toHourValue, 10);
-      const toHour24 = toPeriodValue === 'AM' 
+      const toHour12 = parseInt(toHour, 10);
+      const toHour24 = toPeriod === 'AM' 
         ? (toHour12 === 12 ? 0 : toHour12) 
         : (toHour12 === 12 ? 12 : toHour12 + 12);
       
@@ -137,9 +138,12 @@ export const DateRangePicker = ({
       onDateRangeChange(newRange);
       
       // Change time range to custom if callback provided
-      if (baseRange && onTimeRangeTypeChange) {
+      if (onTimeRangeTypeChange) {
         onTimeRangeTypeChange();
       }
+      
+      // Close the popover after applying
+      setIsOpen(false);
     }
   };
 
@@ -176,11 +180,8 @@ export const DateRangePicker = ({
           />
           <div className="flex justify-end">
             <Button 
-              onClick={() => {
-                if (localDateRange?.from && localDateRange?.to) {
-                  setIsOpen(false);
-                }
-              }}
+              onClick={applyDateRange}
+              disabled={!localDateRange?.from || !localDateRange?.to}
             >
               Apply
             </Button>
