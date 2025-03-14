@@ -20,7 +20,7 @@ export const TimeRangeToggle = ({
             <Button
               variant={timeRange === 'month-to-date' ? 'default' : 'outline'}
               onClick={() => onTimeRangeChange('month-to-date')}
-              className={`rounded-none border-l-0 ${
+              className={`rounded-l-md rounded-r-none ${
                 timeRange === 'month-to-date' 
                   ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
                   : ''
@@ -62,7 +62,7 @@ export const TimeRangeToggle = ({
       <Button
         variant={timeRange === 'custom' ? 'default' : 'outline'}
         onClick={() => onTimeRangeChange('custom')}
-        className={`rounded-l-none border-l-0 ${
+        className={`rounded-l-none rounded-r-md border-l-0 ${
           timeRange === 'custom' 
             ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
             : ''
