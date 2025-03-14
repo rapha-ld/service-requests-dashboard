@@ -22,7 +22,7 @@ export const TimeRangeToggle = ({
               onClick={() => onTimeRangeChange('month-to-date')}
               className={`rounded-l-md rounded-r-none ${
                 timeRange === 'month-to-date' 
-                  ? 'bg-[#F6F8FF] border-[#425EFF] text-[#425EFF] border-2' 
+                  ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
                   : ''
               }`}
             >
@@ -40,7 +40,7 @@ export const TimeRangeToggle = ({
         onClick={() => onTimeRangeChange('rolling-30-day')}
         className={`rounded-none border-l-0 ${
           timeRange === 'rolling-30-day' 
-            ? 'bg-[#F6F8FF] border-[#425EFF] text-[#425EFF] border-2' 
+            ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
             : ''
         }`}
       >
@@ -52,7 +52,7 @@ export const TimeRangeToggle = ({
         onClick={() => onTimeRangeChange('last-12-months')}
         className={`rounded-none border-l-0 ${
           timeRange === 'last-12-months' 
-            ? 'bg-[#F6F8FF] border-[#425EFF] text-[#425EFF] border-2' 
+            ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
             : ''
         }`}
       >
@@ -64,7 +64,7 @@ export const TimeRangeToggle = ({
         onClick={() => onTimeRangeChange('custom')}
         className={`rounded-r-md rounded-l-none border-l-0 ${
           timeRange === 'custom' 
-            ? 'bg-[#F6F8FF] border-[#425EFF] text-[#425EFF] border-2' 
+            ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
             : ''
         }`}
       >

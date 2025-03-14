@@ -17,7 +17,7 @@ export const ViewTypeToggle = ({
         onClick={() => onViewTypeChange('cumulative')}
         className={`rounded-r-none ${
           viewType === 'cumulative' 
-            ? 'bg-[#F6F8FF] border-[#425EFF] text-[#425EFF] border-2' 
+            ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
             : ''
         }`}
       >
@@ -28,7 +28,7 @@ export const ViewTypeToggle = ({
         onClick={() => onViewTypeChange('net-new')}
         className={`rounded-l-none border-l-0 ${
           viewType === 'net-new' 
-            ? 'bg-[#F6F8FF] border-[#425EFF] text-[#425EFF] border-2' 
+            ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
             : ''
         }`}
       >
