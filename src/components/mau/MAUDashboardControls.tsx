@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown, CalendarIcon } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -47,9 +48,11 @@ export const MAUDashboardControls = ({
   customDateRange,
   onCustomDateRangeChange
 }: MAUDashboardControlsProps) => {
-  // Local state for custom hours
-  const [fromHour, setFromHour] = useState<string>(customDateRange?.from ? format(customDateRange.from, 'HH') : '00');
-  const [toHour, setToHour] = useState<string>(customDateRange?.to ? format(customDateRange.to, 'HH') : '23');
+  // Local state for custom hours and period
+  const [fromHour, setFromHour] = useState<string>(customDateRange?.from ? format(customDateRange.from, 'h') : '12');
+  const [fromPeriod, setFromPeriod] = useState<'AM' | 'PM'>(customDateRange?.from ? (customDateRange.from.getHours() >= 12 ? 'PM' : 'AM') : 'AM');
+  const [toHour, setToHour] = useState<string>(customDateRange?.to ? format(customDateRange.to, 'h') : '11');
+  const [toPeriod, setToPeriod] = useState<'AM' | 'PM'>(customDateRange?.to ? (customDateRange.to.getHours() >= 12 ? 'PM' : 'AM') : 'PM');
   const [dateRange, setDateRange] = useState<DateRange | undefined>(customDateRange);
   
   // Generate abbreviated month options with year
@@ -79,11 +82,19 @@ export const MAUDashboardControls = ({
         to: new Date(range.to)
       };
       
-      // Set hours for from date
-      newRange.from.setHours(parseInt(fromHour, 10), 0, 0, 0);
+      // Set hours for from date (convert from 12-hour to 24-hour)
+      const fromHourValue = parseInt(fromHour, 10);
+      const fromHour24 = fromPeriod === 'AM' 
+        ? (fromHourValue === 12 ? 0 : fromHourValue) 
+        : (fromHourValue === 12 ? 12 : fromHourValue + 12);
+      newRange.from.setHours(fromHour24, 0, 0, 0);
       
-      // Set hours for to date
-      newRange.to.setHours(parseInt(toHour, 10), 59, 59, 999);
+      // Set hours for to date (convert from 12-hour to 24-hour)
+      const toHourValue = parseInt(toHour, 10);
+      const toHour24 = toPeriod === 'AM' 
+        ? (toHourValue === 12 ? 0 : toHourValue) 
+        : (toHourValue === 12 ? 12 : toHourValue + 12);
+      newRange.to.setHours(toHour24, 59, 59, 999);
       
       if (onCustomDateRangeChange) {
         onCustomDateRangeChange(newRange);
@@ -98,51 +109,76 @@ export const MAUDashboardControls = ({
   const handleFromHourChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let newHour = event.target.value;
     
-    // Validate hour input (0-23)
+    // Validate hour input (1-12)
     const hourNum = parseInt(newHour, 10);
-    if (isNaN(hourNum) || hourNum < 0) {
-      newHour = '00';
-    } else if (hourNum > 23) {
-      newHour = '23';
-    } else if (newHour.length === 1) {
-      newHour = `0${newHour}`;
+    if (isNaN(hourNum) || hourNum < 1) {
+      newHour = '1';
+    } else if (hourNum > 12) {
+      newHour = '12';
     }
     
     setFromHour(newHour);
     
     // Update date range with new hour if we have a selected range
-    updateDateRangeWithHours(newHour, toHour);
+    updateDateRangeWithHours(newHour, fromPeriod, toHour, toPeriod);
   };
   
   const handleToHourChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let newHour = event.target.value;
     
-    // Validate hour input (0-23)
+    // Validate hour input (1-12)
     const hourNum = parseInt(newHour, 10);
-    if (isNaN(hourNum) || hourNum < 0) {
-      newHour = '00';
-    } else if (hourNum > 23) {
-      newHour = '23';
-    } else if (newHour.length === 1) {
-      newHour = `0${newHour}`;
+    if (isNaN(hourNum) || hourNum < 1) {
+      newHour = '1';
+    } else if (hourNum > 12) {
+      newHour = '12';
     }
     
     setToHour(newHour);
     
     // Update date range with new hour if we have a selected range
-    updateDateRangeWithHours(fromHour, newHour);
+    updateDateRangeWithHours(fromHour, fromPeriod, newHour, toPeriod);
+  };
+  
+  // Handle period changes (AM/PM)
+  const handleFromPeriodChange = (value: string) => {
+    const period = value as 'AM' | 'PM';
+    setFromPeriod(period);
+    updateDateRangeWithHours(fromHour, period, toHour, toPeriod);
+  };
+  
+  const handleToPeriodChange = (value: string) => {
+    const period = value as 'AM' | 'PM';
+    setToPeriod(period);
+    updateDateRangeWithHours(fromHour, fromPeriod, toHour, period);
   };
   
   // Helper function to update date range with hours
-  const updateDateRangeWithHours = (fromHourValue: string, toHourValue: string) => {
+  const updateDateRangeWithHours = (
+    fromHourValue: string, 
+    fromPeriodValue: 'AM' | 'PM', 
+    toHourValue: string, 
+    toPeriodValue: 'AM' | 'PM'
+  ) => {
     if (dateRange?.from && dateRange?.to && onCustomDateRangeChange) {
       const newRange = {
         from: new Date(dateRange.from),
         to: new Date(dateRange.to)
       };
       
-      newRange.from.setHours(parseInt(fromHourValue, 10), 0, 0, 0);
-      newRange.to.setHours(parseInt(toHourValue, 10), 59, 59, 999);
+      // Convert from 12-hour to 24-hour format
+      const fromHour12 = parseInt(fromHourValue, 10);
+      const fromHour24 = fromPeriodValue === 'AM' 
+        ? (fromHour12 === 12 ? 0 : fromHour12) 
+        : (fromHour12 === 12 ? 12 : fromHour12 + 12);
+      
+      const toHour12 = parseInt(toHourValue, 10);
+      const toHour24 = toPeriodValue === 'AM' 
+        ? (toHour12 === 12 ? 0 : toHour12) 
+        : (toHour12 === 12 ? 12 : toHour12 + 12);
+      
+      newRange.from.setHours(fromHour24, 0, 0, 0);
+      newRange.to.setHours(toHour24, 59, 59, 999);
       
       onCustomDateRangeChange(newRange);
     }
@@ -151,7 +187,7 @@ export const MAUDashboardControls = ({
   // Format date range for display
   const formatDateRange = () => {
     if (customDateRange?.from && customDateRange?.to) {
-      return `${format(customDateRange.from, "MMM d, yyyy HH:mm")} - ${format(customDateRange.to, "MMM d, yyyy HH:mm")}`;
+      return `${format(customDateRange.from, "MMM d, yyyy h:mm a")} - ${format(customDateRange.to, "MMM d, yyyy h:mm a")}`;
     }
     return "Custom Date Range";
   };
@@ -189,29 +225,49 @@ export const MAUDashboardControls = ({
                 className={cn("p-3 pointer-events-auto")}
               />
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="fromHour">From Hour (0-23):</Label>
-                  <Input
-                    id="fromHour"
-                    type="number"
-                    min="0"
-                    max="23"
-                    value={fromHour}
-                    onChange={handleFromHourChange}
-                    className="w-full"
-                  />
+                <div>
+                  <Label className="mb-2 block">From Time:</Label>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      min="1"
+                      max="12"
+                      value={fromHour}
+                      onChange={handleFromHourChange}
+                      className="w-16"
+                    />
+                    <Select value={fromPeriod} onValueChange={handleFromPeriodChange}>
+                      <SelectTrigger className="w-20">
+                        <SelectValue placeholder="AM/PM" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="AM">AM</SelectItem>
+                        <SelectItem value="PM">PM</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="toHour">To Hour (0-23):</Label>
-                  <Input
-                    id="toHour"
-                    type="number"
-                    min="0"
-                    max="23"
-                    value={toHour}
-                    onChange={handleToHourChange}
-                    className="w-full"
-                  />
+                <div>
+                  <Label className="mb-2 block">To Time:</Label>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      min="1"
+                      max="12"
+                      value={toHour}
+                      onChange={handleToHourChange}
+                      className="w-16"
+                    />
+                    <Select value={toPeriod} onValueChange={handleToPeriodChange}>
+                      <SelectTrigger className="w-20">
+                        <SelectValue placeholder="AM/PM" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="AM">AM</SelectItem>
+                        <SelectItem value="PM">PM</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
             </div>
