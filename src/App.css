@@ -46,7 +46,7 @@
 [data-sidebar="sidebar"] {
   z-index: 30;
   box-shadow: none !important;
-  background-color: white !important;
+  background-color: hsl(var(--background)) !important;
   border-radius: 0 !important;
 }
 

@@ -1,10 +1,9 @@
+
 import { useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { Sun, Moon } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useTheme } from "@/hooks/useTheme";
-import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/components/ui/sidebar";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const USAGE_TABS = [
   { id: "overview", label: "Overview", path: "/overview" },
@@ -22,7 +21,6 @@ const DIAGNOSTICS_TABS = [
 
 export function NavigationTabs() {
   const location = useLocation();
-  const { theme, toggleTheme } = useTheme();
   const { state } = useSidebar();
   
   const currentPath = location.pathname;
@@ -52,20 +50,7 @@ export function NavigationTabs() {
       </Tabs>
       
       <div className="flex-shrink-0 mr-2 flex items-center">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={toggleTheme}
-          className="rounded-full"
-          title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
-        >
-          {theme === 'light' ? (
-            <Sun className="h-4 w-4" />
-          ) : (
-            <Moon className="h-4 w-4" />
-          )}
-          <span className="sr-only">Toggle theme</span>
-        </Button>
+        <ThemeToggle />
       </div>
     </div>
   );

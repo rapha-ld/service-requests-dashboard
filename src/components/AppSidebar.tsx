@@ -1,3 +1,4 @@
+
 import { CreditCard, Activity, Stethoscope } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getTitleRoute } from "@/utils/routeMappers";
@@ -60,7 +61,7 @@ export function AppSidebar() {
   return (
     <Sidebar 
       variant="floating" 
-      className="!rounded-none border-r border-border !bg-white !shadow-none"
+      className="!rounded-none border-r border-border !bg-background !shadow-none"
       style={{ boxShadow: 'none' }}
     >
       <SidebarContent>
@@ -77,10 +78,10 @@ export function AppSidebar() {
                     className={`font-medium transition-colors ${
                       isActive(item.route) 
                         ? "bg-primary/10 text-primary border-l-2 border-primary" 
-                        : ""
+                        : "text-foreground"
                     }`}
                   >
-                    <item.icon className={`size-5 ${isActive(item.route) ? "text-primary" : ""}`} />
+                    <item.icon className={`size-5 ${isActive(item.route) ? "text-primary" : "text-muted-foreground"}`} />
                     <span>{item.title}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
