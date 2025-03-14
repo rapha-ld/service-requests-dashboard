@@ -46,11 +46,13 @@ export const DashboardHeader = ({
 
   return (
     <div className="flex gap-2 items-center mb-6 flex-wrap">
-      <GroupingSelector 
-        grouping={grouping}
-        onGroupingChange={onGroupingChange}
-        visible={showGrouping}
-      />
+      {showGrouping && (
+        <GroupingSelector 
+          grouping={grouping}
+          onGroupingChange={onGroupingChange}
+          visible={showGrouping}
+        />
+      )}
       
       <TimeRangeControls 
         timeRange={timeRange}
@@ -59,6 +61,14 @@ export const DashboardHeader = ({
         onCustomDateRangeChange={onCustomDateRangeChange}
       />
       
+      {showViewType && (
+        <ViewTypeToggle 
+          viewType={viewType}
+          onViewTypeChange={onViewTypeChange}
+          visible={true}
+        />
+      )}
+      
       <MonthSelector 
         selectedMonth={selectedMonth}
         onMonthChange={onMonthChange}
@@ -66,12 +76,6 @@ export const DashboardHeader = ({
       />
       
       <div className="flex-grow" />
-      
-      <ViewTypeToggle 
-        viewType={viewType}
-        onViewTypeChange={onViewTypeChange}
-        visible={showViewType}
-      />
       
       <SortButton 
         sortDirection={sortDirection}

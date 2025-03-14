@@ -60,18 +60,18 @@ export const MAUDashboardControls = ({
         onCustomDateRangeChange={onCustomDateRangeChange}
       />
       
-      {showMonthSelector && (
-        <MonthSelector 
-          selectedMonth={selectedMonth}
-          onMonthChange={onMonthChange}
-          visible={true}
-        />
-      )}
-      
       {showViewType && (
         <ViewTypeToggle 
           viewType={viewType}
           onViewTypeChange={onViewTypeChange}
+          visible={true}
+        />
+      )}
+      
+      {showMonthSelector && (
+        <MonthSelector 
+          selectedMonth={selectedMonth}
+          onMonthChange={onMonthChange}
           visible={true}
         />
       )}

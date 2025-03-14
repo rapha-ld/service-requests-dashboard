@@ -43,6 +43,14 @@ export const ExperimentHeader = ({
         onCustomDateRangeChange={onCustomDateRangeChange}
       />
       
+      {showViewType && (
+        <ViewTypeToggle 
+          viewType={viewType}
+          onViewTypeChange={onViewTypeChange}
+          visible={true}
+        />
+      )}
+      
       <MonthSelector 
         selectedMonth={selectedMonth}
         onMonthChange={onMonthChange}
@@ -50,12 +58,6 @@ export const ExperimentHeader = ({
       />
       
       <div className="flex-grow" />
-      
-      <ViewTypeToggle 
-        viewType={viewType}
-        onViewTypeChange={onViewTypeChange}
-        visible={showViewType}
-      />
       
       <SortButton 
         sortDirection={sortDirection}
