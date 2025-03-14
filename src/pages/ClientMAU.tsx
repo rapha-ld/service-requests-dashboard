@@ -24,10 +24,12 @@ const ClientMAU = () => {
   const [selectedProject, setSelectedProject] = useState<string>("all");
   const chartRefs = useRef<{ [key: string]: any }>({});
 
-  // Effect to set view type based on time range, but only for last-12-months
+  // Effect to set view type based on time range, for both last-12-months and rolling-30-day
   useEffect(() => {
     if (timeRange === 'last-12-months') {
       setViewType('net-new');
+    } else if (timeRange === 'rolling-30-day') {
+      setViewType('cumulative');
     }
   }, [timeRange]);
   
@@ -41,6 +43,8 @@ const ClientMAU = () => {
     setTimeRange(newTimeRange);
     if (newTimeRange === 'last-12-months') {
       setViewType('net-new');
+    } else if (newTimeRange === 'rolling-30-day') {
+      setViewType('cumulative');
     } else if (newTimeRange !== timeRange) {
       // Only set to cumulative when changing from a different time range
       setViewType('cumulative');

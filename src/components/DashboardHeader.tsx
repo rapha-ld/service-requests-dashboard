@@ -152,8 +152,8 @@ export const DashboardHeader = ({
       
       <div className="flex-grow" />
       
-      {/* Only show Cumulative/Net New toggle when not in Last 12 Months view and showViewTypeToggle is true */}
-      {timeRange !== 'last-12-months' && showViewTypeToggle && (
+      {/* Only show Cumulative/Net New toggle when not in Last 12 Months or rolling 30-day view and showViewTypeToggle is true */}
+      {timeRange !== 'last-12-months' && timeRange !== 'rolling-30-day' && showViewTypeToggle && (
         <div className="flex">
           <Button
             variant={viewType === 'cumulative' ? 'default' : 'outline'}

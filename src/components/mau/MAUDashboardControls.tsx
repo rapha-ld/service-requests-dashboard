@@ -146,8 +146,8 @@ export const MAUDashboardControls = ({
       )}
       <div className="flex-grow" />
       
-      {/* Only show Cumulative/Net New toggle when not in Last 12 Months view and hideModeToggle is false */}
-      {timeRange !== 'last-12-months' && !hideModeToggle && (
+      {/* Only show Cumulative/Net New toggle when not in Last 12 Months view or Rolling 30-day view and hideModeToggle is false */}
+      {timeRange !== 'last-12-months' && timeRange !== 'rolling-30-day' && !hideModeToggle && (
         <div className="flex">
           <Button
             variant={viewType === 'cumulative' ? 'default' : 'outline'}
