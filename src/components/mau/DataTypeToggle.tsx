@@ -1,5 +1,5 @@
 
-import { Button } from "@/components/ui/button";
+import { Toggle } from "@/components/common/Toggle";
 
 interface DataTypeToggleProps {
   dataType: 'mau' | 'connections';
@@ -11,29 +11,13 @@ export const DataTypeToggle = ({
   onDataTypeChange 
 }: DataTypeToggleProps) => {
   return (
-    <div className="flex">
-      <Button
-        variant={dataType === 'mau' ? 'default' : 'outline'}
-        onClick={() => onDataTypeChange('mau')}
-        className={`rounded-r-none ${
-          dataType === 'mau' 
-            ? 'dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
-            : ''
-        }`}
-      >
-        MAU
-      </Button>
-      <Button
-        variant={dataType === 'connections' ? 'default' : 'outline'}
-        onClick={() => onDataTypeChange('connections')}
-        className={`rounded-l-none border-l-0 ${
-          dataType === 'connections' 
-            ? 'dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
-            : ''
-        }`}
-      >
-        Connections
-      </Button>
-    </div>
+    <Toggle
+      options={[
+        { value: 'mau', label: 'MAU' },
+        { value: 'connections', label: 'Connections' }
+      ]}
+      value={dataType}
+      onChange={(value) => onDataTypeChange(value as 'mau' | 'connections')}
+    />
   );
 };
