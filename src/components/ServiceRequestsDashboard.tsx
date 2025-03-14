@@ -12,8 +12,8 @@ export const ServiceRequestsDashboard = () => {
   // State hooks
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
-  const [viewType, setViewType] = useState<ViewType>('net-new'); // Changed default to net-new
-  const [chartType, setChartType] = useState<ChartType>('bar'); // Changed default to bar for net-new view
+  const [viewType, setViewType] = useState<ViewType>('net-new');
+  const [chartType, setChartType] = useState<ChartType>('bar');
   const [grouping, setGrouping] = useState<GroupingType>('all');
   const [timeRange, setTimeRange] = useState<TimeRangeType>('month-to-date');
   const [customDateRange, setCustomDateRange] = useState<DateRange>({
@@ -22,20 +22,20 @@ export const ServiceRequestsDashboard = () => {
   });
   const chartRefs = useRef<{ [key: string]: any }>({});
   
-  // Effect to ensure we stay in net-new view for diagnostic pages
+  // Effect to update chart type based on view type
   useEffect(() => {
-    if (viewType !== 'net-new') {
-      setViewType('net-new');
-    }
-    
-    setChartType('bar');
-  }, [timeRange, viewType]);
+    // For net-new view, use bar charts; for cumulative, use area charts
+    setChartType(viewType === 'net-new' ? 'bar' : 'area');
+  }, [viewType]);
   
   // Handle time range change
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
     setTimeRange(newTimeRange);
-    // Always keep net-new view for diagnostic pages
-    setViewType('net-new');
+    
+    // Only allow net-new view for 12-month and 30-day views
+    if (newTimeRange === 'last-12-months' || newTimeRange === 'rolling-30-day') {
+      setViewType('net-new');
+    }
   };
   
   // Handle custom date range change
@@ -45,9 +45,9 @@ export const ServiceRequestsDashboard = () => {
   
   // Handle view type change
   const handleViewTypeChange = (newViewType: ViewType) => {
-    // For diagnostic pages, always use net-new
-    setViewType('net-new');
-    setChartType('bar');
+    setViewType(newViewType);
+    // Update chart type based on view type
+    setChartType(newViewType === 'net-new' ? 'bar' : 'area');
   };
   
   // Fetch data using custom hook
@@ -85,7 +85,7 @@ export const ServiceRequestsDashboard = () => {
           onMonthChange={(value) => setSelectedMonth(parseInt(value))}
           timeRange={timeRange}
           onTimeRangeChange={handleTimeRangeChange}
-          showViewTypeToggle={false} // Add this to hide the toggle
+          showViewTypeToggle={timeRange !== 'last-12-months' && timeRange !== 'rolling-30-day'}
           customDateRange={customDateRange}
           onCustomDateRangeChange={handleCustomDateRangeChange}
         />

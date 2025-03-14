@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { MAUHeader } from "@/components/mau/MAUHeader";
 import { MAUDashboardControls } from "@/components/mau/MAUDashboardControls";
@@ -10,41 +11,51 @@ import {
   getLast12MonthsData, 
   calculateMaxValue
 } from "@/utils/mauDataTransformers";
+import { DateRange } from "@/types/mauTypes";
 
 const ClientConnections = () => {
   // State management
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
   const [viewType, setViewType] = useState<'net-new' | 'cumulative'>('net-new');
-  const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>('bar'); // Default to bar
+  const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>('bar'); 
   const [timeRange, setTimeRange] = useState<TimeRangeType>('month-to-date');
   const [selectedProject, setSelectedProject] = useState<string>("all");
+  const [customDateRange, setCustomDateRange] = useState<DateRange>({
+    from: new Date(),
+    to: new Date()
+  });
   const chartRefs = useRef<{ [key: string]: any }>({});
 
   // Connection multiplier
   const connectionMultiplier = 4;
 
-  // Effect to ensure we stay in net-new view for diagnostic pages
+  // Effect to update chart type based on view type
   useEffect(() => {
-    if (viewType !== 'net-new') {
-      setViewType('net-new');
-    }
-    
-    setChartType('bar');
-  }, [timeRange, viewType]);
+    // For net-new view, use bar charts; for cumulative, use area charts
+    setChartType(viewType === 'net-new' ? 'bar' : 'area');
+  }, [viewType]);
   
   // Handle time range change
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
     setTimeRange(newTimeRange);
-    // Always keep net-new view for diagnostic pages
-    setViewType('net-new');
+    
+    // Only allow net-new view for 12-month and 30-day views
+    if (newTimeRange === 'last-12-months' || newTimeRange === 'rolling-30-day') {
+      setViewType('net-new');
+    }
   };
   
-  // Handle view type change (hidden from UI but still used internally)
+  // Handle custom date range change
+  const handleCustomDateRangeChange = (dateRange: DateRange) => {
+    setCustomDateRange(dateRange);
+  };
+  
+  // Handle view type change
   const handleViewTypeChange = (newViewType: 'net-new' | 'cumulative') => {
-    // For diagnostic pages, always use net-new
-    setViewType('net-new');
-    setChartType('bar');
+    setViewType(newViewType);
+    // Update chart type based on view type
+    setChartType(newViewType === 'net-new' ? 'bar' : 'area');
   };
   
   // Handle chart type change
@@ -63,7 +74,8 @@ const ClientConnections = () => {
   };
 
   // Fetch MAU data with the custom hook
-  const { mauData, isLoading } = useMAUData(selectedMonth, selectedProject, timeRange);
+  const { mauData, isLoading } = useMAUData(selectedMonth, selectedProject, timeRange, 
+    timeRange === 'custom' ? customDateRange : undefined);
 
   // Handle loading state
   if (isLoading) {
@@ -126,7 +138,9 @@ const ClientConnections = () => {
           onSortDirectionChange={() => setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc')}
           onMonthChange={(value) => setSelectedMonth(parseInt(value))}
           onTimeRangeChange={handleTimeRangeChange}
-          hideModeToggle={true} // Add this prop to hide the Net New/Cumulative toggle
+          hideModeToggle={timeRange === 'last-12-months' || timeRange === 'rolling-30-day'}
+          customDateRange={customDateRange}
+          onCustomDateRangeChange={handleCustomDateRangeChange}
         />
         
         <DashboardSummary groups={sortedGroups} />

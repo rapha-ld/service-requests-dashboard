@@ -1,5 +1,5 @@
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
 import { DashboardHeader } from "@/components/DashboardHeader";
@@ -22,16 +22,32 @@ const ServerMAU = () => {
   });
   const chartRefs = useRef<{ [key: string]: any }>({});
   
+  // Effect to update chart type based on view type
+  useEffect(() => {
+    // For net-new view, use bar charts; for cumulative, use area charts
+    setChartType(viewType === 'net-new' ? 'bar' : 'area');
+  }, [viewType]);
+  
   // Handle time range change
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
     setTimeRange(newTimeRange);
-    // Keep view type as net-new regardless of time range for diagnostic pages
-    setViewType('net-new');
+    
+    // Only allow net-new view for 12-month and 30-day views
+    if (newTimeRange === 'last-12-months' || newTimeRange === 'rolling-30-day') {
+      setViewType('net-new');
+    }
   };
   
   // Handle custom date range change
   const handleCustomDateRangeChange = (dateRange: DateRange) => {
     setCustomDateRange(dateRange);
+  };
+  
+  // Handle view type change
+  const handleViewTypeChange = (newViewType: 'net-new' | 'cumulative') => {
+    setViewType(newViewType);
+    // Update chart type based on view type
+    setChartType(newViewType === 'net-new' ? 'bar' : 'area');
   };
   
   // Fetch data using custom hook
@@ -71,12 +87,12 @@ const ServerMAU = () => {
           selectedMonth={selectedMonth}
           sortDirection={sortDirection}
           onGroupingChange={setGrouping}
-          onViewTypeChange={() => {}} // Dummy function since we're not showing the toggle
+          onViewTypeChange={handleViewTypeChange}
           onSortDirectionChange={() => setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc')}
           onMonthChange={(value) => setSelectedMonth(parseInt(value))}
           timeRange={timeRange}
           onTimeRangeChange={handleTimeRangeChange}
-          showViewTypeToggle={false} // Hide the toggle
+          showViewTypeToggle={timeRange !== 'last-12-months' && timeRange !== 'rolling-30-day'}
           customDateRange={customDateRange}
           onCustomDateRangeChange={handleCustomDateRangeChange}
         />
