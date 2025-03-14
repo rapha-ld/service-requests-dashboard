@@ -131,7 +131,7 @@ export const ChartComponent = ({
             strokeOpacity={0.5}
             label={{
               value: `Avg: ${average.toFixed(1)}${unit}`,
-              fill: 'currentColor',
+              fill: 'hsl(var(--secondary-foreground))',
               fontSize: 10,
               position: 'insideTopRight',
               style: { zIndex: 10 },
