@@ -61,6 +61,12 @@ export const DashboardHeader = ({
         onCustomDateRangeChange={onCustomDateRangeChange}
       />
       
+      <MonthSelector 
+        selectedMonth={selectedMonth}
+        onMonthChange={onMonthChange}
+        visible={showMonthSelector}
+      />
+      
       {showViewType && (
         <ViewTypeToggle 
           viewType={viewType}
@@ -68,12 +74,6 @@ export const DashboardHeader = ({
           visible={true}
         />
       )}
-      
-      <MonthSelector 
-        selectedMonth={selectedMonth}
-        onMonthChange={onMonthChange}
-        visible={showMonthSelector}
-      />
       
       <div className="flex-grow" />
       
