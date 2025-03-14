@@ -3,6 +3,7 @@ import { ArrowUpDown } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface DashboardHeaderProps {
   grouping: 'all' | 'environment' | 'relayId' | 'userAgent';
@@ -67,28 +68,48 @@ export const DashboardHeader = ({
       )}
       
       <div className="flex">
-        <Button
-          variant={timeRange === 'month-to-date' ? 'default' : 'outline'}
-          onClick={() => onTimeRangeChange('month-to-date')}
-          className={`rounded-r-none ${
-            timeRange === 'month-to-date' 
-              ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
-              : ''
-          }`}
-        >
-          MTD
-        </Button>
-        <Button
-          variant={timeRange === 'rolling-30-day' ? 'default' : 'outline'}
-          onClick={() => onTimeRangeChange('rolling-30-day')}
-          className={`rounded-none border-l-0 ${
-            timeRange === 'rolling-30-day' 
-              ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
-              : ''
-          }`}
-        >
-          30D
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant={timeRange === 'month-to-date' ? 'default' : 'outline'}
+                onClick={() => onTimeRangeChange('month-to-date')}
+                className={`rounded-r-none ${
+                  timeRange === 'month-to-date' 
+                    ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
+                    : ''
+                }`}
+              >
+                MTD
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Month-to-date</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant={timeRange === 'rolling-30-day' ? 'default' : 'outline'}
+                onClick={() => onTimeRangeChange('rolling-30-day')}
+                className={`rounded-none border-l-0 ${
+                  timeRange === 'rolling-30-day' 
+                    ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
+                    : ''
+                }`}
+              >
+                30D
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Rolling 30-day Avg.</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        
         <Button
           variant={timeRange === 'last-12-months' ? 'default' : 'outline'}
           onClick={() => onTimeRangeChange('last-12-months')}
