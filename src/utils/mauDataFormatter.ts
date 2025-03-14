@@ -100,10 +100,11 @@ export const calculateMAUTotals = (data: EnvironmentsMap) => {
   );
 };
 
-// Function to limit data to the current date (March 12 for MTD view)
-export const limitDataToCurrentDate = (data: EnvironmentsMap): EnvironmentsMap => {
+// Function to limit data to the current date or a specified end date
+export const limitDataToCurrentDate = (data: EnvironmentsMap, endDate?: Date): EnvironmentsMap => {
   const result: EnvironmentsMap = {};
-  const currentDate = new Date(2024, 2, 12); // March 12, 2024
+  // Use provided end date or default to March 12, 2024
+  const currentDate = endDate || new Date(2024, 2, 12); // March 12, 2024
   
   Object.keys(data).forEach(env => {
     result[env] = data[env].map(dayData => {

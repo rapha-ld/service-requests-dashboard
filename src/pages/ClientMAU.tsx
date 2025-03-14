@@ -5,7 +5,7 @@ import { MAUDashboardControls } from "@/components/mau/MAUDashboardControls";
 import { LoadingState } from "@/components/mau/LoadingState";
 import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
-import { useMAUData, TimeRangeType } from "@/hooks/useMAUData";
+import { useMAUData, TimeRangeType, DateRange } from "@/hooks/useMAUData";
 import { 
   transformDataToChartGroups, 
   getLast12MonthsData, 
@@ -22,7 +22,10 @@ const ClientMAU = () => {
   const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>('area');
   const [timeRange, setTimeRange] = useState<TimeRangeType>('month-to-date');
   const [selectedProject, setSelectedProject] = useState<string>("all");
-  const [customDate, setCustomDate] = useState<Date>(new Date());
+  const [customDateRange, setCustomDateRange] = useState<DateRange>({
+    from: new Date(),
+    to: new Date()
+  });
   const chartRefs = useRef<{ [key: string]: any }>({});
 
   // Effect to set view type based on time range, for both last-12-months and rolling-30-day
@@ -52,9 +55,9 @@ const ClientMAU = () => {
     }
   };
   
-  // Handle custom date change
-  const handleCustomDateChange = (date: Date) => {
-    setCustomDate(date);
+  // Handle custom date range change
+  const handleCustomDateRangeChange = (dateRange: DateRange) => {
+    setCustomDateRange(dateRange);
   };
   
   // Handle view type change
@@ -79,7 +82,12 @@ const ClientMAU = () => {
   };
 
   // Fetch MAU data with the custom hook
-  const { mauData, isLoading } = useMAUData(selectedMonth, selectedProject, timeRange, customDate);
+  const { mauData, isLoading } = useMAUData(
+    selectedMonth, 
+    selectedProject, 
+    timeRange, 
+    timeRange === 'custom' ? customDateRange : undefined
+  );
 
   // Handle loading state
   if (isLoading) {
@@ -132,8 +140,9 @@ const ClientMAU = () => {
           onSortDirectionChange={() => setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc')}
           onMonthChange={(value) => setSelectedMonth(parseInt(value))}
           onTimeRangeChange={handleTimeRangeChange}
-          customDate={customDate}
-          onCustomDateChange={handleCustomDateChange}
+          customDateRange={customDateRange}
+          onCustomDateRangeChange={handleCustomDateRangeChange}
+          hideModeToggle={timeRange === 'rolling-30-day' || timeRange === 'last-12-months'}
         />
         
         <DashboardSummary groups={sortedGroups} />

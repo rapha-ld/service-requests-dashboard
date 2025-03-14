@@ -4,7 +4,8 @@ import { getMockMAUData } from "@/utils/mauDataGenerator";
 import { createFallbackData } from "@/utils/mauDataTransformers";
 import { 
   TimeRangeType, 
-  MAUDataResult 
+  MAUDataResult,
+  DateRange
 } from "@/types/mauTypes";
 import {
   formatRolling30DayData,
@@ -24,13 +25,13 @@ export const useMAUData = (
   selectedMonth: number,
   selectedProject: string,
   timeRange: TimeRangeType,
-  customDate?: Date
+  customDateRange?: DateRange
 ) => {
-  const currentDate = customDate || new Date(new Date().getFullYear(), selectedMonth);
+  const currentDate = customDateRange?.from || new Date(new Date().getFullYear(), selectedMonth);
   const safeProject = selectedProject || "all";
 
   const { data: mauData, isLoading, error } = useQuery<MAUDataResult>({
-    queryKey: ['mau-data', currentDate.toISOString(), safeProject, timeRange],
+    queryKey: ['mau-data', currentDate.toISOString(), safeProject, timeRange, customDateRange?.to?.toISOString()],
     queryFn: async () => {
       try {
         const currentData = getMockMAUData(safeProject);
@@ -59,7 +60,8 @@ export const useMAUData = (
 
         // Apply date limitation for Month-to-Date view or custom date
         if (timeRange === 'month-to-date' || timeRange === 'custom') {
-          processedCurrentData = limitDataToCurrentDate(processedCurrentData);
+          processedCurrentData = limitDataToCurrentDate(processedCurrentData, 
+            timeRange === 'custom' && customDateRange?.to ? customDateRange.to : undefined);
         }
         
         // Cap the data at the threshold if it's the "all" project
@@ -92,4 +94,4 @@ export const useMAUData = (
 };
 
 // Re-export types for convenience
-export type { TimeRangeType, MAUDataResult, ChartGroup } from "@/types/mauTypes";
+export type { TimeRangeType, MAUDataResult, ChartGroup, DateRange } from "@/types/mauTypes";

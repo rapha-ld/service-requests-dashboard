@@ -1,8 +1,7 @@
-
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown, CalendarIcon } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { TimeRangeType } from "@/hooks/useMAUData";
+import { DateRange, TimeRangeType } from "@/hooks/useMAUData";
 import { ProjectSelector } from "@/components/mau/ProjectSelector";
 import { format } from "date-fns";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -27,8 +26,8 @@ interface MAUDashboardControlsProps {
   onMonthChange: (value: string) => void;
   onTimeRangeChange: (value: TimeRangeType) => void;
   hideModeToggle?: boolean;
-  customDate?: Date;
-  onCustomDateChange?: (date: Date) => void;
+  customDateRange?: DateRange;
+  onCustomDateRangeChange?: (dateRange: DateRange) => void;
 }
 
 export const MAUDashboardControls = ({
@@ -45,12 +44,13 @@ export const MAUDashboardControls = ({
   onMonthChange,
   onTimeRangeChange,
   hideModeToggle = false,
-  customDate,
-  onCustomDateChange
+  customDateRange,
+  onCustomDateRangeChange
 }: MAUDashboardControlsProps) => {
-  // Local state for custom hour
-  const [hour, setHour] = useState<string>(customDate ? format(customDate, 'HH') : '00');
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(customDate);
+  // Local state for custom hours
+  const [fromHour, setFromHour] = useState<string>(customDateRange?.from ? format(customDateRange.from, 'HH') : '00');
+  const [toHour, setToHour] = useState<string>(customDateRange?.to ? format(customDateRange.to, 'HH') : '23');
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(customDateRange);
   
   // Generate abbreviated month options with year
   const getMonthOptions = () => {
@@ -66,26 +66,36 @@ export const MAUDashboardControls = ({
 
   const monthOptions = getMonthOptions();
 
-  // Handle date selection with hour
-  const handleDateSelect = (date: Date | undefined) => {
-    if (!date) return;
+  // Handle date range selection
+  const handleDateRangeChange = (range: DateRange | undefined) => {
+    if (!range) return;
     
-    setSelectedDate(date);
+    setDateRange(range);
     
-    // Create a new date with the selected hour
-    const newDate = new Date(date);
-    newDate.setHours(parseInt(hour, 10), 0, 0, 0);
-    
-    if (onCustomDateChange) {
-      onCustomDateChange(newDate);
+    // If both dates are selected, apply hours and update
+    if (range.from && range.to) {
+      const newRange = {
+        from: new Date(range.from),
+        to: new Date(range.to)
+      };
+      
+      // Set hours for from date
+      newRange.from.setHours(parseInt(fromHour, 10), 0, 0, 0);
+      
+      // Set hours for to date
+      newRange.to.setHours(parseInt(toHour, 10), 59, 59, 999);
+      
+      if (onCustomDateRangeChange) {
+        onCustomDateRangeChange(newRange);
+      }
+      
+      // Set time range to custom
+      onTimeRangeChange('custom');
     }
-    
-    // Set time range to custom
-    onTimeRangeChange('custom');
   };
   
-  // Handle hour change
-  const handleHourChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  // Handle hour changes
+  const handleFromHourChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let newHour = event.target.value;
     
     // Validate hour input (0-23)
@@ -98,14 +108,52 @@ export const MAUDashboardControls = ({
       newHour = `0${newHour}`;
     }
     
-    setHour(newHour);
+    setFromHour(newHour);
     
-    // Update date with new hour if we have a selected date
-    if (selectedDate && onCustomDateChange) {
-      const newDate = new Date(selectedDate);
-      newDate.setHours(parseInt(newHour, 10), 0, 0, 0);
-      onCustomDateChange(newDate);
+    // Update date range with new hour if we have a selected range
+    updateDateRangeWithHours(newHour, toHour);
+  };
+  
+  const handleToHourChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let newHour = event.target.value;
+    
+    // Validate hour input (0-23)
+    const hourNum = parseInt(newHour, 10);
+    if (isNaN(hourNum) || hourNum < 0) {
+      newHour = '00';
+    } else if (hourNum > 23) {
+      newHour = '23';
+    } else if (newHour.length === 1) {
+      newHour = `0${newHour}`;
     }
+    
+    setToHour(newHour);
+    
+    // Update date range with new hour if we have a selected range
+    updateDateRangeWithHours(fromHour, newHour);
+  };
+  
+  // Helper function to update date range with hours
+  const updateDateRangeWithHours = (fromHourValue: string, toHourValue: string) => {
+    if (dateRange?.from && dateRange?.to && onCustomDateRangeChange) {
+      const newRange = {
+        from: new Date(dateRange.from),
+        to: new Date(dateRange.to)
+      };
+      
+      newRange.from.setHours(parseInt(fromHourValue, 10), 0, 0, 0);
+      newRange.to.setHours(parseInt(toHourValue, 10), 59, 59, 999);
+      
+      onCustomDateRangeChange(newRange);
+    }
+  };
+
+  // Format date range for display
+  const formatDateRange = () => {
+    if (customDateRange?.from && customDateRange?.to) {
+      return `${format(customDateRange.from, "MMM d, yyyy HH:mm")} - ${format(customDateRange.to, "MMM d, yyyy HH:mm")}`;
+    }
+    return "Custom Date Range";
   };
 
   return (
@@ -116,7 +164,7 @@ export const MAUDashboardControls = ({
       />
       
       <div className="flex">
-        {/* Custom Date Picker with Hour */}
+        {/* Custom Date Range Picker with Hours */}
         <Popover>
           <PopoverTrigger asChild>
             <Button 
@@ -128,31 +176,43 @@ export const MAUDashboardControls = ({
               }`}
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
-              {customDate 
-                ? format(customDate, "MMM d, yyyy HH:mm") 
-                : "Custom Date & Time"}
+              {timeRange === 'custom' ? formatDateRange() : "Custom Date Range"}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="start">
             <div className="p-4 space-y-4">
               <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={handleDateSelect}
+                mode="range"
+                selected={dateRange}
+                onSelect={handleDateRangeChange}
                 initialFocus
                 className={cn("p-3 pointer-events-auto")}
               />
-              <div className="space-y-2">
-                <Label htmlFor="hour">Hour (0-23):</Label>
-                <Input
-                  id="hour"
-                  type="number"
-                  min="0"
-                  max="23"
-                  value={hour}
-                  onChange={handleHourChange}
-                  className="w-full"
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="fromHour">From Hour (0-23):</Label>
+                  <Input
+                    id="fromHour"
+                    type="number"
+                    min="0"
+                    max="23"
+                    value={fromHour}
+                    onChange={handleFromHourChange}
+                    className="w-full"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="toHour">To Hour (0-23):</Label>
+                  <Input
+                    id="toHour"
+                    type="number"
+                    min="0"
+                    max="23"
+                    value={toHour}
+                    onChange={handleToHourChange}
+                    className="w-full"
+                  />
+                </div>
               </div>
             </div>
           </PopoverContent>
@@ -241,7 +301,6 @@ export const MAUDashboardControls = ({
       )}
       <div className="flex-grow" />
       
-      {/* Only show Cumulative/Net New toggle when not in Last 12 Months view or Rolling 30-day view and hideModeToggle is false */}
       {timeRange !== 'last-12-months' && timeRange !== 'rolling-30-day' && !hideModeToggle && (
         <div className="flex">
           <Button
