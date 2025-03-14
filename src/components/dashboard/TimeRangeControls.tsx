@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { DateRangePicker } from "@/components/mau/DateRangePicker";
 import { TimeRangeType, DateRange } from "@/types/mauTypes";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface TimeRangeControlsProps {
   timeRange: TimeRangeType;
@@ -27,17 +28,26 @@ export const TimeRangeControls = ({
 
   return (
     <div className="flex flex-wrap gap-0">
-      <Button
-        variant={timeRange === 'month-to-date' ? 'default' : 'outline'}
-        onClick={() => onTimeRangeChange('month-to-date')}
-        className={`rounded-r-none ${
-          timeRange === 'month-to-date' 
-            ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
-            : ''
-        }`}
-      >
-        MTD
-      </Button>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant={timeRange === 'month-to-date' ? 'default' : 'outline'}
+              onClick={() => onTimeRangeChange('month-to-date')}
+              className={`rounded-r-none ${
+                timeRange === 'month-to-date' 
+                  ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
+                  : ''
+              }`}
+            >
+              MTD
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Month-to-Date</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
       
       <Button
         variant={timeRange === 'rolling-30-day' ? 'default' : 'outline'}
