@@ -1,11 +1,11 @@
 
 import { DateRange, TimeRangeType } from "@/types/mauTypes";
 import { ProjectSelector } from "@/components/mau/ProjectSelector";
-import { DateRangePicker } from "@/components/mau/DateRangePicker";
-import { TimeRangeToggle } from "@/components/mau/TimeRangeToggle";
-import { ViewTypeToggle } from "@/components/mau/ViewTypeToggle";
-import { MonthSelector } from "@/components/mau/MonthSelector";
-import { SortDirectionButton } from "@/components/mau/SortDirectionButton";
+import { TimeRangeControls } from "@/components/dashboard/TimeRangeControls";
+import { MonthSelector } from "@/components/dashboard/MonthSelector";
+import { ViewTypeToggle } from "@/components/dashboard/ViewTypeToggle";
+import { SortButton } from "@/components/dashboard/SortButton";
+import { GroupingSelector } from "@/components/dashboard/GroupingSelector";
 
 interface MAUDashboardControlsProps {
   viewType: 'net-new' | 'cumulative';
@@ -42,14 +42,9 @@ export const MAUDashboardControls = ({
   customDateRange,
   onCustomDateRangeChange
 }: MAUDashboardControlsProps) => {
-  // Handle custom date range selection 
-  const handleCustomDateRangeChange = (dateRange: DateRange) => {
-    if (onCustomDateRangeChange) {
-      onCustomDateRangeChange(dateRange);
-      // Set time range to custom when date range is changed
-      onTimeRangeChange('custom');
-    }
-  };
+  // Determine visibility for conditional components
+  const showMonthSelector = timeRange === 'month-to-date';
+  const showViewType = timeRange !== 'last-12-months' && timeRange !== 'rolling-30-day' && !hideModeToggle;
 
   return (
     <div className="flex gap-2 items-center mb-6 flex-wrap">
@@ -58,44 +53,33 @@ export const MAUDashboardControls = ({
         setSelectedProject={setSelectedProject}
       />
 
-      <div className="flex flex-wrap gap-0">
-        {/* Date Range Picker - Should always be visible */}
-        <DateRangePicker 
-          dateRange={customDateRange}
-          onDateRangeChange={handleCustomDateRangeChange}
-          isSelected={timeRange === 'custom'}
-          onTimeRangeTypeChange={() => onTimeRangeChange('custom')}
-        />
-        
-        {/* Time Range Toggle Buttons */}
-        <TimeRangeToggle 
-          timeRange={timeRange}
-          onTimeRangeChange={onTimeRangeChange}
-        />
-      </div>
+      <TimeRangeControls 
+        timeRange={timeRange}
+        onTimeRangeChange={onTimeRangeChange}
+        customDateRange={customDateRange}
+        onCustomDateRangeChange={onCustomDateRangeChange}
+      />
       
-      {/* Month Selector (only shown for month-to-date view) */}
-      {timeRange === 'month-to-date' && (
+      {showMonthSelector && (
         <MonthSelector 
           selectedMonth={selectedMonth}
           onMonthChange={onMonthChange}
+          visible={true}
         />
       )}
       
       <div className="flex-grow" />
       
-      {/* View Type Toggle (hidden for certain time ranges) */}
-      {timeRange !== 'last-12-months' && timeRange !== 'rolling-30-day' && !hideModeToggle && (
-        <ViewTypeToggle 
-          viewType={viewType}
-          onViewTypeChange={onViewTypeChange}
-        />
-      )}
+      <ViewTypeToggle 
+        viewType={viewType}
+        onViewTypeChange={onViewTypeChange}
+        visible={showViewType}
+      />
       
-      {/* Sort Direction Button */}
-      <SortDirectionButton 
+      <SortButton 
         sortDirection={sortDirection}
         onSortDirectionChange={onSortDirectionChange}
+        visible={true}
       />
     </div>
   );
