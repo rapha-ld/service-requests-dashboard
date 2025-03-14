@@ -1,5 +1,6 @@
 
 import { calculatePercentChange } from "./dataTransformers";
+import { TimeRangeType } from "@/types/serviceData";
 
 export type ChartGroup = {
   id: string;
@@ -57,7 +58,7 @@ export const calculateMaxValue = (
 export const getAllEnvironmentsData = (
   grouping: 'all' | 'environment' | 'relayId' | 'userAgent',
   serviceData: any,
-  timeRange: 'month-to-date' | 'last-12-months' | 'rolling-30-day',
+  timeRange: TimeRangeType,
   sortedGroups: ChartGroup[]
 ) => {
   if (grouping === 'all') {
@@ -73,9 +74,8 @@ export const getAllEnvironmentsData = (
     }
     
     return currentData[firstKey].map((dataPoint, index: number) => {
-      // For rolling-30-day timeframe, use the exact same day format from the data
-      // This ensures the top chart and small charts have the same date format
-      const day = timeRange === 'rolling-30-day' 
+      // For rolling-30-day or custom timeframe, use the exact same day format from the data
+      const day = timeRange === 'rolling-30-day' || timeRange === 'custom'
         ? dataPoint.day  // Use the exact day as in the original data
         : timeRange === 'last-12-months' 
           ? currentData[firstKey][index].day

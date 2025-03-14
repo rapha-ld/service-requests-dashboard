@@ -3,9 +3,10 @@ import { getMockData } from "./mockDataGenerator";
 import { getTotalValue } from "./dataTransformers";
 import { generateLast12MonthsData, generateRolling30DayData, combineDataSets, processCombinedData } from "./timeRangeDataGenerators";
 import { TimeRangeType, GroupingType } from "@/types/serviceData";
+import { DateRange } from "@/types/mauTypes";
 
 // Handle 'all' dimensions data
-export const handleAllDimensionsData = (timeRange: TimeRangeType) => {
+export const handleAllDimensionsData = (timeRange: TimeRangeType, customDateRange?: DateRange) => {
   const environmentData = getMockData('environment');
   const relayIdData = getMockData('relayId');
   const userAgentData = getMockData('userAgent');
@@ -28,12 +29,20 @@ export const handleAllDimensionsData = (timeRange: TimeRangeType) => {
     return processCombinedData(combined);
   }
   
+  if (timeRange === 'custom' && customDateRange) {
+    // For custom date range, use the month-to-date data for now
+    // In a real app, you would fetch data for the specific date range
+    const combined = combineDataSets([environmentData, relayIdData, userAgentData]);
+    return processCombinedData(combined);
+  }
+  
+  // Default for month-to-date
   const combined = combineDataSets([environmentData, relayIdData, userAgentData]);
   return processCombinedData(combined);
 };
 
 // Handle specific dimension data
-export const handleSpecificDimensionData = (grouping: GroupingType, timeRange: TimeRangeType) => {
+export const handleSpecificDimensionData = (grouping: GroupingType, timeRange: TimeRangeType, customDateRange?: DateRange) => {
   // Convert the grouping string to the correct type for getMockData
   const current = getMockData(grouping as 'environment' | 'relayId' | 'userAgent');
   const previous = getMockData(grouping as 'environment' | 'relayId' | 'userAgent');
@@ -65,7 +74,23 @@ export const handleSpecificDimensionData = (grouping: GroupingType, timeRange: T
       )
     };
   }
+  
+  if (timeRange === 'custom' && customDateRange) {
+    // For custom date range, use the month-to-date data for now
+    // In a real app, you would fetch data for the specific date range
+    return {
+      current,
+      previous,
+      currentTotals: Object.fromEntries(
+        Object.entries(current).map(([key, data]) => [key, getTotalValue(data)])
+      ),
+      previousTotals: Object.fromEntries(
+        Object.entries(previous).map(([key, data]) => [key, getTotalValue(data)])
+      )
+    };
+  }
 
+  // Default for month-to-date
   return {
     current,
     previous,

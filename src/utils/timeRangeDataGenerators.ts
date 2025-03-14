@@ -2,6 +2,7 @@
 import { format, subMonths, subDays, isAfter } from "date-fns";
 import { getTotalValue } from "./dataTransformers";
 import { TimeRangeType, GroupingType } from "@/types/serviceData";
+import { DateRange } from "@/types/mauTypes";
 
 // Generate data for last 12 months view
 export const generateLast12MonthsData = (currentData: Record<string, any[]>) => {
@@ -34,6 +35,13 @@ export const generateRolling30DayData = (currentData: Record<string, any[]>) => 
       })
     ])
   );
+};
+
+// Generate data for custom date range
+export const generateCustomDateRangeData = (currentData: Record<string, any[]>, dateRange: DateRange) => {
+  // In a real implementation, this would fetch data for the specific date range
+  // For now, just return the current data
+  return currentData;
 };
 
 // Combine data from multiple data sets into a single dataset
