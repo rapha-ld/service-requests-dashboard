@@ -15,17 +15,17 @@ import {
 
 const sidebarItems = [
   {
-    title: "Billing",
+    title: "Plan",
     icon: CreditCard,
     route: "/details",
   },
   {
-    title: "Usage",
+    title: "Plan Usage",
     icon: Activity,
     route: "/overview",
   },
   {
-    title: "Diagnostics",
+    title: "Diagnostic Usage",
     icon: Stethoscope,
     route: "/diagnostics",
   },
@@ -66,7 +66,7 @@ export function AppSidebar() {
     >
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-sm font-semibold tracking-wide text-muted-foreground">Plan</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-sm font-semibold tracking-wide text-muted-foreground">Plans and Usage</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {sidebarItems.map((item) => (

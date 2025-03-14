@@ -68,13 +68,15 @@ export const MAUDashboardControls = ({
         />
       )}
       
-      <div className="flex-grow" />
+      {showViewType && (
+        <ViewTypeToggle 
+          viewType={viewType}
+          onViewTypeChange={onViewTypeChange}
+          visible={true}
+        />
+      )}
       
-      <ViewTypeToggle 
-        viewType={viewType}
-        onViewTypeChange={onViewTypeChange}
-        visible={showViewType}
-      />
+      <div className="flex-grow" />
       
       <SortButton 
         sortDirection={sortDirection}
