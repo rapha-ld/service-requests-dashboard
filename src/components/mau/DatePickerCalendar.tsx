@@ -20,7 +20,7 @@ export const DatePickerCalendar = ({
           {localDateRange?.from ? format(localDateRange.from, "MMMM yyyy") : "Select date"}
         </p>
         <p className="text-center text-sm text-muted-foreground">
-          Double-click to change starting date
+          Select a date range
         </p>
       </div>
       <Calendar
@@ -29,6 +29,7 @@ export const DatePickerCalendar = ({
         onSelect={onDateRangeChange}
         initialFocus
         className={cn("p-3 pointer-events-auto")}
+        numberOfMonths={1}
       />
     </div>
   );

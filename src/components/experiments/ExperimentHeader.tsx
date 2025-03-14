@@ -151,7 +151,7 @@ export const ExperimentHeader = ({
       <div className="flex-grow" />
       
       {/* Only show Cumulative/Net New toggle when not in Last 12 Months view */}
-      {timeRange !== 'last-12-months' && (
+      {timeRange !== 'last-12-months' && timeRange !== 'rolling-30-day' && (
         <div className="flex">
           <Button
             variant={viewType === 'cumulative' ? 'default' : 'outline'}

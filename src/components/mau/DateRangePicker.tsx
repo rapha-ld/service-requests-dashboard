@@ -24,6 +24,7 @@ export const DateRangePicker = ({
 }: DateRangePickerProps) => {
   // Local state for date range
   const [localDateRange, setLocalDateRange] = useState<DateRange | undefined>(dateRange);
+  const [isOpen, setIsOpen] = useState(false);
   
   // Local state for custom hours and period
   const [fromHour, setFromHour] = useState<string>(dateRange?.from ? format(dateRange.from, 'h') : '12');
@@ -143,7 +144,7 @@ export const DateRangePicker = ({
   };
 
   return (
-    <Popover>
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <Button 
           variant={isSelected ? 'default' : 'outline'}
@@ -173,6 +174,17 @@ export const DateRangePicker = ({
             handleFromPeriodChange={handleFromPeriodChange}
             handleToPeriodChange={handleToPeriodChange}
           />
+          <div className="flex justify-end">
+            <Button 
+              onClick={() => {
+                if (localDateRange?.from && localDateRange?.to) {
+                  setIsOpen(false);
+                }
+              }}
+            >
+              Apply
+            </Button>
+          </div>
         </div>
       </PopoverContent>
     </Popover>
