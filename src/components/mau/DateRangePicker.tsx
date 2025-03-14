@@ -179,7 +179,7 @@ export const DateRangePicker = ({
         return `${format(dateRange.from, "MMM d, yyyy, h:mm a")} - ${format(dateRange.to, "MMM d, yyyy, h:mm a")}`;
       }
     }
-    return "Select Date Range";
+    return "Custom";
   };
 
   return (
@@ -194,7 +194,7 @@ export const DateRangePicker = ({
           }`}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {isSelected ? formatDateRange() : "Select Date Range"}
+          {isSelected ? formatDateRange() : "Custom"}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
@@ -216,7 +216,7 @@ export const DateRangePicker = ({
           />
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label className="mb-2 block">From Time:</Label>
+              <Label className="mb-2 block">From:</Label>
               <div className="flex items-center gap-2">
                 <Input
                   type="number"
@@ -238,7 +238,7 @@ export const DateRangePicker = ({
               </div>
             </div>
             <div>
-              <Label className="mb-2 block">To Time:</Label>
+              <Label className="mb-2 block">To:</Label>
               <div className="flex items-center gap-2">
                 <Input
                   type="number"
