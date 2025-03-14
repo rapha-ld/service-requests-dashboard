@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { getMockMAUData } from "@/utils/mauDataGenerator";
 import { createFallbackData } from "@/utils/mauDataTransformers";
@@ -94,4 +93,5 @@ export const useMAUData = (
 };
 
 // Re-export types for convenience
-export type { TimeRangeType, MAUDataResult, ChartGroup, DateRange } from "@/types/mauTypes";
+export type { TimeRangeType, DateRange } from "@/types/mauTypes";
+export type { MAUDataResult, ChartGroup } from "@/types/mauTypes";
