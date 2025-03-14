@@ -23,9 +23,10 @@ const USER_LIMIT = 25000;
 export const useMAUData = (
   selectedMonth: number,
   selectedProject: string,
-  timeRange: TimeRangeType
+  timeRange: TimeRangeType,
+  customDate?: Date
 ) => {
-  const currentDate = new Date(new Date().getFullYear(), selectedMonth);
+  const currentDate = customDate || new Date(new Date().getFullYear(), selectedMonth);
   const safeProject = selectedProject || "all";
 
   const { data: mauData, isLoading, error } = useQuery<MAUDataResult>({
@@ -56,8 +57,8 @@ export const useMAUData = (
           processedCurrentData = formatRolling30DayData(currentData, safeProject);
         }
 
-        // Apply date limitation for Month-to-Date view
-        if (timeRange === 'month-to-date') {
+        // Apply date limitation for Month-to-Date view or custom date
+        if (timeRange === 'month-to-date' || timeRange === 'custom') {
           processedCurrentData = limitDataToCurrentDate(processedCurrentData);
         }
         
