@@ -22,6 +22,7 @@ const ClientMAU = () => {
   const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>('area');
   const [timeRange, setTimeRange] = useState<TimeRangeType>('month-to-date');
   const [selectedProject, setSelectedProject] = useState<string>("all");
+  const [customDate, setCustomDate] = useState<Date>(new Date());
   const chartRefs = useRef<{ [key: string]: any }>({});
 
   // Effect to set view type based on time range, for both last-12-months and rolling-30-day
@@ -51,6 +52,11 @@ const ClientMAU = () => {
     }
   };
   
+  // Handle custom date change
+  const handleCustomDateChange = (date: Date) => {
+    setCustomDate(date);
+  };
+  
   // Handle view type change
   const handleViewTypeChange = (newViewType: 'net-new' | 'cumulative') => {
     setViewType(newViewType);
@@ -73,7 +79,7 @@ const ClientMAU = () => {
   };
 
   // Fetch MAU data with the custom hook
-  const { mauData, isLoading } = useMAUData(selectedMonth, selectedProject, timeRange);
+  const { mauData, isLoading } = useMAUData(selectedMonth, selectedProject, timeRange, customDate);
 
   // Handle loading state
   if (isLoading) {
@@ -126,6 +132,8 @@ const ClientMAU = () => {
           onSortDirectionChange={() => setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc')}
           onMonthChange={(value) => setSelectedMonth(parseInt(value))}
           onTimeRangeChange={handleTimeRangeChange}
+          customDate={customDate}
+          onCustomDateChange={handleCustomDateChange}
         />
         
         <DashboardSummary groups={sortedGroups} />
