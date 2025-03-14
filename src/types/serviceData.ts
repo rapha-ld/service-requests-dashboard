@@ -1,6 +1,6 @@
 
 export type GroupingType = 'all' | 'environment' | 'relayId' | 'userAgent';
-export type TimeRangeType = 'month-to-date' | 'last-12-months' | 'rolling-30-day';
+export type TimeRangeType = 'month-to-date' | 'last-12-months' | 'rolling-30-day' | 'custom';
 export type ViewType = 'net-new' | 'cumulative';
 export type ChartType = 'area' | 'line' | 'bar';
 

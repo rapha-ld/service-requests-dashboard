@@ -1,6 +1,7 @@
 
 import { calculatePercentChange } from "@/utils/dataTransformers";
 import { TimeRangeType } from "@/hooks/useExperimentData";
+import { DateRange } from "@/types/mauTypes";
 
 export interface ExperimentGroup {
   id: string;
@@ -8,6 +9,56 @@ export interface ExperimentGroup {
   value: number;
   data: Array<{ day: string; value: number }>;
   percentChange: number;
+}
+
+export function generateExperimentData(
+  timeRange: TimeRangeType,
+  currentDate: Date,
+  customDateRange?: DateRange
+) {
+  // Mock data generation based on time range
+  const data = {
+    current: {
+      experimentA: Array.from({ length: 30 }, (_, i) => ({
+        day: (i + 1).toString(),
+        value: Math.floor(Math.random() * 100)
+      })),
+      experimentB: Array.from({ length: 30 }, (_, i) => ({
+        day: (i + 1).toString(),
+        value: Math.floor(Math.random() * 100)
+      })),
+      experimentC: Array.from({ length: 30 }, (_, i) => ({
+        day: (i + 1).toString(),
+        value: Math.floor(Math.random() * 100)
+      }))
+    },
+    previous: {
+      experimentA: Array.from({ length: 30 }, (_, i) => ({
+        day: (i + 1).toString(),
+        value: Math.floor(Math.random() * 100)
+      })),
+      experimentB: Array.from({ length: 30 }, (_, i) => ({
+        day: (i + 1).toString(),
+        value: Math.floor(Math.random() * 100)
+      })),
+      experimentC: Array.from({ length: 30 }, (_, i) => ({
+        day: (i + 1).toString(),
+        value: Math.floor(Math.random() * 100)
+      }))
+    },
+    currentTotals: {
+      experimentA: 2500,
+      experimentB: 1800,
+      experimentC: 3200
+    },
+    previousTotals: {
+      experimentA: 2300,
+      experimentB: 1650,
+      experimentC: 2900
+    }
+  };
+
+  return data;
 }
 
 export function processExperimentData(serviceData: any, sortDirection: 'desc' | 'asc') {

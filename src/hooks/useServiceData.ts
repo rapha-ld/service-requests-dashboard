@@ -19,10 +19,10 @@ export const useServiceData = (
     queryKey: ['service-data', currentDate.toISOString(), grouping, timeRange, customDateRange],
     queryFn: () => {
       if (grouping === 'all') {
-        return handleAllDimensionsData(timeRange, customDateRange);
+        return handleAllDimensionsData(timeRange);
       }
       
-      return handleSpecificDimensionData(grouping, timeRange, customDateRange);
+      return handleSpecificDimensionData(grouping, timeRange);
     }
   });
 };
