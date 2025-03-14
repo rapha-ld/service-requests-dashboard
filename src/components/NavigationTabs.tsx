@@ -1,4 +1,3 @@
-
 import { useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { Sun, Moon } from "lucide-react";
@@ -12,13 +11,13 @@ const USAGE_TABS = [
   { id: "client-mau", label: "Client MAU", path: "/client-mau" },
   { id: "experiments", label: "Experiments", path: "/experiments" },
   { id: "data-export", label: "Data Export", path: "/data-export" },
+  { id: "service-requests", label: "Service Connections", path: "/service-requests" },
 ];
 
 const DIAGNOSTICS_TABS = [
   { id: "client-connections", label: "Client Connections", path: "/client-connections" },
   { id: "server-mau", label: "Server MAU", path: "/server-mau" },
   { id: "peak-server-connections", label: "Peak Server SDK Connections", path: "/peak-server-connections" },
-  { id: "service-requests", label: "Service Requests", path: "/service-requests" },
 ];
 
 export function NavigationTabs() {
@@ -28,14 +27,11 @@ export function NavigationTabs() {
   
   const currentPath = location.pathname;
   
-  // Determine which tab group to show based on path
   const isUsagePath = USAGE_TABS.some(tab => tab.path === currentPath);
   const isDiagnosticsPath = DIAGNOSTICS_TABS.some(tab => tab.path === currentPath);
   
-  // Get the active tab ID
   const activeTab = [...USAGE_TABS, ...DIAGNOSTICS_TABS].find(tab => tab.path === currentPath)?.id || "";
   
-  // Determine which tabs to display
   const tabsToDisplay = isUsagePath ? USAGE_TABS : isDiagnosticsPath ? DIAGNOSTICS_TABS : [];
 
   return (
