@@ -28,13 +28,26 @@ export const ServiceRequestsDashboard = () => {
     setChartType(viewType === 'net-new' ? 'bar' : 'area');
   }, [viewType]);
   
+  // Effect to update view type based on time range
+  useEffect(() => {
+    if (timeRange === 'last-12-months') {
+      setViewType('net-new');
+    } else if (timeRange === 'rolling-30-day') {
+      // Always use cumulative view for 30-day range
+      setViewType('cumulative');
+    }
+  }, [timeRange]);
+  
   // Handle time range change
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
     setTimeRange(newTimeRange);
     
-    // Only allow net-new view for 12-month and 30-day views
-    if (newTimeRange === 'last-12-months' || newTimeRange === 'rolling-30-day') {
+    // Set view type based on time range
+    if (newTimeRange === 'last-12-months') {
       setViewType('net-new');
+    } else if (newTimeRange === 'rolling-30-day') {
+      // Always use cumulative view for 30-day range
+      setViewType('cumulative');
     }
   };
   
@@ -45,6 +58,9 @@ export const ServiceRequestsDashboard = () => {
   
   // Handle view type change
   const handleViewTypeChange = (newViewType: ViewType) => {
+    // Don't allow changing view type for rolling-30-day
+    if (timeRange === 'rolling-30-day') return;
+    
     setViewType(newViewType);
     // Update chart type based on view type
     setChartType(newViewType === 'net-new' ? 'bar' : 'area');
