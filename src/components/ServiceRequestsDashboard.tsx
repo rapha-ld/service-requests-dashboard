@@ -88,7 +88,7 @@ export const ServiceRequestsDashboard = () => {
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl font-semibold text-foreground mb-6 text-left pl-0">Service Requests</h1>
+        <h1 className="text-2xl font-semibold text-foreground mb-6 text-left pl-0">Service Connections</h1>
         
         <DashboardHeader
           grouping={grouping}
@@ -119,6 +119,7 @@ export const ServiceRequestsDashboard = () => {
           onExportChart={() => {}}
           useViewDetailsButton={false}
           showOnlyTotal={grouping === 'all'}
+          unitLabel="connections"
         />
       </div>
     </div>
