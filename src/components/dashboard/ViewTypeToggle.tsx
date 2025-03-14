@@ -17,7 +17,7 @@ export const ViewTypeToggle = ({ viewType, onViewTypeChange, visible }: ViewType
         onClick={() => onViewTypeChange('cumulative')}
         className={`rounded-r-none ${
           viewType === 'cumulative' 
-            ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
+            ? 'dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
             : ''
         }`}
       >
@@ -28,7 +28,7 @@ export const ViewTypeToggle = ({ viewType, onViewTypeChange, visible }: ViewType
         onClick={() => onViewTypeChange('net-new')}
         className={`rounded-l-none border-l-0 ${
           viewType === 'net-new' 
-            ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
+            ? 'dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
             : ''
         }`}
       >
