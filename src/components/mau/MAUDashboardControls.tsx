@@ -105,17 +105,26 @@ export const MAUDashboardControls = ({
           </Tooltip>
         </TooltipProvider>
         
-        <Button
-          variant={timeRange === 'last-12-months' ? 'default' : 'outline'}
-          onClick={() => onTimeRangeChange('last-12-months')}
-          className={`rounded-l-none border-l-0 ${
-            timeRange === 'last-12-months' 
-              ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
-              : ''
-          }`}
-        >
-          12M
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant={timeRange === 'last-12-months' ? 'default' : 'outline'}
+                onClick={() => onTimeRangeChange('last-12-months')}
+                className={`rounded-l-none border-l-0 ${
+                  timeRange === 'last-12-months' 
+                    ? 'dark:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
+                    : ''
+                }`}
+              >
+                12M
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Last 12 Months</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
       
       {timeRange === 'month-to-date' && (
