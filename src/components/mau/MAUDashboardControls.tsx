@@ -42,10 +42,11 @@ export const MAUDashboardControls = ({
   customDateRange,
   onCustomDateRangeChange
 }: MAUDashboardControlsProps) => {
-  // Handle custom date range selection and set time range to custom
+  // Handle custom date range selection 
   const handleCustomDateRangeChange = (dateRange: DateRange) => {
     if (onCustomDateRangeChange) {
       onCustomDateRangeChange(dateRange);
+      // Set time range to custom when date range is changed
       onTimeRangeChange('custom');
     }
   };
@@ -56,9 +57,9 @@ export const MAUDashboardControls = ({
         selectedProject={selectedProject}
         setSelectedProject={setSelectedProject}
       />
-      
-      <div className="flex">
-        {/* Custom Date Range Picker */}
+
+      <div className="flex flex-wrap gap-0">
+        {/* Date Range Picker - Should always be visible */}
         <DateRangePicker 
           dateRange={customDateRange}
           onDateRangeChange={handleCustomDateRangeChange}

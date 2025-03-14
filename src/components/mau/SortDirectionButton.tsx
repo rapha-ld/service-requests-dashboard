@@ -18,7 +18,7 @@ export const SortDirectionButton = ({
       className="h-10 ml-2"
       title={sortDirection === 'desc' ? "Sort ascending" : "Sort descending"}
     >
-      <ArrowUpDown className="h-4 w-4 text-primary" />
+      <ArrowUpDown className="h-4 w-4 text-primary mr-2" />
       Sort
     </Button>
   );
