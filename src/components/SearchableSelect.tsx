@@ -63,7 +63,7 @@ export function SearchableSelect({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-full md:w-[280px] justify-between"
+          className="w-full md:w-[280px] justify-between h-8 bg-white"
         >
           <div className="flex items-center">
             <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
@@ -72,7 +72,7 @@ export function SearchableSelect({
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-full md:w-[280px] p-0 bg-background border" align="start">
+      <PopoverContent className="w-full md:w-[280px] p-0 bg-white border" align="start">
         <Command>
           <CommandInput placeholder={`Search ${placeholder.toLowerCase()}...`} />
           <CommandEmpty>No item found.</CommandEmpty>
