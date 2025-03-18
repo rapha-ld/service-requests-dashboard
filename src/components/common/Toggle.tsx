@@ -1,8 +1,15 @@
 
 import { Button } from "@/components/ui/button";
+import { ReactNode } from "react";
+
+interface ToggleOption {
+  value: string;
+  label: string;
+  icon?: ReactNode;
+}
 
 interface ToggleProps {
-  options: { value: string; label: string }[];
+  options: ToggleOption[];
   value: string;
   onChange: (value: string) => void;
   className?: string;
@@ -35,7 +42,10 @@ export const Toggle = ({
               : ''}
           `}
         >
-          {option.label}
+          <div className="flex items-center">
+            {option.icon}
+            {option.label}
+          </div>
         </Button>
       ))}
     </div>
