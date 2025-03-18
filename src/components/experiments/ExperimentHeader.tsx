@@ -34,8 +34,8 @@ export const ExperimentHeader = ({
 }: ExperimentHeaderProps) => {
   // Determine visibility for conditional components
   const showMonthSelector = timeRange === 'month-to-date';
-  // Show view type toggle for last-12-months or month-to-date when enabled
-  const showToggle = showViewTypeToggle && (timeRange === 'last-12-months' || timeRange === 'month-to-date');
+  // Always show view type toggle when enabled, regardless of time range (except for rolling-30-day)
+  const showToggle = showViewTypeToggle && timeRange !== 'rolling-30-day';
 
   return (
     <div className="flex gap-4 items-center mb-6 flex-wrap">
