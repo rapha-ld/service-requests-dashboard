@@ -147,7 +147,7 @@ const ClientMAU = () => {
           onTimeRangeChange={handleTimeRangeChange}
           customDateRange={customDateRange}
           onCustomDateRangeChange={handleCustomDateRangeChange}
-          hideModeToggle={true}
+          hideModeToggle={false}
         />
         
         <DashboardSummary groups={sortedGroups} />

@@ -4,6 +4,7 @@ import { TimeRangeControls } from "@/components/dashboard/TimeRangeControls";
 import { MonthSelector } from "@/components/dashboard/MonthSelector";
 import { GroupingSelector } from "@/components/dashboard/GroupingSelector";
 import { SortButton } from "@/components/dashboard/SortButton";
+import { ViewTypeToggle } from "@/components/dashboard/ViewTypeToggle";
 
 interface DashboardHeaderProps {
   grouping: 'all' | 'environment' | 'relayId' | 'userAgent';
@@ -41,6 +42,9 @@ export const DashboardHeader = ({
   // Determine visibility for conditional components
   const showMonthSelector = timeRange === 'month-to-date';
   const showSortButton = grouping !== 'all';
+  
+  // Show view type toggle for last-12-months or when explicitly enabled
+  const showToggle = showViewTypeToggle && (timeRange === 'last-12-months' || timeRange === 'month-to-date');
 
   return (
     <div className="flex gap-4 items-center mb-6 flex-wrap">
@@ -63,6 +67,12 @@ export const DashboardHeader = ({
         selectedMonth={selectedMonth}
         onMonthChange={onMonthChange}
         visible={showMonthSelector}
+      />
+      
+      <ViewTypeToggle
+        viewType={viewType}
+        onViewTypeChange={onViewTypeChange}
+        visible={showToggle}
       />
       
       <div className="flex-grow" />

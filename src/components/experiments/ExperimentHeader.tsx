@@ -3,6 +3,7 @@ import { DateRange } from "@/types/mauTypes";
 import { TimeRangeControls } from "@/components/dashboard/TimeRangeControls";
 import { MonthSelector } from "@/components/dashboard/MonthSelector";
 import { SortButton } from "@/components/dashboard/SortButton";
+import { ViewTypeToggle } from "@/components/dashboard/ViewTypeToggle";
 
 interface ExperimentHeaderProps {
   viewType: 'net-new' | 'cumulative';
@@ -15,7 +16,6 @@ interface ExperimentHeaderProps {
   onTimeRangeChange: (value: 'month-to-date' | 'last-12-months' | 'rolling-30-day' | 'custom') => void;
   customDateRange?: DateRange;
   onCustomDateRangeChange?: (dateRange: DateRange) => void;
-  // Add the missing prop to the interface
   showViewTypeToggle?: boolean;
 }
 
@@ -30,13 +30,12 @@ export const ExperimentHeader = ({
   onTimeRangeChange,
   customDateRange,
   onCustomDateRangeChange,
-  // Add the prop to the destructuring assignment
   showViewTypeToggle = true
 }: ExperimentHeaderProps) => {
   // Determine visibility for conditional components
   const showMonthSelector = timeRange === 'month-to-date';
-  // Use the showViewTypeToggle prop in conjunction with the existing logic
-  const showViewType = showViewTypeToggle && (timeRange !== 'last-12-months' && timeRange !== 'rolling-30-day');
+  // Show view type toggle for last-12-months or month-to-date when enabled
+  const showToggle = showViewTypeToggle && (timeRange === 'last-12-months' || timeRange === 'month-to-date');
 
   return (
     <div className="flex gap-4 items-center mb-6 flex-wrap">
@@ -51,6 +50,12 @@ export const ExperimentHeader = ({
         selectedMonth={selectedMonth}
         onMonthChange={onMonthChange}
         visible={showMonthSelector}
+      />
+      
+      <ViewTypeToggle 
+        viewType={viewType}
+        onViewTypeChange={onViewTypeChange}
+        visible={showToggle}
       />
       
       <div className="flex-grow" />

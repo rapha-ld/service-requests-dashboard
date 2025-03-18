@@ -92,7 +92,7 @@ const Experiments = () => {
           onTimeRangeChange={handleTimeRangeChange}
           customDateRange={customDateRange}
           onCustomDateRangeChange={handleCustomDateRangeChange}
-          showViewTypeToggle={false}
+          showViewTypeToggle={true}
         />
         
         <DashboardSummary groups={sortedGroups as ExperimentGroup[]} />
