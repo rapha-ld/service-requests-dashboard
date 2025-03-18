@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
 import { ExperimentHeader } from "@/components/experiments/ExperimentHeader";
+import { TimeRangeMessage } from "@/components/dashboard/TimeRangeMessage";
 import { useExperimentData, TimeRangeType } from "@/hooks/useExperimentData";
 import { 
   processExperimentData, 
@@ -90,6 +91,8 @@ const Experiments = () => {
           onCustomDateRangeChange={handleCustomDateRangeChange}
           showViewTypeToggle={true}
         />
+        
+        <TimeRangeMessage timeRange={timeRange} />
         
         <DashboardSummary groups={sortedGroups as ExperimentGroup[]} />
         

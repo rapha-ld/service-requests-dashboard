@@ -1,8 +1,8 @@
-
 import { useState, useRef, useEffect } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
+import { TimeRangeMessage } from "@/components/dashboard/TimeRangeMessage";
 import { useServiceData } from "@/hooks/useServiceData";
 import { GroupingType, TimeRangeType, ViewType, ChartType } from "@/types/serviceData";
 import { processServiceData, calculateMaxValue, getAllEnvironmentsData } from "@/utils/serviceDataUtils";
@@ -101,6 +101,8 @@ export const ServiceRequestsDashboard = () => {
           customDateRange={customDateRange}
           onCustomDateRangeChange={handleCustomDateRangeChange}
         />
+        
+        <TimeRangeMessage timeRange={timeRange} />
         
         {grouping !== 'all' && <DashboardSummary groups={sortedGroups} />}
         

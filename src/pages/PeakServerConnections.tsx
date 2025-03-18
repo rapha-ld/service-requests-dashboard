@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
 import { DashboardHeader } from "@/components/DashboardHeader";
+import { TimeRangeMessage } from "@/components/dashboard/TimeRangeMessage";
 import { useServiceData } from "@/hooks/useServiceData";
 import { GroupingType, TimeRangeType } from "@/types/serviceData";
 import { processServiceData, calculateMaxValue, getAllEnvironmentsData } from "@/utils/serviceDataUtils";
@@ -108,6 +109,8 @@ const PeakServerConnections = () => {
           customDateRange={customDateRange}
           onCustomDateRangeChange={handleCustomDateRangeChange}
         />
+        
+        <TimeRangeMessage timeRange={timeRange} />
         
         {grouping !== 'all' && <DashboardSummary groups={sortedGroups} />}
         

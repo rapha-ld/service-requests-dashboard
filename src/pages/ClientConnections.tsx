@@ -5,6 +5,7 @@ import { MAUDashboardControls } from "@/components/mau/MAUDashboardControls";
 import { LoadingState } from "@/components/mau/LoadingState";
 import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
+import { TimeRangeMessage } from "@/components/dashboard/TimeRangeMessage";
 import { useMAUData, TimeRangeType } from "@/hooks/useMAUData";
 import { 
   transformDataToChartGroups, 
@@ -154,6 +155,8 @@ const ClientConnections = () => {
           customDateRange={customDateRange}
           onCustomDateRangeChange={handleCustomDateRangeChange}
         />
+        
+        <TimeRangeMessage timeRange={timeRange} />
         
         <DashboardSummary groups={sortedGroups} />
         
