@@ -1,4 +1,3 @@
-
 import { format } from 'date-fns';
 
 export const getRequestStatus = (value: number) => {
@@ -32,27 +31,29 @@ export const transformData = (
       }];
     }
     
-    // For rolling 30-day view, check if we're crossing a month boundary
+    // For Last 12 Months view, treat each month as its own cumulative sequence
+    // if the day includes a "Month" label, it's from the Last 12 Months view
+    const isLast12MonthsView = curr.day.includes('Month') || curr.day.includes('Jan') || curr.day.includes('Feb') || 
+                              curr.day.includes('Mar') || curr.day.includes('Apr') || curr.day.includes('May') || 
+                              curr.day.includes('Jun') || curr.day.includes('Jul') || curr.day.includes('Aug') || 
+                              curr.day.includes('Sep') || curr.day.includes('Oct') || curr.day.includes('Nov') || 
+                              curr.day.includes('Dec');
+    
+    // Never reset cumulative values for Last 12 Months view - always accumulate
     if (index > 0) {
-      const prevDate = new Date(formatTooltipDate(acc[index - 1].day));
-      const currDate = new Date(formatTooltipDate(curr.day));
+      const previousItem = acc[index - 1];
+      const previousValue = previousItem && previousItem.value !== null ? previousItem.value : 0;
       
-      // If the current day is in a different month than the previous day,
-      // start cumulative sum from current value
-      if (prevDate.getMonth() !== currDate.getMonth()) {
-        return [...acc, {
-          day: curr.day,
-          value: curr.value
-        }];
-      }
+      return [...acc, {
+        day: curr.day,
+        value: previousValue + (curr.value as number)
+      }];
     }
     
-    const previousItem = index > 0 ? acc[index - 1] : null;
-    const previousValue = previousItem && previousItem.value !== null ? previousItem.value : 0;
-    
+    // First item keeps its original value
     return [...acc, {
       day: curr.day,
-      value: previousValue + (curr.value as number)
+      value: curr.value
     }];
   }, [] as Array<{ day: string; value: number | null }>);
 };
