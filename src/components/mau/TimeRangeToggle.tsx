@@ -23,7 +23,7 @@ export const TimeRangeToggle = ({
               className={`rounded-l-md rounded-r-none ${
                 timeRange === 'month-to-date' 
                   ? 'dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
-                  : ''
+                  : 'bg-white dark:bg-black dark:border-[#6C6E7A]'
               }`}
             >
               MTD
@@ -41,7 +41,7 @@ export const TimeRangeToggle = ({
         className={`rounded-none border-l-0 ${
           timeRange === 'rolling-30-day' 
             ? 'dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
-            : ''
+            : 'bg-white dark:bg-black dark:border-[#6C6E7A]'
         }`}
       >
         Trailing 30D
@@ -53,7 +53,7 @@ export const TimeRangeToggle = ({
         className={`rounded-none border-l-0 ${
           timeRange === 'last-12-months' 
             ? 'dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
-            : ''
+            : 'bg-white dark:bg-black dark:border-[#6C6E7A]'
         }`}
       >
         Last 12M
@@ -65,7 +65,7 @@ export const TimeRangeToggle = ({
         className={`rounded-r-md rounded-l-none border-l-0 ${
           timeRange === 'custom' 
             ? 'dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
-            : ''
+            : 'bg-white dark:bg-black dark:border-[#6C6E7A]'
         }`}
       >
         Custom
