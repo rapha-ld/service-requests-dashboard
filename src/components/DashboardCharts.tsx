@@ -59,7 +59,7 @@ export const DashboardCharts = ({
   return (
     <>
       {onViewTypeChange && !disableViewTypeToggle && (
-        <div className="flex justify-end items-center mb-4">
+        <div className="flex justify-start items-center mb-4">
           <ViewTypeToggle
             viewType={viewType}
             onViewTypeChange={onViewTypeChange}
