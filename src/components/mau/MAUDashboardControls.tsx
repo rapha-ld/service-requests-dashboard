@@ -3,7 +3,6 @@ import { DateRange, TimeRangeType } from "@/types/mauTypes";
 import { ProjectSelector } from "@/components/mau/ProjectSelector";
 import { TimeRangeControls } from "@/components/dashboard/TimeRangeControls";
 import { MonthSelector } from "@/components/dashboard/MonthSelector";
-import { ViewTypeToggle } from "@/components/dashboard/ViewTypeToggle";
 import { SortButton } from "@/components/dashboard/SortButton";
 import { GroupingSelector } from "@/components/dashboard/GroupingSelector";
 
@@ -44,7 +43,6 @@ export const MAUDashboardControls = ({
 }: MAUDashboardControlsProps) => {
   // Determine visibility for conditional components
   const showMonthSelector = timeRange === 'month-to-date';
-  const showViewType = timeRange !== 'last-12-months' && timeRange !== 'rolling-30-day' && !hideModeToggle;
 
   return (
     <div className="flex gap-4 items-center mb-6 flex-wrap">
@@ -65,14 +63,6 @@ export const MAUDashboardControls = ({
         onMonthChange={onMonthChange}
         visible={showMonthSelector}
       />
-      
-      {showViewType && (
-        <ViewTypeToggle 
-          viewType={viewType}
-          onViewTypeChange={onViewTypeChange}
-          visible={true}
-        />
-      )}
       
       <div className="flex-grow" />
       

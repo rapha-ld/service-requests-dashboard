@@ -4,6 +4,7 @@ import { TotalChart } from "@/components/charts/TotalChart";
 import { LayoutToggle } from "@/components/charts/LayoutToggle";
 import { ChartGrid } from "@/components/charts/ChartGrid";
 import { getTotalTitle } from "@/utils/chartUtils";
+import { ViewTypeToggle } from "@/components/mau/ViewTypeToggle";
 
 interface ChartGroup {
   id: string;
@@ -25,6 +26,8 @@ interface DashboardChartsProps {
   showThreshold?: boolean;
   threshold?: number;
   showOnlyTotal?: boolean;
+  onViewTypeChange?: (value: 'net-new' | 'cumulative') => void;
+  disableViewTypeToggle?: boolean;
 }
 
 export const DashboardCharts = ({
@@ -40,7 +43,9 @@ export const DashboardCharts = ({
   unitLabel = "reqs",
   showThreshold = false,
   threshold,
-  showOnlyTotal = false
+  showOnlyTotal = false,
+  onViewTypeChange,
+  disableViewTypeToggle = false
 }: DashboardChartsProps) => {
   const [layoutMode, setLayoutMode] = useState<'compact' | 'expanded'>('compact');
   const totalTitle = getTotalTitle(grouping);
@@ -53,6 +58,15 @@ export const DashboardCharts = ({
 
   return (
     <>
+      {onViewTypeChange && !disableViewTypeToggle && (
+        <div className="flex justify-between items-center mb-4">
+          <ViewTypeToggle
+            viewType={viewType}
+            onViewTypeChange={onViewTypeChange}
+          />
+        </div>
+      )}
+      
       <TotalChart
         title={totalTitle}
         data={allEnvironmentsData}

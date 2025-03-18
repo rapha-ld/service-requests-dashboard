@@ -92,6 +92,7 @@ const Experiments = () => {
           onTimeRangeChange={handleTimeRangeChange}
           customDateRange={customDateRange}
           onCustomDateRangeChange={handleCustomDateRangeChange}
+          showViewTypeToggle={false}
         />
         
         <DashboardSummary groups={sortedGroups as ExperimentGroup[]} />
@@ -109,6 +110,8 @@ const Experiments = () => {
           useViewDetailsButton={false}
           showThreshold={true}
           threshold={EXPERIMENT_EVENTS_THRESHOLD}
+          onViewTypeChange={handleViewTypeChange}
+          disableViewTypeToggle={timeRange === 'rolling-30-day' || timeRange === 'last-12-months'}
         />
       </div>
     </div>

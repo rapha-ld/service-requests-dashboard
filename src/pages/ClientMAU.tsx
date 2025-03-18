@@ -147,7 +147,7 @@ const ClientMAU = () => {
           onTimeRangeChange={handleTimeRangeChange}
           customDateRange={customDateRange}
           onCustomDateRangeChange={handleCustomDateRangeChange}
-          hideModeToggle={timeRange === 'rolling-30-day' || timeRange === 'last-12-months'}
+          hideModeToggle={true}
         />
         
         <DashboardSummary groups={sortedGroups} />
@@ -165,6 +165,8 @@ const ClientMAU = () => {
           unitLabel="users"
           showThreshold={showThreshold}
           threshold={USER_LIMIT}
+          onViewTypeChange={handleViewTypeChange}
+          disableViewTypeToggle={timeRange === 'rolling-30-day' || timeRange === 'last-12-months'}
         />
       </div>
     </div>

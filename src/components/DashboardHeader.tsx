@@ -3,7 +3,6 @@ import { DateRange } from "@/types/mauTypes";
 import { TimeRangeControls } from "@/components/dashboard/TimeRangeControls";
 import { MonthSelector } from "@/components/dashboard/MonthSelector";
 import { GroupingSelector } from "@/components/dashboard/GroupingSelector";
-import { ViewTypeToggle } from "@/components/dashboard/ViewTypeToggle";
 import { SortButton } from "@/components/dashboard/SortButton";
 
 interface DashboardHeaderProps {
@@ -41,7 +40,6 @@ export const DashboardHeader = ({
 }: DashboardHeaderProps) => {
   // Determine visibility for conditional components
   const showMonthSelector = timeRange === 'month-to-date';
-  const showViewType = timeRange !== 'last-12-months' && timeRange !== 'rolling-30-day' && showViewTypeToggle;
   const showSortButton = grouping !== 'all';
 
   return (
@@ -66,14 +64,6 @@ export const DashboardHeader = ({
         onMonthChange={onMonthChange}
         visible={showMonthSelector}
       />
-      
-      {showViewType && (
-        <ViewTypeToggle 
-          viewType={viewType}
-          onViewTypeChange={onViewTypeChange}
-          visible={true}
-        />
-      )}
       
       <div className="flex-grow" />
       

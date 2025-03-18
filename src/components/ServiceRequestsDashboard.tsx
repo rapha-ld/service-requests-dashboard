@@ -101,7 +101,7 @@ export const ServiceRequestsDashboard = () => {
           onMonthChange={(value) => setSelectedMonth(parseInt(value))}
           timeRange={timeRange}
           onTimeRangeChange={handleTimeRangeChange}
-          showViewTypeToggle={timeRange !== 'last-12-months' && timeRange !== 'rolling-30-day'}
+          showViewTypeToggle={false}
           customDateRange={customDateRange}
           onCustomDateRangeChange={handleCustomDateRangeChange}
         />
@@ -120,6 +120,8 @@ export const ServiceRequestsDashboard = () => {
           useViewDetailsButton={false}
           showOnlyTotal={grouping === 'all'}
           unitLabel="connections"
+          onViewTypeChange={handleViewTypeChange}
+          disableViewTypeToggle={timeRange === 'last-12-months' || timeRange === 'rolling-30-day'}
         />
       </div>
     </div>

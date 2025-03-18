@@ -154,7 +154,7 @@ const ClientConnections = () => {
           onSortDirectionChange={() => setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc')}
           onMonthChange={(value) => setSelectedMonth(parseInt(value))}
           onTimeRangeChange={handleTimeRangeChange}
-          hideModeToggle={timeRange === 'last-12-months' || timeRange === 'rolling-30-day'}
+          hideModeToggle={true}
           customDateRange={customDateRange}
           onCustomDateRangeChange={handleCustomDateRangeChange}
         />
@@ -173,6 +173,8 @@ const ClientConnections = () => {
           useViewDetailsButton={false}
           unitLabel="connections"
           showThreshold={false}
+          onViewTypeChange={handleViewTypeChange}
+          disableViewTypeToggle={timeRange === 'rolling-30-day' || timeRange === 'last-12-months'}
         />
       </div>
     </div>
