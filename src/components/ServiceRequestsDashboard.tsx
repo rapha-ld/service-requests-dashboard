@@ -41,7 +41,7 @@ export const ServiceRequestsDashboard = () => {
     setTimeRange(newTimeRange);
     
     // Set view type based on time range
-    if (timeRange === 'rolling-30-day') {
+    if (newTimeRange === 'rolling-30-day') {
       // Always use cumulative view for 30-day range
       setViewType('cumulative');
     }
