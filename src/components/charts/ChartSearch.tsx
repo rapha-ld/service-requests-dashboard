@@ -27,7 +27,7 @@ export const ChartSearch = ({ onSearch, placeholder = "Search..." }: ChartSearch
         placeholder={placeholder}
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="pl-9 pr-9"
+        className="pl-9 pr-9 h-8 bg-white dark:bg-black dark:border-[#6C6E7A]"
       />
       {searchTerm && (
         <button 

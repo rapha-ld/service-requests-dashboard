@@ -15,7 +15,7 @@ export const GroupingSelector = ({ grouping, onGroupingChange, visible }: Groupi
       value={grouping}
       onValueChange={(value) => onGroupingChange(value as 'all' | 'environment' | 'relayId' | 'userAgent')}
     >
-      <SelectTrigger className="w-[180px] h-8 bg-white dark:bg-black dark:border-white/10">
+      <SelectTrigger className="w-[180px] h-8 bg-white dark:bg-black dark:border-[#6C6E7A]">
         <SelectValue placeholder="Select grouping" />
       </SelectTrigger>
       <SelectContent className="bg-white dark:bg-black">

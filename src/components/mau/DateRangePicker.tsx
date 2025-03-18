@@ -152,17 +152,17 @@ export const DateRangePicker = ({
       <PopoverTrigger asChild>
         <Button 
           variant={isSelected ? 'default' : 'outline'}
-          className={`rounded-r-md rounded-l-none border-l-0 ${
+          className={`rounded-r-md rounded-l-none border-l-0 h-8 ${
             isSelected 
               ? 'dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
-              : ''
+              : 'bg-white dark:bg-black dark:border-[#6C6E7A]'
           }`}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
           {isSelected ? formatDateRange(dateRange) : "Custom"}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
+      <PopoverContent className="w-auto p-0 bg-white dark:bg-black dark:border-[#6C6E7A]" align="start">
         <div className="p-4 space-y-4">
           <DatePickerCalendar 
             localDateRange={localDateRange} 
@@ -182,6 +182,7 @@ export const DateRangePicker = ({
             <Button 
               onClick={applyDateRange}
               disabled={!localDateRange?.from || !localDateRange?.to}
+              className="bg-white dark:bg-black dark:border-[#6C6E7A]"
             >
               Apply
             </Button>

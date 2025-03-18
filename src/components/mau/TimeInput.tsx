@@ -28,10 +28,10 @@ export const TimeInput = ({
           max="12"
           value={hour}
           onChange={onHourChange}
-          className="w-16"
+          className="w-16 h-8 bg-white dark:bg-black dark:border-[#6C6E7A]"
         />
         <Select value={period} onValueChange={onPeriodChange}>
-          <SelectTrigger className="w-20">
+          <SelectTrigger className="w-20 h-8 bg-white dark:bg-black dark:border-[#6C6E7A]">
             <SelectValue placeholder="AM/PM" />
           </SelectTrigger>
           <SelectContent>
