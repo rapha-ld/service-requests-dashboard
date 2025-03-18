@@ -35,7 +35,7 @@ export const Toggle = ({
           variant={value === option.value ? 'default' : 'outline'}
           onClick={() => onChange(option.value)}
           disabled={disabled}
-          className={`
+          className={`h-8
             ${index === 0 ? 'rounded-r-none' : 'rounded-l-none border-l-0'}
             ${value === option.value 
               ? 'dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
