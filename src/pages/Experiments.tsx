@@ -27,11 +27,9 @@ const Experiments = () => {
   });
   const chartRefs = useRef<{ [key: string]: any }>({});
 
-  // Effect to set view type based on time range, but only for last-12-months
+  // Effect to set view type based on time range, only apply default for rolling-30-day
   useEffect(() => {
-    if (timeRange === 'last-12-months') {
-      setViewType('net-new');
-    } else if (timeRange === 'rolling-30-day') {
+    if (timeRange === 'rolling-30-day') {
       // Always use cumulative view for 30-day range
       setViewType('cumulative');
     }
@@ -43,9 +41,7 @@ const Experiments = () => {
   
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
     setTimeRange(newTimeRange);
-    if (newTimeRange === 'last-12-months') {
-      setViewType('net-new');
-    } else if (newTimeRange === 'rolling-30-day') {
+    if (newTimeRange === 'rolling-30-day') {
       // Always use cumulative view for 30-day range
       setViewType('cumulative');
     }
@@ -111,7 +107,7 @@ const Experiments = () => {
           showThreshold={true}
           threshold={EXPERIMENT_EVENTS_THRESHOLD}
           onViewTypeChange={handleViewTypeChange}
-          disableViewTypeToggle={timeRange === 'rolling-30-day' || timeRange === 'last-12-months'}
+          disableViewTypeToggle={timeRange === 'rolling-30-day'} // Only disable for rolling-30-day
         />
       </div>
     </div>
