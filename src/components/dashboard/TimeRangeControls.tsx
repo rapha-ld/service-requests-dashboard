@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { DateRangePicker } from "@/components/mau/DateRangePicker";
 import { TimeRangeType, DateRange } from "@/types/mauTypes";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { CalendarIcon } from "lucide-react";
 
 interface TimeRangeControlsProps {
   timeRange: TimeRangeType;
@@ -58,7 +59,7 @@ export const TimeRangeControls = ({
             : 'bg-white dark:bg-black dark:border-[#6C6E7A]'
         }`}
       >
-        Trailing 30D
+        30D
       </Button>
       
       <Button
@@ -70,7 +71,7 @@ export const TimeRangeControls = ({
             : 'bg-white dark:bg-black dark:border-[#6C6E7A]'
         }`}
       >
-        Last 12M
+        12M
       </Button>
       
       {/* Custom date range picker with rounded right corners */}

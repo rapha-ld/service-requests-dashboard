@@ -158,8 +158,8 @@ export const DateRangePicker = ({
               : 'bg-white dark:bg-black dark:border-[#6C6E7A]'
           }`}
         >
-          <CalendarIcon className="mr-2 h-4 w-4" />
-          {isSelected ? formatDateRange(dateRange) : "Custom"}
+          <CalendarIcon className="h-4 w-4" />
+          {isSelected ? formatDateRange(dateRange) : ""}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0 bg-white dark:bg-black dark:border-[#6C6E7A]" align="start">

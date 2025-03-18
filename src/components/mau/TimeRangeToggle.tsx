@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { TimeRangeType } from "@/types/mauTypes";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { CalendarIcon } from "lucide-react";
 
 interface TimeRangeToggleProps {
   timeRange: TimeRangeType;
@@ -44,7 +45,7 @@ export const TimeRangeToggle = ({
             : 'bg-white dark:bg-black dark:border-[#6C6E7A]'
         }`}
       >
-        Trailing 30D
+        30D
       </Button>
       
       <Button
@@ -56,7 +57,7 @@ export const TimeRangeToggle = ({
             : 'bg-white dark:bg-black dark:border-[#6C6E7A]'
         }`}
       >
-        Last 12M
+        12M
       </Button>
       
       <Button
@@ -68,7 +69,7 @@ export const TimeRangeToggle = ({
             : 'bg-white dark:bg-black dark:border-[#6C6E7A]'
         }`}
       >
-        Custom
+        <CalendarIcon className="h-4 w-4" />
       </Button>
     </>
   );
