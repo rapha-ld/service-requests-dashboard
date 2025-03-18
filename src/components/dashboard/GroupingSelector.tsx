@@ -15,10 +15,10 @@ export const GroupingSelector = ({ grouping, onGroupingChange, visible }: Groupi
       value={grouping}
       onValueChange={(value) => onGroupingChange(value as 'all' | 'environment' | 'relayId' | 'userAgent')}
     >
-      <SelectTrigger className="w-[180px] h-8 bg-white">
+      <SelectTrigger className="w-[180px] h-8 bg-white dark:bg-black dark:border-white/10">
         <SelectValue placeholder="Select grouping" />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="bg-white dark:bg-black">
         <SelectItem value="all">All dimensions</SelectItem>
         <SelectItem value="environment">Environment</SelectItem>
         <SelectItem value="relayId">Relay ID</SelectItem>

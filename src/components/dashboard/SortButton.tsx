@@ -15,7 +15,7 @@ export const SortButton = ({ sortDirection, onSortDirectionChange, visible }: So
     <Button
       variant="outline"
       onClick={onSortDirectionChange}
-      className="h-8 ml-2"
+      className="h-8 ml-2 bg-white dark:bg-black dark:border-white/10"
       title={sortDirection === 'desc' ? "Sort ascending" : "Sort descending"}
     >
       <ArrowUpDown className="h-4 w-4 text-primary" />

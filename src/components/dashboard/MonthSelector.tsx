@@ -30,10 +30,10 @@ export const MonthSelector = ({ selectedMonth, onMonthChange, visible }: MonthSe
       value={selectedMonth.toString()}
       onValueChange={onMonthChange}
     >
-      <SelectTrigger className="w-[110px] h-8 bg-white">
+      <SelectTrigger className="w-[110px] h-8 bg-white dark:bg-black dark:border-white/10">
         <SelectValue placeholder="Select month" />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="bg-white dark:bg-black">
         {monthOptions.map((month) => (
           <SelectItem key={month.value} value={month.value}>
             {month.label}

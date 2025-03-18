@@ -37,7 +37,7 @@ export const TimeRangeControls = ({
               className={`rounded-l-md rounded-r-none h-8 ${
                 timeRange === 'month-to-date' 
                   ? 'dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
-                  : ''
+                  : 'bg-white dark:bg-black dark:border-white/10'
               }`}
             >
               MTD
@@ -55,7 +55,7 @@ export const TimeRangeControls = ({
         className={`rounded-none border-l-0 h-8 ${
           timeRange === 'rolling-30-day' 
             ? 'dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
-            : ''
+            : 'bg-white dark:bg-black dark:border-white/10'
         }`}
       >
         Trailing 30D
@@ -67,7 +67,7 @@ export const TimeRangeControls = ({
         className={`rounded-none border-l-0 h-8 ${
           timeRange === 'last-12-months' 
             ? 'dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
-            : ''
+            : 'bg-white dark:bg-black dark:border-white/10'
         }`}
       >
         Last 12M
