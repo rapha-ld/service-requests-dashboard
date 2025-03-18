@@ -182,7 +182,7 @@ export const DateRangePicker = ({
             <Button 
               onClick={applyDateRange}
               disabled={!localDateRange?.from || !localDateRange?.to}
-              className="bg-white dark:bg-black dark:border-[#6C6E7A]"
+              className="bg-[#425EFF] hover:bg-[#3346CC] text-white dark:bg-[#425EFF] dark:hover:bg-[#3346CC] dark:text-white"
             >
               Apply
             </Button>
