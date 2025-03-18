@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
@@ -29,9 +30,7 @@ const ServerMAU = () => {
   
   // Effect to update view type based on time range
   useEffect(() => {
-    if (timeRange === 'last-12-months') {
-      setViewType('net-new');
-    } else if (timeRange === 'rolling-30-day') {
+    if (timeRange === 'rolling-30-day') {
       // Always use cumulative view for 30-day range
       setViewType('cumulative');
     }
@@ -42,9 +41,7 @@ const ServerMAU = () => {
     setTimeRange(newTimeRange);
     
     // Set view type based on time range
-    if (newTimeRange === 'last-12-months') {
-      setViewType('net-new');
-    } else if (newTimeRange === 'rolling-30-day') {
+    if (newTimeRange === 'rolling-30-day') {
       // Always use cumulative view for 30-day range
       setViewType('cumulative');
     }
@@ -126,7 +123,7 @@ const ServerMAU = () => {
           useViewDetailsButton={false}
           showOnlyTotal={grouping === 'all'}
           onViewTypeChange={handleViewTypeChange}
-          disableViewTypeToggle={timeRange === 'last-12-months' || timeRange === 'rolling-30-day'}
+          disableViewTypeToggle={timeRange === 'rolling-30-day'} // Only disable for rolling-30-day
         />
       </div>
     </div>

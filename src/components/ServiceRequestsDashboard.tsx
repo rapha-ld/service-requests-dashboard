@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { DashboardSummary } from "@/components/DashboardSummary";
@@ -29,9 +30,7 @@ export const ServiceRequestsDashboard = () => {
   
   // Effect to update view type based on time range
   useEffect(() => {
-    if (timeRange === 'last-12-months') {
-      setViewType('net-new');
-    } else if (timeRange === 'rolling-30-day') {
+    if (timeRange === 'rolling-30-day') {
       // Always use cumulative view for 30-day range
       setViewType('cumulative');
     }
@@ -42,9 +41,7 @@ export const ServiceRequestsDashboard = () => {
     setTimeRange(newTimeRange);
     
     // Set view type based on time range
-    if (newTimeRange === 'last-12-months') {
-      setViewType('net-new');
-    } else if (newTimeRange === 'rolling-30-day') {
+    if (timeRange === 'rolling-30-day') {
       // Always use cumulative view for 30-day range
       setViewType('cumulative');
     }
@@ -120,7 +117,7 @@ export const ServiceRequestsDashboard = () => {
           showOnlyTotal={grouping === 'all'}
           unitLabel="connections"
           onViewTypeChange={handleViewTypeChange}
-          disableViewTypeToggle={timeRange === 'last-12-months' || timeRange === 'rolling-30-day'}
+          disableViewTypeToggle={timeRange === 'rolling-30-day'} // Only disable for rolling-30-day
         />
       </div>
     </div>

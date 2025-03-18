@@ -38,9 +38,7 @@ const ClientConnections = () => {
   
   // Effect to update view type based on time range
   useEffect(() => {
-    if (timeRange === 'last-12-months') {
-      setViewType('net-new');
-    } else if (timeRange === 'rolling-30-day') {
+    if (timeRange === 'rolling-30-day') {
       // Always use cumulative view for 30-day range
       setViewType('cumulative');
     }
@@ -51,9 +49,7 @@ const ClientConnections = () => {
     setTimeRange(newTimeRange);
     
     // Set view type based on time range
-    if (newTimeRange === 'last-12-months') {
-      setViewType('net-new');
-    } else if (newTimeRange === 'rolling-30-day') {
+    if (newTimeRange === 'rolling-30-day') {
       // Always use cumulative view for 30-day range
       setViewType('cumulative');
     }
@@ -174,7 +170,7 @@ const ClientConnections = () => {
           unitLabel="connections"
           showThreshold={false}
           onViewTypeChange={handleViewTypeChange}
-          disableViewTypeToggle={timeRange === 'rolling-30-day' || timeRange === 'last-12-months'}
+          disableViewTypeToggle={timeRange === 'rolling-30-day'} // Only disable for rolling-30-day
         />
       </div>
     </div>
