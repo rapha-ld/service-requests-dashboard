@@ -30,9 +30,7 @@ const ClientMAU = () => {
 
   // Effect to set view type based on time range
   useEffect(() => {
-    if (timeRange === 'last-12-months') {
-      setViewType('net-new');
-    } else if (timeRange === 'rolling-30-day') {
+    if (timeRange === 'rolling-30-day') {
       // Always use cumulative view for 30-day range
       setViewType('cumulative');
     }
@@ -46,13 +44,8 @@ const ClientMAU = () => {
   // Handle time range change
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
     setTimeRange(newTimeRange);
-    if (newTimeRange === 'last-12-months') {
-      setViewType('net-new');
-    } else if (newTimeRange === 'rolling-30-day') {
+    if (newTimeRange === 'rolling-30-day') {
       // Always use cumulative view for 30-day range
-      setViewType('cumulative');
-    } else if (newTimeRange !== timeRange) {
-      // Only set to cumulative when changing from a different time range
       setViewType('cumulative');
     }
   };
@@ -166,7 +159,7 @@ const ClientMAU = () => {
           showThreshold={showThreshold}
           threshold={USER_LIMIT}
           onViewTypeChange={handleViewTypeChange}
-          disableViewTypeToggle={timeRange === 'rolling-30-day' || timeRange === 'last-12-months'}
+          disableViewTypeToggle={timeRange === 'rolling-30-day'} // Only disable for rolling-30-day
         />
       </div>
     </div>
