@@ -34,8 +34,8 @@ export const ExperimentHeader = ({
 }: ExperimentHeaderProps) => {
   // Determine visibility for conditional components
   const showMonthSelector = timeRange === 'month-to-date';
-  // Always show view type toggle when enabled, regardless of time range (except for rolling-30-day)
-  const showToggle = showViewTypeToggle && timeRange !== 'rolling-30-day';
+  // Never show the toggle in the header - it will be shown in the charts section
+  const showToggle = false;
 
   return (
     <div className="flex gap-4 items-center mb-6 flex-wrap">

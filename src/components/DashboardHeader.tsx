@@ -43,8 +43,8 @@ export const DashboardHeader = ({
   const showMonthSelector = timeRange === 'month-to-date';
   const showSortButton = grouping !== 'all';
   
-  // Show view type toggle for all time ranges except rolling-30-day when enabled
-  const showToggle = showViewTypeToggle && timeRange !== 'rolling-30-day';
+  // Never show the toggle in the header - it will be shown in the charts section
+  const showToggle = false;
 
   return (
     <div className="flex gap-4 items-center mb-6 flex-wrap">

@@ -4,7 +4,7 @@ import { TotalChart } from "@/components/charts/TotalChart";
 import { LayoutToggle } from "@/components/charts/LayoutToggle";
 import { ChartGrid } from "@/components/charts/ChartGrid";
 import { getTotalTitle } from "@/utils/chartUtils";
-import { ViewTypeToggle } from "@/components/mau/ViewTypeToggle";
+import { ViewTypeToggle } from "@/components/dashboard/ViewTypeToggle";
 
 interface ChartGroup {
   id: string;
@@ -59,10 +59,11 @@ export const DashboardCharts = ({
   return (
     <>
       {onViewTypeChange && !disableViewTypeToggle && (
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-end items-center mb-4">
           <ViewTypeToggle
             viewType={viewType}
             onViewTypeChange={onViewTypeChange}
+            visible={true}
           />
         </div>
       )}

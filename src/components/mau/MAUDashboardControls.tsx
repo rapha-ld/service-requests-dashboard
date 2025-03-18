@@ -44,8 +44,8 @@ export const MAUDashboardControls = ({
 }: MAUDashboardControlsProps) => {
   // Determine visibility for conditional components
   const showMonthSelector = timeRange === 'month-to-date';
-  // Always show view type toggle when not hidden, except for rolling-30-day
-  const showToggle = !hideModeToggle && timeRange !== 'rolling-30-day';
+  // Never show the toggle in the header - it will be shown in the charts section
+  const showToggle = false;
 
   return (
     <div className="flex gap-4 items-center mb-6 flex-wrap">
