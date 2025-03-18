@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
@@ -92,8 +91,6 @@ const Experiments = () => {
           showViewTypeToggle={true}
         />
         
-        <TimeRangeMessage timeRange={timeRange} />
-        
         <DashboardSummary groups={sortedGroups as ExperimentGroup[]} />
         
         <DashboardCharts
@@ -111,6 +108,7 @@ const Experiments = () => {
           threshold={EXPERIMENT_EVENTS_THRESHOLD}
           onViewTypeChange={handleViewTypeChange}
           disableViewTypeToggle={timeRange === 'rolling-30-day'} // Only disable for rolling-30-day
+          timeRangeMessage={<TimeRangeMessage timeRange={timeRange} />}
         />
       </div>
     </div>
