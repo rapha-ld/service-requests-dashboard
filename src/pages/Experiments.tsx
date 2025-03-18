@@ -3,7 +3,6 @@ import { useState, useRef, useEffect } from "react";
 import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
 import { ExperimentHeader } from "@/components/experiments/ExperimentHeader";
-import { TimeRangeMessage } from "@/components/dashboard/TimeRangeMessage";
 import { useExperimentData, TimeRangeType } from "@/hooks/useExperimentData";
 import { 
   processExperimentData, 
@@ -92,10 +91,6 @@ const Experiments = () => {
           showViewTypeToggle={true}
         />
         
-        <TimeRangeMessage timeRange={timeRange} />
-        
-        <DashboardSummary groups={sortedGroups as ExperimentGroup[]} />
-        
         <DashboardCharts
           allEnvironmentsData={allExperimentsData}
           sortedGroups={sortedGroups as any[]}
@@ -111,6 +106,7 @@ const Experiments = () => {
           threshold={EXPERIMENT_EVENTS_THRESHOLD}
           onViewTypeChange={handleViewTypeChange}
           disableViewTypeToggle={timeRange === 'rolling-30-day'} // Only disable for rolling-30-day
+          timeRange={timeRange}
         />
       </div>
     </div>

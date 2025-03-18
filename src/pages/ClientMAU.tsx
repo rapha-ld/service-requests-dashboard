@@ -1,11 +1,9 @@
-
 import { useState, useRef, useEffect } from "react";
 import { MAUHeader } from "@/components/mau/MAUHeader";
 import { MAUDashboardControls } from "@/components/mau/MAUDashboardControls";
 import { LoadingState } from "@/components/mau/LoadingState";
 import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
-import { TimeRangeMessage } from "@/components/dashboard/TimeRangeMessage";
 import { useMAUData, TimeRangeType, DateRange } from "@/hooks/useMAUData";
 import { 
   transformDataToChartGroups, 
@@ -144,8 +142,6 @@ const ClientMAU = () => {
           hideModeToggle={false}
         />
         
-        <TimeRangeMessage timeRange={timeRange} />
-        
         <DashboardSummary groups={sortedGroups} />
         
         <DashboardCharts
@@ -162,7 +158,8 @@ const ClientMAU = () => {
           showThreshold={showThreshold}
           threshold={USER_LIMIT}
           onViewTypeChange={handleViewTypeChange}
-          disableViewTypeToggle={timeRange === 'rolling-30-day'} // Only disable for rolling-30-day
+          disableViewTypeToggle={timeRange === 'rolling-30-day'}
+          timeRange={timeRange}
         />
       </div>
     </div>

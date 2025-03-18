@@ -5,6 +5,8 @@ import { LayoutToggle } from "@/components/charts/LayoutToggle";
 import { ChartGrid } from "@/components/charts/ChartGrid";
 import { getTotalTitle } from "@/utils/chartUtils";
 import { ViewTypeToggle } from "@/components/dashboard/ViewTypeToggle";
+import { TimeRangeMessage } from "@/components/dashboard/TimeRangeMessage";
+import { TimeRangeType } from "@/types/mauTypes";
 
 interface ChartGroup {
   id: string;
@@ -28,6 +30,7 @@ interface DashboardChartsProps {
   showOnlyTotal?: boolean;
   onViewTypeChange?: (value: 'net-new' | 'cumulative') => void;
   disableViewTypeToggle?: boolean;
+  timeRange?: TimeRangeType;
 }
 
 export const DashboardCharts = ({
@@ -45,7 +48,8 @@ export const DashboardCharts = ({
   threshold,
   showOnlyTotal = false,
   onViewTypeChange,
-  disableViewTypeToggle = false
+  disableViewTypeToggle = false,
+  timeRange
 }: DashboardChartsProps) => {
   const [layoutMode, setLayoutMode] = useState<'compact' | 'expanded'>('compact');
   const totalTitle = getTotalTitle(grouping);
@@ -58,15 +62,17 @@ export const DashboardCharts = ({
 
   return (
     <>
-      {onViewTypeChange && !disableViewTypeToggle && (
-        <div className="flex justify-start items-center mb-4">
+      <div className="flex justify-start items-center mb-4">
+        {timeRange === 'rolling-30-day' ? (
+          <TimeRangeMessage timeRange={timeRange} />
+        ) : onViewTypeChange && !disableViewTypeToggle ? (
           <ViewTypeToggle
             viewType={viewType}
             onViewTypeChange={onViewTypeChange}
             visible={true}
           />
-        </div>
-      )}
+        ) : null}
+      </div>
       
       <TotalChart
         title={totalTitle}

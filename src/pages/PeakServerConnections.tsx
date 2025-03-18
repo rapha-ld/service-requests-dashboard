@@ -1,9 +1,7 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
 import { DashboardHeader } from "@/components/DashboardHeader";
-import { TimeRangeMessage } from "@/components/dashboard/TimeRangeMessage";
 import { useServiceData } from "@/hooks/useServiceData";
 import { GroupingType, TimeRangeType } from "@/types/serviceData";
 import { processServiceData, calculateMaxValue, getAllEnvironmentsData } from "@/utils/serviceDataUtils";
@@ -110,8 +108,6 @@ const PeakServerConnections = () => {
           onCustomDateRangeChange={handleCustomDateRangeChange}
         />
         
-        <TimeRangeMessage timeRange={timeRange} />
-        
         {grouping !== 'all' && <DashboardSummary groups={sortedGroups} />}
         
         <DashboardCharts
@@ -126,7 +122,8 @@ const PeakServerConnections = () => {
           useViewDetailsButton={false}
           showOnlyTotal={grouping === 'all'}
           onViewTypeChange={handleViewTypeChange}
-          disableViewTypeToggle={timeRange === 'rolling-30-day'} // Only disable for rolling-30-day
+          disableViewTypeToggle={timeRange === 'rolling-30-day'}
+          timeRange={timeRange}
         />
       </div>
     </div>
