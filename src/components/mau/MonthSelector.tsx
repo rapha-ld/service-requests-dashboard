@@ -30,7 +30,7 @@ export const MonthSelector = ({
       value={selectedMonth.toString()}
       onValueChange={onMonthChange}
     >
-      <SelectTrigger className="w-[110px] h-10">
+      <SelectTrigger className="w-[110px] h-10 dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]">
         <SelectValue placeholder="Select month" />
       </SelectTrigger>
       <SelectContent>
