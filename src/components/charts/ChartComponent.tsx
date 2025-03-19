@@ -4,6 +4,7 @@ import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip,
 import { CustomTooltip } from './CustomTooltip';
 import { formatYAxisTick } from './formatters';
 import { transformData, calculateAverage } from './dataTransformers';
+import { useLocation } from 'react-router-dom';
 
 interface ChartComponentProps {
   data: Array<{ day: string; value: number | null }>;
@@ -26,8 +27,17 @@ export const ChartComponent = ({
   threshold,
   chartRef
 }: ChartComponentProps) => {
+  const location = useLocation();
+  
+  // Define which routes are diagnostic pages
+  const isDiagnosticPage = [
+    "/client-connections",
+    "/server-mau",
+    "/peak-server-connections"
+  ].includes(location.pathname);
+  
   const average = calculateAverage(data);
-  const transformedData = transformData(data, viewType, true); // Always use handleResets=true
+  const transformedData = transformData(data, viewType, true, isDiagnosticPage); // Pass isDiagnosticPage flag
   
   // Calculate effective max value for the chart
   // When threshold is shown, make sure y-axis includes it
