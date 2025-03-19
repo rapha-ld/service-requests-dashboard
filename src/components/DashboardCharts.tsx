@@ -5,6 +5,7 @@ import { LayoutToggle } from "@/components/charts/LayoutToggle";
 import { ChartGrid } from "@/components/charts/ChartGrid";
 import { getTotalTitle } from "@/utils/chartUtils";
 import { ViewTypeToggle } from "@/components/dashboard/ViewTypeToggle";
+import { TimeRangeMessage } from "@/components/dashboard/TimeRangeMessage";
 import { TimeRangeType } from "@/types/mauTypes";
 
 interface ChartGroup {
@@ -74,7 +75,9 @@ export const DashboardCharts = ({
             />
           )}
           
-          {/* Remove TimeRangeMessage from here since it's now in ServiceRequestsDashboard */}
+          {timeRange && (
+            <TimeRangeMessage timeRange={timeRange} viewType={viewType} />
+          )}
         </div>
       </div>
       
