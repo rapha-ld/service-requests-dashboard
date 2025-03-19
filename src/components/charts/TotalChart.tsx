@@ -1,6 +1,7 @@
 
 import { SmallMultiple } from "@/components/SmallMultiple";
 import { transformData } from "@/components/charts/dataTransformers";
+import { useLocation } from "react-router-dom";
 
 interface TotalChartProps {
   title: string;
@@ -31,10 +32,19 @@ export const TotalChart = ({
   showTitle = true,
   chartHeight = 192 // Default height
 }: TotalChartProps) => {
+  const location = useLocation();
+  
+  // Define which routes are diagnostic pages
+  const isDiagnosticPage = [
+    "/client-connections",
+    "/server-mau",
+    "/peak-server-connections"
+  ].includes(location.pathname);
+
   // Transform data for cumulative view using the same function as other charts
   // For 30-day view with resets, we need to handle the data differently
   const transformedData = viewType === 'cumulative' 
-    ? transformData(data, viewType, true) // Pass an additional flag to handle 30-day resets
+    ? transformData(data, viewType, true, isDiagnosticPage) // Pass isDiagnosticPage to handle resets differently
     : data;
     
   // Calculate max value based on transformed data
@@ -66,3 +76,4 @@ export const TotalChart = ({
     </div>
   );
 };
+

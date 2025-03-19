@@ -20,9 +20,13 @@ export const calculatePercentChange = (currentValue: number, previousValue: numb
 export const transformData = (
   data: Array<{ day: string; value: number | null }>, 
   viewType: 'net-new' | 'cumulative',
-  handleResets = false
+  handleResets = false,
+  isDiagnosticPage = false
 ) => {
   if (viewType === 'net-new') return data;
+  
+  // For diagnostic pages, never handle resets even if handleResets is true
+  const shouldHandleResets = handleResets && !isDiagnosticPage;
   
   return data.reduce((acc, curr, index) => {
     // Always include the day, but set future dates or null values to null
@@ -49,8 +53,8 @@ export const transformData = (
       const previousValue = previousItem && previousItem.value !== null ? previousItem.value : 0;
       
       // Reset cumulative value if it's the first day of a month in trailing 30-day view
-      // and handleResets is true (specifically for plan usage charts)
-      if (handleResets && isFirstOfMonth) {
+      // and shouldHandleResets is true (specifically for plan usage charts)
+      if (shouldHandleResets && isFirstOfMonth) {
         return [...acc, {
           day: curr.day,
           value: curr.value // Start fresh on the 1st
@@ -91,3 +95,4 @@ export const formatTooltipDate = (day: string) => {
   
   return day;
 };
+
