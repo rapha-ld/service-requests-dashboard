@@ -48,7 +48,8 @@ export const transformData = (
       const previousItem = acc[index - 1];
       const previousValue = previousItem && previousItem.value !== null ? previousItem.value : 0;
       
-      // Reset cumulative value if it's the first day of a month in rolling 30-day view
+      // Reset cumulative value if it's the first day of a month in trailing 30-day view
+      // and handleResets is true (specifically for plan usage charts)
       if (handleResets && isFirstOfMonth) {
         return [...acc, {
           day: curr.day,

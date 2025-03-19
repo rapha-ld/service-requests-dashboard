@@ -26,7 +26,7 @@ export const TimeRangeMessage = ({ timeRange, viewType }: TimeRangeMessageProps)
   
   return (
     <div className="text-sm text-muted-foreground">
-      Cumulative usage - resets monthly
+      Trailing 30 day usage - resets monthly
     </div>
   );
 };
