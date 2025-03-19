@@ -27,7 +27,7 @@ export const ChartComponent = ({
   chartRef
 }: ChartComponentProps) => {
   const average = calculateAverage(data);
-  const transformedData = transformData(data, viewType);
+  const transformedData = transformData(data, viewType, true); // Always use handleResets=true
   
   // Calculate effective max value for the chart
   // When threshold is shown, make sure y-axis includes it

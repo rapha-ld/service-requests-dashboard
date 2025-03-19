@@ -19,9 +19,13 @@ export const formatRolling30DayData = (currentData: EnvironmentsMap, safeProject
       date.setDate(today.getDate() - (29 - index));
       const isFutureDate = date > today;
       
+      // Determine if this is the first day of a month for resets
+      const isFirstOfMonth = day.endsWith(" 1");
+      
       return {
         day,
-        value: isFutureDate ? null : Math.floor((CLIENT_MAU_VALUE / 30) * (0.8 + Math.random() * 0.4))
+        value: isFutureDate ? null : 
+              (isFirstOfMonth ? 0 : Math.floor((CLIENT_MAU_VALUE / 30) * (0.8 + Math.random() * 0.4)))
       };
     });
   });
