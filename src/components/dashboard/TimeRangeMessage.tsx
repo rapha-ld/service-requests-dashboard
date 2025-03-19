@@ -16,7 +16,7 @@ export const TimeRangeMessage = ({ timeRange, viewType }: TimeRangeMessageProps)
     "/client-mau",
     "/experiments",
     "/data-export",
-    "/service-connections" // Added service-connections to the plan usage pages
+    "/service-connections" // Service-connections is a plan usage page
   ].includes(location.pathname);
   
   // Only show the message for:

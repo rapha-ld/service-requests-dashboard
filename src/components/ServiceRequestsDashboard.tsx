@@ -7,6 +7,7 @@ import { useServiceData } from "@/hooks/useServiceData";
 import { GroupingType, TimeRangeType, ViewType, ChartType } from "@/types/serviceData";
 import { processServiceData, calculateMaxValue, getAllEnvironmentsData } from "@/utils/serviceDataUtils";
 import { DateRange } from "@/types/mauTypes";
+import { TimeRangeMessage } from "@/components/dashboard/TimeRangeMessage";
 
 export const ServiceRequestsDashboard = () => {
   // State hooks
@@ -84,6 +85,9 @@ export const ServiceRequestsDashboard = () => {
           customDateRange={customDateRange}
           onCustomDateRangeChange={handleCustomDateRangeChange}
         />
+        
+        {/* Add TimeRangeMessage component */}
+        <TimeRangeMessage timeRange={timeRange} viewType={viewType} />
         
         {grouping !== 'all' && <DashboardSummary groups={sortedGroups} />}
         
