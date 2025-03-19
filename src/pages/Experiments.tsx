@@ -27,34 +27,21 @@ const Experiments = () => {
   });
   const chartRefs = useRef<{ [key: string]: any }>({});
 
-  // Effect to set view type based on time range, only apply default for rolling-30-day
-  useEffect(() => {
-    if (timeRange === 'rolling-30-day') {
-      // Always use cumulative view for 30-day range
-      setViewType('cumulative');
-    }
-  }, [timeRange]);
-  
   useEffect(() => {
     setChartType(viewType === 'net-new' ? 'bar' : 'area');
   }, [viewType]);
   
+  // Handle time range change - no longer force cumulative for 30D
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
     setTimeRange(newTimeRange);
-    if (newTimeRange === 'rolling-30-day') {
-      // Always use cumulative view for 30-day range
-      setViewType('cumulative');
-    }
   };
   
   const handleCustomDateRangeChange = (dateRange: DateRange) => {
     setCustomDateRange(dateRange);
   };
   
+  // Handle view type change - now we allow changing even for rolling-30-day
   const handleViewTypeChange = (newViewType: 'net-new' | 'cumulative') => {
-    // Don't allow changing view type for rolling-30-day
-    if (timeRange === 'rolling-30-day') return;
-    
     setViewType(newViewType);
     setChartType(newViewType === 'net-new' ? 'bar' : 'area');
   };
@@ -88,7 +75,7 @@ const Experiments = () => {
           onTimeRangeChange={handleTimeRangeChange}
           customDateRange={customDateRange}
           onCustomDateRangeChange={handleCustomDateRangeChange}
-          showViewTypeToggle={true}
+          showViewTypeToggle={false} // Hide in header, we'll show in chart section
         />
         
         <DashboardCharts
@@ -105,7 +92,7 @@ const Experiments = () => {
           showThreshold={true}
           threshold={EXPERIMENT_EVENTS_THRESHOLD}
           onViewTypeChange={handleViewTypeChange}
-          disableViewTypeToggle={timeRange === 'rolling-30-day'} // Only disable for rolling-30-day
+          disableViewTypeToggle={false} // Always allow toggle
           timeRange={timeRange}
         />
       </div>

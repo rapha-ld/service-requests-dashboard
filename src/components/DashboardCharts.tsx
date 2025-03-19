@@ -60,18 +60,25 @@ export const DashboardCharts = ({
   // Apply doubled height when "All dimensions" is selected
   const chartHeight = grouping === 'all' ? 384 : 192; // 192 * 2 = 384
 
+  // For 30-day timeframe, always show the toggle regardless of disableViewTypeToggle
+  const showToggle = timeRange === 'rolling-30-day' || (onViewTypeChange && !disableViewTypeToggle);
+
   return (
     <>
-      <div className="flex justify-start items-center mb-4">
-        {timeRange === 'rolling-30-day' ? (
-          <TimeRangeMessage timeRange={timeRange} />
-        ) : onViewTypeChange && !disableViewTypeToggle ? (
-          <ViewTypeToggle
-            viewType={viewType}
-            onViewTypeChange={onViewTypeChange}
-            visible={true}
-          />
-        ) : null}
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex items-center space-x-4">
+          {showToggle && onViewTypeChange && (
+            <ViewTypeToggle
+              viewType={viewType}
+              onViewTypeChange={onViewTypeChange}
+              visible={true}
+            />
+          )}
+          
+          {timeRange && (
+            <TimeRangeMessage timeRange={timeRange} viewType={viewType} />
+          )}
+        </div>
       </div>
       
       <TotalChart

@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { MAUHeader } from "@/components/mau/MAUHeader";
 import { MAUDashboardControls } from "@/components/mau/MAUDashboardControls";
@@ -27,26 +28,14 @@ const ClientMAU = () => {
   });
   const chartRefs = useRef<{ [key: string]: any }>({});
 
-  // Effect to set view type based on time range
-  useEffect(() => {
-    if (timeRange === 'rolling-30-day') {
-      // Always use cumulative view for 30-day range
-      setViewType('cumulative');
-    }
-  }, [timeRange]);
-  
   // Effect to set chart type based on view type
   useEffect(() => {
     setChartType(viewType === 'net-new' ? 'bar' : 'area');
   }, [viewType]);
   
-  // Handle time range change
+  // Handle time range change - no longer force cumulative for 30D
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
     setTimeRange(newTimeRange);
-    if (newTimeRange === 'rolling-30-day') {
-      // Always use cumulative view for 30-day range
-      setViewType('cumulative');
-    }
   };
   
   // Handle custom date range change
@@ -54,11 +43,8 @@ const ClientMAU = () => {
     setCustomDateRange(dateRange);
   };
   
-  // Handle view type change
+  // Handle view type change - now we allow changing even for rolling-30-day
   const handleViewTypeChange = (newViewType: 'net-new' | 'cumulative') => {
-    // Don't allow changing view type for rolling-30-day
-    if (timeRange === 'rolling-30-day') return;
-    
     setViewType(newViewType);
     setChartType(newViewType === 'net-new' ? 'bar' : 'area');
   };
@@ -139,7 +125,7 @@ const ClientMAU = () => {
           onTimeRangeChange={handleTimeRangeChange}
           customDateRange={customDateRange}
           onCustomDateRangeChange={handleCustomDateRangeChange}
-          hideModeToggle={false}
+          hideModeToggle={true} // Hide in controls, we'll show in chart section
         />
         
         <DashboardSummary groups={sortedGroups} />
@@ -158,7 +144,7 @@ const ClientMAU = () => {
           showThreshold={showThreshold}
           threshold={USER_LIMIT}
           onViewTypeChange={handleViewTypeChange}
-          disableViewTypeToggle={timeRange === 'rolling-30-day'}
+          disableViewTypeToggle={false} // Always allow toggle
           timeRange={timeRange}
         />
       </div>

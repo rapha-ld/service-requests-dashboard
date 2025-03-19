@@ -28,23 +28,9 @@ export const ServiceRequestsDashboard = () => {
     setChartType(viewType === 'net-new' ? 'bar' : 'area');
   }, [viewType]);
   
-  // Effect to update view type based on time range
-  useEffect(() => {
-    if (timeRange === 'rolling-30-day') {
-      // Always use cumulative view for 30-day range
-      setViewType('cumulative');
-    }
-  }, [timeRange]);
-  
   // Handle time range change
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
     setTimeRange(newTimeRange);
-    
-    // Set view type based on time range
-    if (newTimeRange === 'rolling-30-day') {
-      // Always use cumulative view for 30-day range
-      setViewType('cumulative');
-    }
   };
   
   // Handle custom date range change
@@ -52,11 +38,8 @@ export const ServiceRequestsDashboard = () => {
     setCustomDateRange(dateRange);
   };
   
-  // Handle view type change
+  // Handle view type change - now we allow changing even for rolling-30-day
   const handleViewTypeChange = (newViewType: ViewType) => {
-    // Don't allow changing view type for rolling-30-day
-    if (timeRange === 'rolling-30-day') return;
-    
     setViewType(newViewType);
     // Update chart type based on view type
     setChartType(newViewType === 'net-new' ? 'bar' : 'area');
@@ -97,7 +80,7 @@ export const ServiceRequestsDashboard = () => {
           onMonthChange={(value) => setSelectedMonth(parseInt(value))}
           timeRange={timeRange}
           onTimeRangeChange={handleTimeRangeChange}
-          showViewTypeToggle={true}
+          showViewTypeToggle={false} // Remove toggle from header
           customDateRange={customDateRange}
           onCustomDateRangeChange={handleCustomDateRangeChange}
         />
@@ -117,7 +100,7 @@ export const ServiceRequestsDashboard = () => {
           showOnlyTotal={grouping === 'all'}
           unitLabel="connections"
           onViewTypeChange={handleViewTypeChange}
-          disableViewTypeToggle={timeRange === 'rolling-30-day'}
+          disableViewTypeToggle={false} // Always allow toggle
           timeRange={timeRange}
         />
       </div>

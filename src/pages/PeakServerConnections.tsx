@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
@@ -27,23 +28,9 @@ const PeakServerConnections = () => {
     setChartType(viewType === 'net-new' ? 'bar' : 'area');
   }, [viewType]);
   
-  // Effect to update view type based on time range
-  useEffect(() => {
-    if (timeRange === 'rolling-30-day') {
-      // Always use cumulative view for 30-day range
-      setViewType('cumulative');
-    }
-  }, [timeRange]);
-  
-  // Handle time range change
+  // Handle time range change - no longer force cumulative for 30D
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
     setTimeRange(newTimeRange);
-    
-    // Set view type based on time range
-    if (newTimeRange === 'rolling-30-day') {
-      // Always use cumulative view for 30-day range
-      setViewType('cumulative');
-    }
   };
   
   // Handle custom date range change
@@ -51,11 +38,8 @@ const PeakServerConnections = () => {
     setCustomDateRange(dateRange);
   };
   
-  // Handle view type change
+  // Handle view type change - now we allow changing even for rolling-30-day
   const handleViewTypeChange = (newViewType: 'net-new' | 'cumulative') => {
-    // Don't allow changing view type for rolling-30-day
-    if (timeRange === 'rolling-30-day') return;
-    
     setViewType(newViewType);
     // Update chart type based on view type
     setChartType(newViewType === 'net-new' ? 'bar' : 'area');
@@ -103,7 +87,7 @@ const PeakServerConnections = () => {
           onMonthChange={(value) => setSelectedMonth(parseInt(value))}
           timeRange={timeRange}
           onTimeRangeChange={handleTimeRangeChange}
-          showViewTypeToggle={true}
+          showViewTypeToggle={false} // Remove toggle from header
           customDateRange={customDateRange}
           onCustomDateRangeChange={handleCustomDateRangeChange}
         />
@@ -122,7 +106,7 @@ const PeakServerConnections = () => {
           useViewDetailsButton={false}
           showOnlyTotal={grouping === 'all'}
           onViewTypeChange={handleViewTypeChange}
-          disableViewTypeToggle={timeRange === 'rolling-30-day'}
+          disableViewTypeToggle={false} // Always allow toggle
           timeRange={timeRange}
         />
       </div>
