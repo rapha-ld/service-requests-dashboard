@@ -1,4 +1,3 @@
-
 import { calculatePercentChange } from "@/utils/dataTransformers";
 import { TimeRangeType } from "@/hooks/useExperimentData";
 import { DateRange } from "@/types/mauTypes";
@@ -20,22 +19,17 @@ export function generateExperimentData(
   if (timeRange === 'rolling-30-day') {
     // Generate rolling 30-day data with reset on the 1st of each month
     const today = new Date();
-    const currentDay = getDate(today);
-    const currentMonth = getMonth(today);
     
     const generateResettingData = () => {
       return Array.from({ length: 30 }, (_, i) => {
         const date = subDays(today, 29 - i);
         const isFutureDate = isAfter(date, today);
         const dayOfMonth = getDate(date);
-        const monthOfDate = getMonth(date);
         
-        // Reset values on the 1st of each month or when crossing month boundary
-        const shouldReset = dayOfMonth === 1 || (monthOfDate !== currentMonth && dayOfMonth < currentDay);
-        
+        // Reset to 0 on the 1st of each month
         return {
           day: format(date, 'MMM d'),
-          value: isFutureDate ? null : (shouldReset ? Math.floor(Math.random() * 50) : Math.floor(Math.random() * 100))
+          value: isFutureDate ? null : (dayOfMonth === 1 ? 0 : Math.floor(Math.random() * 100))
         };
       });
     };

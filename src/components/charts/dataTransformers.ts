@@ -1,3 +1,4 @@
+
 import { format, parse, getDate } from 'date-fns';
 
 export const getRequestStatus = (value: number) => {
@@ -40,15 +41,15 @@ export const transformData = (
                               curr.day.includes('Sep') || curr.day.includes('Oct') || curr.day.includes('Nov') || 
                               curr.day.includes('Dec');
     
-    // Handle resets for 30-day data (when a date looks like "Jan 1", "Feb 1", etc.)
-    const isFirstOfMonth = handleResets && curr.day.includes(' 1');
+    // Check if it's the first day of the month (when a date looks like "Jan 1", "Feb 1", etc.)
+    const isFirstOfMonth = curr.day.match(/ 1$/);
     
     if (index > 0) {
       const previousItem = acc[index - 1];
       const previousValue = previousItem && previousItem.value !== null ? previousItem.value : 0;
       
-      // Reset accumulation if it's the first day of a month in 30-day view
-      if (isFirstOfMonth) {
+      // Reset cumulative value if it's the first day of a month in rolling 30-day view
+      if (handleResets && isFirstOfMonth) {
         return [...acc, {
           day: curr.day,
           value: curr.value // Start fresh on the 1st

@@ -19,8 +19,6 @@ export const generateLast12MonthsData = (currentData: Record<string, any[]>) => 
 // Generate data for rolling 30 days view with reset on the 1st of each month
 export const generateRolling30DayData = (currentData: Record<string, any[]>) => {
   const today = new Date();
-  const currentDate = getDate(today);
-  const currentMonth = getMonth(today);
   
   return Object.fromEntries(
     Object.entries(currentData).map(([key, data]) => [
@@ -29,18 +27,12 @@ export const generateRolling30DayData = (currentData: Record<string, any[]>) => 
         const date = subDays(today, 29 - i);
         const isFutureDate = isAfter(date, today);
         const dayOfMonth = getDate(date);
-        const monthOfDate = getMonth(date);
         
-        // Reset values on the 1st of each month
-        // If we've crossed into a new month in our 30-day window, reset the counter
-        const shouldReset = dayOfMonth === 1 || (monthOfDate !== currentMonth && dayOfMonth < currentDate);
-        
-        // Start new accumulation on the 1st of the month
-        const baseValue = shouldReset ? 0 : null;
-        
+        // Set value to 0 on the 1st of each month and generate random values for other days
+        // This ensures values reset on the 1st of each month
         return {
           day: format(date, 'MMM d'),
-          value: isFutureDate ? null : (baseValue !== null ? baseValue : Math.floor(Math.random() * 500))
+          value: isFutureDate ? null : (dayOfMonth === 1 ? 0 : Math.floor(Math.random() * 500))
         };
       })
     ])
