@@ -18,6 +18,7 @@ import ServerMAU from "./pages/ServerMAU";
 import PeakServerConnections from "./pages/PeakServerConnections";
 import Details from "./pages/Details";
 import Diagnostics from "./pages/Diagnostics";
+import { ServiceRequestsDashboard } from "./components/ServiceRequestsDashboard";
 
 const queryClient = new QueryClient();
 
@@ -30,7 +31,8 @@ function AppContent() {
     "/overview", 
     "/client-mau", 
     "/experiments", 
-    "/data-export"
+    "/data-export",
+    "/service-connections"  // Add service-connections to usage paths
   ].includes(location.pathname);
 
   const isDiagnosticsPath = [
@@ -55,6 +57,7 @@ function AppContent() {
               <Routes>
                 <Route path="/" element={<Navigate to="/overview" replace />} />
                 <Route path="/service-requests" element={<Index />} />
+                <Route path="/service-connections" element={<ServiceRequestsDashboard />} /> {/* Add new route */}
                 <Route path="/overview" element={<Overview />} />
                 <Route path="/client-mau" element={<ClientMAU />} />
                 <Route path="/client-connections" element={<ClientConnections />} />

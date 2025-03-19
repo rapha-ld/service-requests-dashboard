@@ -12,6 +12,8 @@ export const getTitleRoute = (title: string): string => {
     return '/experiments';
   } else if (normalizedTitle.includes('data export')) {
     return '/data-export';
+  } else if (normalizedTitle.includes('service') && normalizedTitle.includes('connection')) {
+    return '/service-connections';
   } else if (normalizedTitle.includes('service')) {
     return '/service-requests';
   } 
