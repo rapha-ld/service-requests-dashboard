@@ -32,8 +32,9 @@ export const TotalChart = ({
   chartHeight = 192 // Default height
 }: TotalChartProps) => {
   // Transform data for cumulative view using the same function as other charts
+  // For 30-day view with resets, we need to handle the data differently
   const transformedData = viewType === 'cumulative' 
-    ? transformData(data, viewType)
+    ? transformData(data, viewType, true) // Pass an additional flag to handle 30-day resets
     : data;
     
   // Calculate max value based on transformed data

@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { format, parse, getDate } from 'date-fns';
 
 export const getRequestStatus = (value: number) => {
   if (value <= 200) return 'good';
@@ -18,7 +18,8 @@ export const calculatePercentChange = (currentValue: number, previousValue: numb
 // Transform raw data to cumulative values if needed
 export const transformData = (
   data: Array<{ day: string; value: number | null }>, 
-  viewType: 'net-new' | 'cumulative'
+  viewType: 'net-new' | 'cumulative',
+  handleResets = false
 ) => {
   if (viewType === 'net-new') return data;
   
@@ -39,11 +40,22 @@ export const transformData = (
                               curr.day.includes('Sep') || curr.day.includes('Oct') || curr.day.includes('Nov') || 
                               curr.day.includes('Dec');
     
-    // Never reset cumulative values for Last 12 Months view - always accumulate
+    // Handle resets for 30-day data (when a date looks like "Jan 1", "Feb 1", etc.)
+    const isFirstOfMonth = handleResets && curr.day.includes(' 1');
+    
     if (index > 0) {
       const previousItem = acc[index - 1];
       const previousValue = previousItem && previousItem.value !== null ? previousItem.value : 0;
       
+      // Reset accumulation if it's the first day of a month in 30-day view
+      if (isFirstOfMonth) {
+        return [...acc, {
+          day: curr.day,
+          value: curr.value // Start fresh on the 1st
+        }];
+      }
+      
+      // Otherwise continue accumulating
       return [...acc, {
         day: curr.day,
         value: previousValue + (curr.value as number)

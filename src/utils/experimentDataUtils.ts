@@ -2,6 +2,7 @@
 import { calculatePercentChange } from "@/utils/dataTransformers";
 import { TimeRangeType } from "@/hooks/useExperimentData";
 import { DateRange } from "@/types/mauTypes";
+import { format, subDays, isAfter, getDate, getMonth } from "date-fns";
 
 export interface ExperimentGroup {
   id: string;
@@ -16,7 +17,73 @@ export function generateExperimentData(
   currentDate: Date,
   customDateRange?: DateRange
 ) {
-  // Mock data generation based on time range
+  if (timeRange === 'rolling-30-day') {
+    // Generate rolling 30-day data with reset on the 1st of each month
+    const today = new Date();
+    const currentDay = getDate(today);
+    const currentMonth = getMonth(today);
+    
+    const generateResettingData = () => {
+      return Array.from({ length: 30 }, (_, i) => {
+        const date = subDays(today, 29 - i);
+        const isFutureDate = isAfter(date, today);
+        const dayOfMonth = getDate(date);
+        const monthOfDate = getMonth(date);
+        
+        // Reset values on the 1st of each month or when crossing month boundary
+        const shouldReset = dayOfMonth === 1 || (monthOfDate !== currentMonth && dayOfMonth < currentDay);
+        
+        return {
+          day: format(date, 'MMM d'),
+          value: isFutureDate ? null : (shouldReset ? Math.floor(Math.random() * 50) : Math.floor(Math.random() * 100))
+        };
+      });
+    };
+    
+    // Create data with resets for each experiment
+    const experimentA = generateResettingData();
+    const experimentB = generateResettingData();
+    const experimentC = generateResettingData();
+    
+    // Calculate totals based on this reset data
+    const calculateTotal = (data: Array<{ day: string; value: number | null }>) => {
+      return data.reduce((sum, item) => sum + (item.value || 0), 0);
+    };
+    
+    return {
+      current: {
+        experimentA,
+        experimentB,
+        experimentC
+      },
+      previous: {
+        experimentA: Array.from({ length: 30 }, (_, i) => ({
+          day: (i + 1).toString(),
+          value: Math.floor(Math.random() * 100)
+        })),
+        experimentB: Array.from({ length: 30 }, (_, i) => ({
+          day: (i + 1).toString(),
+          value: Math.floor(Math.random() * 100)
+        })),
+        experimentC: Array.from({ length: 30 }, (_, i) => ({
+          day: (i + 1).toString(),
+          value: Math.floor(Math.random() * 100)
+        }))
+      },
+      currentTotals: {
+        experimentA: calculateTotal(experimentA),
+        experimentB: calculateTotal(experimentB),
+        experimentC: calculateTotal(experimentC)
+      },
+      previousTotals: {
+        experimentA: 2300,
+        experimentB: 1650,
+        experimentC: 2900
+      }
+    };
+  }
+  
+  // For other time ranges, use the original mock data
   const data = {
     current: {
       experimentA: Array.from({ length: 30 }, (_, i) => ({
