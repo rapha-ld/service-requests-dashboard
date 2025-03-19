@@ -1,26 +1,22 @@
 
-import { format, subMonths, subDays, parseISO, isWithinInterval } from "date-fns";
-import { EnvironmentsMap, MAUDataResult } from "@/types/mauTypes";
-import { getMockMAUData } from "./mauDataGenerator";
-import { getTotalValue } from "./dataTransformers";
+import { EnvironmentsMap } from "@/types/mauTypes";
+import { generateRolling30DayDateStrings, generateLast12MonthsDateStrings, getMonthNumber } from "./mauDateUtils";
+import { format } from "date-fns";
 
 // Client MAU value from the Overview page
 const CLIENT_MAU_VALUE = 18450;
-// User limit threshold
-const USER_LIMIT = 25000;
 
+// Format data for rolling 30-day period
 export const formatRolling30DayData = (currentData: EnvironmentsMap, safeProject: string) => {
   const rolling30DayData: EnvironmentsMap = {};
   const today = new Date();
   
-  const dateStrings = Array.from({ length: 30 }, (_, i) => {
-    const date = subDays(today, 29 - i);
-    return format(date, 'MMM d');
-  });
+  const dateStrings = generateRolling30DayDateStrings();
   
   Object.keys(currentData).forEach(key => {
     rolling30DayData[key] = dateStrings.map((day, index) => {
-      const date = subDays(today, 29 - index);
+      const date = new Date(today);
+      date.setDate(today.getDate() - (29 - index));
       const isFutureDate = date > today;
       
       return {
@@ -33,14 +29,17 @@ export const formatRolling30DayData = (currentData: EnvironmentsMap, safeProject
   return rolling30DayData;
 };
 
+// Format data for last 12 months
 export const formatLast12MonthsData = (currentData: EnvironmentsMap, safeProject: string) => {
   const last12MonthsData: EnvironmentsMap = {};
   
+  const monthStrings = generateLast12MonthsDateStrings();
+  
   Object.keys(currentData).forEach(key => {
-    last12MonthsData[key] = Array.from({ length: 12 }, (_, i) => ({
-      day: format(subMonths(new Date(), i), 'MMM'),
+    last12MonthsData[key] = monthStrings.map((month, index) => ({
+      day: month,
       value: Math.floor(Math.random() * 5000)
-    })).reverse();
+    }));
   });
 
   if (safeProject === "all") {
@@ -59,49 +58,34 @@ export const formatLast12MonthsData = (currentData: EnvironmentsMap, safeProject
   return last12MonthsData;
 };
 
-export const scaleDataToClientMAU = (currentData: EnvironmentsMap) => {
-  let totalCurrentMAU = 0;
+// Format data for custom date range
+export const formatCustomDateRangeData = (data: EnvironmentsMap, startDate: Date, endDate: Date): EnvironmentsMap => {
+  const result: EnvironmentsMap = {};
   
-  Object.values(currentData).forEach(envData => {
-    totalCurrentMAU += getTotalValue(envData);
-  });
+  // Generate dates between start and end date
+  const dateRange: Date[] = [];
+  let currentDate = new Date(startDate);
   
-  const scalingFactor = CLIENT_MAU_VALUE / totalCurrentMAU;
+  while (currentDate <= endDate) {
+    dateRange.push(new Date(currentDate));
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
   
-  Object.keys(currentData).forEach(env => {
-    currentData[env] = currentData[env].map(day => ({
-      ...day,
-      value: Math.round(day.value * scalingFactor)
+  // Format dates to match chart format
+  const formattedDates = dateRange.map(date => format(date, 'MMM d'));
+  
+  // Create data for each environment
+  Object.keys(data).forEach(env => {
+    result[env] = formattedDates.map(day => ({
+      day,
+      value: Math.floor(Math.random() * 3000) + 1000 // Random value for demonstration
     }));
   });
-
-  return currentData;
+  
+  return result;
 };
 
-export const adjustRolling30DayData = (currentData: EnvironmentsMap) => {
-  const daysInPeriod = 30;
-  const targetDailyAverage = CLIENT_MAU_VALUE / daysInPeriod;
-
-  Object.keys(currentData).forEach(env => {
-    const envCount = Object.keys(currentData).length;
-    const envDailyTarget = targetDailyAverage / envCount;
-    
-    currentData[env] = currentData[env].map((day, idx) => ({
-      day: day.day,
-      value: Math.round(envDailyTarget * (0.8 + (idx / daysInPeriod) * 0.4))
-    }));
-  });
-
-  return currentData;
-};
-
-export const calculateMAUTotals = (data: EnvironmentsMap) => {
-  return Object.fromEntries(
-    Object.entries(data).map(([key, envData]) => [key, getTotalValue(envData)])
-  );
-};
-
-// Function to limit data to the current date or a specified end date
+// Limit data to the current date
 export const limitDataToCurrentDate = (data: EnvironmentsMap, endDate?: Date): EnvironmentsMap => {
   const result: EnvironmentsMap = {};
   // Use provided end date or default to current date
@@ -125,92 +109,6 @@ export const limitDataToCurrentDate = (data: EnvironmentsMap, endDate?: Date): E
         value: dataDate > currentDate ? null : dayData.value
       };
     });
-  });
-  
-  return result;
-};
-
-// Helper function to convert month abbreviation to month number
-const getMonthNumber = (monthAbbr: string): number => {
-  const months: {[key: string]: number} = {
-    'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5,
-    'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
-  };
-  return months[monthAbbr] || 0;
-};
-
-// Function to ensure data doesn't exceed the threshold
-export const capEnvironmentsData = (data: EnvironmentsMap, threshold: number = USER_LIMIT): EnvironmentsMap => {
-  // First, calculate the total for each day across all environments
-  const dailyTotals: { [key: string]: number } = {};
-  
-  // Get all unique day values
-  const allDays = new Set<string>();
-  Object.values(data).forEach(envData => {
-    envData.forEach(dayData => {
-      if (dayData.day) {
-        allDays.add(dayData.day);
-      }
-    });
-  });
-  
-  // Calculate daily totals across environments
-  allDays.forEach(day => {
-    let total = 0;
-    Object.values(data).forEach(envData => {
-      const dayData = envData.find(d => d.day === day);
-      if (dayData && dayData.value !== null) {
-        total += dayData.value;
-      }
-    });
-    dailyTotals[day] = total;
-  });
-  
-  // Cap the data proportionally if it exceeds the threshold
-  const result: EnvironmentsMap = {};
-  
-  Object.keys(data).forEach(env => {
-    result[env] = data[env].map(dayData => {
-      if (dayData.value === null) return dayData;
-      
-      const total = dailyTotals[dayData.day];
-      if (total > threshold) {
-        // Scale down proportionally
-        const scaleFactor = threshold / total;
-        return {
-          day: dayData.day,
-          value: Math.round(dayData.value * scaleFactor)
-        };
-      }
-      return dayData;
-    });
-  });
-  
-  return result;
-};
-
-// Function to format data for custom date range
-export const formatCustomDateRangeData = (data: EnvironmentsMap, startDate: Date, endDate: Date): EnvironmentsMap => {
-  const result: EnvironmentsMap = {};
-  
-  // Generate dates between start and end date
-  const dateRange: Date[] = [];
-  let currentDate = new Date(startDate);
-  
-  while (currentDate <= endDate) {
-    dateRange.push(new Date(currentDate));
-    currentDate.setDate(currentDate.getDate() + 1);
-  }
-  
-  // Format dates to match chart format
-  const formattedDates = dateRange.map(date => format(date, 'MMM d'));
-  
-  // Create data for each environment
-  Object.keys(data).forEach(env => {
-    result[env] = formattedDates.map(day => ({
-      day,
-      value: Math.floor(Math.random() * 3000) + 1000 // Random value for demonstration
-    }));
   });
   
   return result;

@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { getMockMAUData } from "@/utils/mauDataGenerator";
 import { createFallbackData } from "@/utils/mauDataTransformers";
@@ -9,13 +10,15 @@ import {
 import {
   formatRolling30DayData,
   formatLast12MonthsData,
+  limitDataToCurrentDate,
+  formatCustomDateRangeData
+} from "@/utils/mauDataFormatter";
+import {
   scaleDataToClientMAU,
   adjustRolling30DayData,
   calculateMAUTotals,
-  limitDataToCurrentDate,
-  capEnvironmentsData,
-  formatCustomDateRangeData
-} from "@/utils/mauDataFormatter";
+  capEnvironmentsData
+} from "@/utils/mauDataAdjuster";
 
 // Client MAU value and limits from Overview page
 const CLIENT_MAU_VALUE = 18450;
