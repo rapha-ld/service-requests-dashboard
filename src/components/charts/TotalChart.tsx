@@ -77,7 +77,6 @@ export const TotalChart = ({
         showThreshold={showThreshold}
         threshold={threshold}
         chartHeight={chartHeight}
-        timeRange={timeRange}
       />
     </div>
   );

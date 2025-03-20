@@ -1,4 +1,5 @@
-import { format, subMonths, subDays, subHours, isAfter, parse, getDate, getMonth } from "date-fns";
+
+import { format, subMonths, subDays, isAfter, parse, getDate, getMonth } from "date-fns";
 import { getTotalValue } from "@/components/charts/dataTransformers";
 import { TimeRangeType } from "@/hooks/useExperimentData";
 import { DateRange } from "@/types/mauTypes";
@@ -16,21 +17,21 @@ export const generateLast12MonthsData = (currentData: Record<string, any[]>) => 
   );
 };
 
-// Generate data for 3-day view with hourly buckets
+// Generate data for 3-day view that represents exactly the last 3 days
 export const generate3DayData = (currentData: Record<string, any[]>) => {
-  const now = new Date();
-  const hourlyDataPoints = 72; // 3 days * 24 hours = 72 hours
+  const today = new Date();
   
   return Object.fromEntries(
     Object.entries(currentData).map(([key, data]) => [
       key,
-      Array.from({ length: hourlyDataPoints }, (_, i) => {
-        const date = subHours(now, hourlyDataPoints - 1 - i);
-        const isFutureDate = isAfter(date, now);
+      Array.from({ length: 3 }, (_, i) => {
+        const date = subDays(today, 2 - i);
+        const isFutureDate = isAfter(date, today);
         
+        // Using a specific value for each of the 3 days - no relation to month-to-date
         return {
-          day: format(date, 'MMM d, h a'), // Format: "Mar 15, 3 PM"
-          value: isFutureDate ? null : Math.floor(Math.random() * 15 + 5) // Smaller values for hourly data
+          day: format(date, 'MMM d'),
+          value: isFutureDate ? null : Math.floor(Math.random() * 80 + 20) // Values between 20-100
         };
       })
     ])
