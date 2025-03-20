@@ -30,14 +30,20 @@ export const generate3DayData = (currentData: Record<string, any[]>) => {
         const date = subHours(today, totalHours - 1 - i);
         const isFutureDate = isAfter(date, today);
         
-        // Generate daily values that make sense in both cumulative and net-new views
-        // For cumulative view, these will be properly accumulated in the client
+        // Generate daily values that simulate realistic accumulation when viewed cumulatively
+        // Higher values on later days in the month to show natural growth
         const dayOfMonth = getDate(date);
-        const dayMultiplier = Math.min(dayOfMonth, 15) / 15;  // Scale factor based on day of month
+        const monthProgress = Math.min(dayOfMonth / 28, 1); // Scale based on position in month
+        
+        // Base value grows throughout the month
+        const baseValue = Math.floor(5 + (15 * monthProgress));
+        
+        // Add some randomness
+        const randomFactor = 0.7 + (Math.random() * 0.6);
         
         return {
           day: format(date, 'MMM d, HH:00'),
-          value: isFutureDate ? null : Math.floor(Math.random() * 20 + 5 * dayMultiplier)
+          value: isFutureDate ? null : Math.floor(baseValue * randomFactor)
         };
       })
     ])
@@ -55,14 +61,20 @@ export const generate7DayData = (currentData: Record<string, any[]>) => {
         const date = subDays(today, 6 - i);
         const isFutureDate = isAfter(date, today);
         
-        // Generate daily values that make sense in both cumulative and net-new views
-        // For cumulative view, these will be properly accumulated in the client
+        // Generate values that simulate realistic accumulation when viewed cumulatively
+        // Higher values on later days in the month
         const dayOfMonth = getDate(date);
-        const dayMultiplier = Math.min(dayOfMonth, 20) / 20;  // Scale factor based on day of month
+        const monthProgress = Math.min(dayOfMonth / 28, 1); // Scale based on position in month
+        
+        // Base value grows throughout the month
+        const baseValue = Math.floor(20 + (60 * monthProgress));
+        
+        // Add some randomness
+        const randomFactor = 0.8 + (Math.random() * 0.4);
         
         return {
           day: format(date, 'MMM d'),
-          value: isFutureDate ? null : Math.floor(Math.random() * 80 + 20 * dayMultiplier) // Values between 20-100
+          value: isFutureDate ? null : Math.floor(baseValue * randomFactor)
         };
       })
     ])

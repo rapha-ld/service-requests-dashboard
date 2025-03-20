@@ -36,7 +36,7 @@ const ClientConnections = () => {
     setChartType(viewType === 'net-new' ? 'bar' : 'area');
   }, [viewType]);
   
-  // Handle time range change - no longer force cumulative for 30D
+  // Handle time range change - allow all view types for all time ranges
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
     setTimeRange(newTimeRange);
   };
@@ -46,7 +46,7 @@ const ClientConnections = () => {
     setCustomDateRange(dateRange);
   };
   
-  // Handle view type change - now we allow changing even for rolling-30-day
+  // Handle view type change - allow changing for all time ranges
   const handleViewTypeChange = (newViewType: 'net-new' | 'cumulative') => {
     setViewType(newViewType);
     // Update chart type based on view type

@@ -33,7 +33,7 @@ const ClientMAU = () => {
     setChartType(viewType === 'net-new' ? 'bar' : 'area');
   }, [viewType]);
   
-  // Handle time range change - no longer force cumulative for 30D
+  // Handle time range change - allow all view types for all time ranges
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
     setTimeRange(newTimeRange);
   };
@@ -43,7 +43,7 @@ const ClientMAU = () => {
     setCustomDateRange(dateRange);
   };
   
-  // Handle view type change - allow changing for all time ranges
+  // Handle view type change - allow changing for all time ranges 
   const handleViewTypeChange = (newViewType: 'net-new' | 'cumulative') => {
     setViewType(newViewType);
     setChartType(newViewType === 'net-new' ? 'bar' : 'area');
