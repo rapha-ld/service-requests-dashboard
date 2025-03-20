@@ -1,4 +1,3 @@
-
 import { useRef } from 'react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, Label } from 'recharts';
 import { CustomTooltip } from './CustomTooltip';
@@ -39,7 +38,8 @@ export const ChartComponent = ({
     "/overview",
     "/client-mau",
     "/experiments",
-    "/data-export"
+    "/data-export",
+    "/service-requests"
   ].includes(location.pathname);
   
   const average = calculateAverage(data);
