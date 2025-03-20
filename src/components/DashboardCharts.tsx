@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { TotalChart } from "@/components/charts/TotalChart";
 import { ChartGrid } from "@/components/charts/ChartGrid";
@@ -5,7 +6,7 @@ import { ViewTypeToggle } from "@/components/dashboard/ViewTypeToggle";
 import { SmallMultiple } from "@/components/SmallMultiple";
 import { transformData } from "@/components/charts/dataTransformers";
 import { Button } from "@/components/ui/button";
-import { MousePointerSquare } from "lucide-react";
+import { MousePointer } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { useTheme } from "@/hooks/useTheme";
 
@@ -46,7 +47,7 @@ export const DashboardCharts = ({
   disableViewTypeToggle = false,
   timeRange = 'month-to-date'
 }: DashboardChartsProps) => {
-  const { isDarkMode } = useTheme();
+  const { theme } = useTheme();
   const location = useLocation();
   const [expandedCharts, setExpandedCharts] = useState<string[]>([]);
   
@@ -127,7 +128,7 @@ export const DashboardCharts = ({
       {/* Individual Charts Grid */}
       {!showOnlyTotal && sortedGroups && (
         <ChartGrid
-          groups={sortedGroups}
+          sortedGroups={sortedGroups}
           viewType={viewType}
           chartType={chartType}
           maxValue={maxValue}
