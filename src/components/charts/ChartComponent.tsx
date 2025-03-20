@@ -29,21 +29,24 @@ export const ChartComponent = ({
 }: ChartComponentProps) => {
   const location = useLocation();
   
+  // Update to explicitly include /experiments in plan usage pages
+  const isPlanUsagePage = [
+    "/overview",
+    "/client-mau",
+    "/experiments", // Explicitly include experiments
+    "/data-export"
+  ].includes(location.pathname);
+  
   const isDiagnosticPage = [
     "/client-connections",
     "/server-mau",
     "/peak-server-connections"
   ].includes(location.pathname);
   
-  const isPlanUsagePage = [
-    "/overview",
-    "/client-mau",
-    "/experiments",
-    "/data-export"
-  ].includes(location.pathname);
-  
   const average = calculateAverage(data);
-  const transformedData = transformData(data, viewType, true, isDiagnosticPage);
+  
+  // We need to ensure data is transformed properly for Experiments page
+  const transformedData = transformData(data, viewType, isPlanUsagePage, isDiagnosticPage);
   
   const effectiveMaxValue = showThreshold && threshold && threshold > maxValue 
     ? threshold 
@@ -173,7 +176,7 @@ export const ChartComponent = ({
         {/* Always show reset points for cumulative view on plan usage pages */}
         {viewType === 'cumulative' && 
          isPlanUsagePage && 
-         resetPoints.length > 0 &&
+         resetPoints && resetPoints.length > 0 &&
          resetPoints.map((day, index) => {
            const dataIndex = transformedData.findIndex((d: any) => d.day === day);
            if (dataIndex === -1) return null;

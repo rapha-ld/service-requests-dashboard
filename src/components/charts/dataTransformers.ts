@@ -1,3 +1,4 @@
+
 import { format, parse, getDate } from 'date-fns';
 
 export const getRequestStatus = (value: number) => {
@@ -55,7 +56,7 @@ export const transformData = (
       const previousValue = previousItem && previousItem.value !== null ? previousItem.value : 0;
       
       // Reset cumulative value if it's the first day of a month in trailing 30-day view
-      // and shouldHandleResets is true (specifically for plan usage charts)
+      // and shouldHandleResets is true (specifically for plan usage charts, including Experiments)
       if (shouldHandleResets && isFirstOfMonth) {
         // Add to our reset points array for annotation
         resetPoints.push(curr.day);
