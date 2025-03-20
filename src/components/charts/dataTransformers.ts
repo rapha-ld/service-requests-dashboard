@@ -1,4 +1,5 @@
-import { format, parse, getDate } from 'date-fns';
+
+import { format, parse, getDate, startOfMonth, differenceInDays } from 'date-fns';
 
 export const getRequestStatus = (value: number) => {
   if (value <= 200) return 'good';
@@ -30,30 +31,45 @@ export const transformData = (
   // Track reset points for annotations
   const resetPoints: string[] = [];
 
-  // Get the first day from the data to check if we're starting mid-month
+  // If there's no data, return empty array
+  if (!data || data.length === 0) return [];
+
+  // Get the first day from the data
   const firstDay = data[0]?.day;
-  const isStartingMidMonth = firstDay && !firstDay.includes('1') && !firstDay.endsWith(' 1');
+  if (!firstDay) return data;
+
+  // Detect if we're in a rolling 30-day view (dates like "Feb 19", "Mar 1", etc.)
+  const isRolling30DayFormat = firstDay.includes(' ');
   
-  // Start with the actual values that were accumulated before our data window
+  // Only for rolling 30-day view, check if we're starting mid-month
   let accumulatedValueBeforeWindow = 0;
+  let startDayOfMonth = 1;
   
-  // If we're starting in the middle of a month, we should include previous days' values
-  // This makes the chart not start at 0 when viewing mid-month data
-  // In real implementation, this would come from the API, but for this demo we'll simulate it
-  if (isStartingMidMonth) {
-    // Estimate a reasonable starting value based on the first few data points
-    // In a real app, this would come from your backend
-    const nonNullValues = data.filter(d => d.value !== null).slice(0, 3);
-    if (nonNullValues.length > 0) {
-      const avgDailyValue = nonNullValues.reduce((sum, item) => sum + (item.value || 0), 0) / nonNullValues.length;
-      // Estimate based on the day number (e.g., if it's the 15th, we'd have ~14 days of data already)
-      const dayNumber = parseInt(firstDay?.match(/\d+/)?.[0] || '1');
-      accumulatedValueBeforeWindow = Math.round(avgDailyValue * (dayNumber - 1));
+  if (isRolling30DayFormat) {
+    // Parse the day number from the first data point
+    const match = firstDay.match(/\w+ (\d+)/);
+    if (match && match[1]) {
+      startDayOfMonth = parseInt(match[1]);
+      const isStartingMidMonth = startDayOfMonth > 1;
+      
+      if (isStartingMidMonth) {
+        // Calculate a reasonable starting value based on days already passed in the month
+        // Find the first few non-null values to get an average daily value
+        const nonNullValues = data.filter(d => d.value !== null).slice(0, 5);
+        if (nonNullValues.length > 0) {
+          const avgDailyValue = nonNullValues.reduce((sum, item) => sum + (item.value || 0), 0) / nonNullValues.length;
+          
+          // Estimate accumulated value based on days already passed
+          accumulatedValueBeforeWindow = Math.round(avgDailyValue * (startDayOfMonth - 1));
+          
+          console.log(`Starting mid-month on day ${startDayOfMonth}. Estimated accumulated value: ${accumulatedValueBeforeWindow}`);
+        }
+      }
     }
   }
 
   const result = data.reduce((acc, curr, index) => {
-    // Always include the day, but set future dates or null values to null
+    // Handle null values
     if (curr.value === null) {
       return [...acc, {
         day: curr.day,
@@ -61,29 +77,22 @@ export const transformData = (
       }];
     }
     
-    // For Last 12 Months view, treat each month as its own cumulative sequence
-    // if the day includes a "Month" label, it's from the Last 12 Months view
-    const isLast12MonthsView = curr.day.includes('Month') || curr.day.includes('Jan') || curr.day.includes('Feb') || 
-                              curr.day.includes('Mar') || curr.day.includes('Apr') || curr.day.includes('May') || 
-                              curr.day.includes('Jun') || curr.day.includes('Jul') || curr.day.includes('Aug') || 
-                              curr.day.includes('Sep') || curr.day.includes('Oct') || curr.day.includes('Nov') || 
-                              curr.day.includes('Dec');
-    
-    // Check if it's the first day of the month (when a date looks like "Jan 1", "Feb 1", etc.)
-    const isFirstOfMonth = curr.day.match(/ 1$/);
+    // For 30-day view, check if it's the first of a month (e.g., "Mar 1")
+    const isFirstOfMonth = isRolling30DayFormat && curr.day.match(/ 1$/);
     
     if (index === 0) {
-      // For the first data point, start with our pre-accumulated value plus the current value
+      // For the first data point, include the pre-accumulated value
       return [{
         day: curr.day,
         value: accumulatedValueBeforeWindow + (curr.value as number)
       }];
     } else {
       const previousItem = acc[index - 1];
-      const previousValue = previousItem && previousItem.value !== null ? previousItem.value : accumulatedValueBeforeWindow;
+      const previousValue = previousItem && previousItem.value !== null 
+        ? previousItem.value 
+        : accumulatedValueBeforeWindow;
       
-      // Reset cumulative value if it's the first day of a month in trailing 30-day view
-      // and shouldHandleResets is true (specifically for plan usage charts)
+      // Reset cumulative value if it's the first day of a month and we should handle resets
       if (shouldHandleResets && isFirstOfMonth) {
         // Add to our reset points array for annotation
         resetPoints.push(curr.day);
