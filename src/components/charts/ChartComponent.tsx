@@ -190,19 +190,20 @@ export const ChartComponent = ({
                stroke="#4CAF50"
                strokeWidth={1.5}
                strokeDasharray="3 3"
-               label={{
-                 value: "Monthly usage\nresets here",
-                 fill: 'hsl(var(--secondary-foreground))',
-                 fontSize: 9,
-                 position: 'top',
-                 offset: 10,
-                 angle: 0,
-                 style: { zIndex: 10, textAnchor: 'start' },
-               }}
-             />
+             >
+               <Label 
+                 value="Monthly usage\nresets here" 
+                 position="top"
+                 offset={10}
+                 fill="hsl(var(--secondary-foreground))"
+                 fontSize={9}
+                 style={{ textAnchor: 'start' }}
+               />
+             </ReferenceLine>
            );
          })}
       </ChartComponent>
     </ResponsiveContainer>
   );
 };
+
