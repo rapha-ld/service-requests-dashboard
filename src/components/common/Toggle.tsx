@@ -1,11 +1,18 @@
 
 import { Button } from "@/components/ui/button";
 import { ReactNode } from "react";
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from "@/components/ui/tooltip";
 
 interface ToggleOption {
   value: string;
   label: string;
   icon?: ReactNode;
+  tooltip?: string;
 }
 
 interface ToggleProps {
@@ -30,23 +37,33 @@ export const Toggle = ({
   return (
     <div className={`flex ${className}`}>
       {options.map((option, index) => (
-        <Button
-          key={option.value}
-          variant={value === option.value ? 'default' : 'outline'}
-          onClick={() => onChange(option.value)}
-          disabled={disabled}
-          className={`h-8
-            ${index === 0 ? 'rounded-r-none' : 'rounded-l-none border-l-0'}
-            ${value === option.value 
-              ? 'dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
-              : ''}
-          `}
-        >
-          <div className="flex items-center">
-            {option.icon}
-            {option.label}
-          </div>
-        </Button>
+        <TooltipProvider key={option.value}>
+          <Tooltip delayDuration={300}>
+            <TooltipTrigger asChild>
+              <Button
+                variant={value === option.value ? 'default' : 'outline'}
+                onClick={() => onChange(option.value)}
+                disabled={disabled}
+                className={`h-8
+                  ${index === 0 ? 'rounded-r-none' : 'rounded-l-none border-l-0'}
+                  ${value === option.value 
+                    ? 'dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
+                    : ''}
+                `}
+              >
+                <div className="flex items-center">
+                  {option.icon}
+                  {option.label}
+                </div>
+              </Button>
+            </TooltipTrigger>
+            {option.tooltip && (
+              <TooltipContent side="bottom">
+                <p>{option.tooltip}</p>
+              </TooltipContent>
+            )}
+          </Tooltip>
+        </TooltipProvider>
       ))}
     </div>
   );
