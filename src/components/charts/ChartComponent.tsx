@@ -1,3 +1,4 @@
+
 import { useRef } from 'react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, Label } from 'recharts';
 import { CustomTooltip } from './CustomTooltip';
@@ -72,6 +73,7 @@ export const ChartComponent = ({
 
   const xAxisInterval = calculateXAxisInterval();
 
+  // Get reset points from transformed data
   const resetPoints = transformedData
     .filter((item: any) => item.isResetPoint)
     .map((item: any) => item.day);
@@ -168,8 +170,10 @@ export const ChartComponent = ({
           />
         )}
         
+        {/* Always show reset points for cumulative view on plan usage pages */}
         {viewType === 'cumulative' && 
          isPlanUsagePage && 
+         resetPoints.length > 0 &&
          resetPoints.map((day, index) => {
            const dataIndex = transformedData.findIndex((d: any) => d.day === day);
            if (dataIndex === -1) return null;
