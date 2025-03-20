@@ -1,5 +1,5 @@
 
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, Label } from 'recharts';
 import { CustomTooltip } from './CustomTooltip';
 import { formatYAxisTick } from './formatters';
@@ -48,6 +48,18 @@ export const ChartComponent = ({
   
   const average = calculateAverage(data);
   
+  // Debug log to help diagnose issues
+  useEffect(() => {
+    if (viewType === 'cumulative') {
+      console.log('ChartComponent rendering cumulative data:', {
+        pathname: location.pathname,
+        firstDataPoint: data[0],
+        isDiagnosticPage,
+        dataLength: data.length
+      });
+    }
+  }, [data, viewType, location.pathname, isDiagnosticPage]);
+  
   // Always get the reset points from the transformed data for both view types
   const transformedDataWithResets = transformData(data, 'cumulative', true, false); // Don't skip resets for annotations
   
@@ -58,8 +70,8 @@ export const ChartComponent = ({
   
   // Use the appropriate data based on view type
   const transformedData = viewType === 'cumulative' 
-    ? transformedDataWithResets 
-    : transformData(data, viewType, true, isDiagnosticPage);
+    ? transformData(data, viewType, true, isDiagnosticPage) 
+    : data; // For net-new, use the original data
   
   const effectiveMaxValue = showThreshold && threshold && threshold > maxValue 
     ? threshold 
