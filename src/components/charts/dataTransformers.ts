@@ -28,7 +28,10 @@ export const transformData = (
   // For diagnostic pages, never handle resets even if handleResets is true
   const shouldHandleResets = handleResets && !isDiagnosticPage;
   
-  return data.reduce((acc, curr, index) => {
+  // Track reset points for annotations
+  const resetPoints: string[] = [];
+
+  const result = data.reduce((acc, curr, index) => {
     // Always include the day, but set future dates or null values to null
     if (curr.value === null) {
       return [...acc, {
@@ -55,9 +58,13 @@ export const transformData = (
       // Reset cumulative value if it's the first day of a month in trailing 30-day view
       // and shouldHandleResets is true (specifically for plan usage charts)
       if (shouldHandleResets && isFirstOfMonth) {
+        // Add to our reset points array for annotation
+        resetPoints.push(curr.day);
+
         return [...acc, {
           day: curr.day,
-          value: curr.value // Start fresh on the 1st
+          value: curr.value, // Start fresh on the 1st
+          isResetPoint: true // Mark this as a reset point
         }];
       }
       
@@ -73,7 +80,9 @@ export const transformData = (
       day: curr.day,
       value: curr.value
     }];
-  }, [] as Array<{ day: string; value: number | null }>);
+  }, [] as Array<{ day: string; value: number | null, isResetPoint?: boolean }>);
+
+  return result;
 };
 
 // Calculate average from non-null values
@@ -95,4 +104,3 @@ export const formatTooltipDate = (day: string) => {
   
   return day;
 };
-

@@ -1,6 +1,6 @@
 
 import { useRef } from 'react';
-import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, Label } from 'recharts';
 import { CustomTooltip } from './CustomTooltip';
 import { formatYAxisTick } from './formatters';
 import { transformData, calculateAverage } from './dataTransformers';
@@ -34,6 +34,14 @@ export const ChartComponent = ({
     "/client-connections",
     "/server-mau",
     "/peak-server-connections"
+  ].includes(location.pathname);
+  
+  // Define which routes are plan usage pages
+  const isPlanUsagePage = [
+    "/overview",
+    "/client-mau",
+    "/experiments",
+    "/data-export"
   ].includes(location.pathname);
   
   const average = calculateAverage(data);
@@ -71,6 +79,11 @@ export const ChartComponent = ({
   };
 
   const xAxisInterval = calculateXAxisInterval();
+
+  // Find the reset points (days that are the 1st of a month) in the transformed data
+  const resetPoints = transformedData
+    .filter((item: any) => item.isResetPoint)
+    .map((item: any) => item.day);
 
   return (
     <ResponsiveContainer width="100%" height="100%">
@@ -164,6 +177,37 @@ export const ChartComponent = ({
             }}
           />
         )}
+        
+        {/* Add vertical reference lines for reset points */}
+        {viewType === 'cumulative' && 
+         isPlanUsagePage && 
+         resetPoints.map((day, index) => {
+           // Find the index of this day in the data
+           const dataIndex = transformedData.findIndex((d: any) => d.day === day);
+           if (dataIndex === -1) return null;
+           
+           // Only add annotation if it's not the first point
+           if (dataIndex === 0) return null;
+           
+           return (
+             <ReferenceLine 
+               key={`reset-${index}`}
+               x={day}
+               stroke="#4CAF50"
+               strokeWidth={1.5}
+               strokeDasharray="3 3"
+               label={{
+                 value: "Monthly usage resets here",
+                 fill: '#4CAF50',
+                 fontSize: 9,
+                 position: 'top',
+                 offset: 10,
+                 angle: -45,
+                 style: { zIndex: 10, textAnchor: 'end' },
+               }}
+             />
+           );
+         })}
       </ChartComponent>
     </ResponsiveContainer>
   );
