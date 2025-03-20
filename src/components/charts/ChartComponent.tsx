@@ -1,4 +1,3 @@
-
 import { useRef } from 'react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, Label } from 'recharts';
 import { CustomTooltip } from './CustomTooltip';
@@ -178,12 +177,11 @@ export const ChartComponent = ({
              <ReferenceLine 
                key={`reset-${index}`}
                x={day}
-               stroke="#4CAF50"
+               stroke="hsl(var(--muted-foreground))"
                strokeWidth={1.5}
-               strokeDasharray="3 3"
                label={{
-                 value: "Monthly usage\nresets here",
-                 fill: '#4CAF50',
+                 value: "Monthly usage<br>resets here",
+                 fill: 'hsl(var(--muted-foreground))',
                  fontSize: 9,
                  position: 'insideTopLeft',
                  offset: 0,
