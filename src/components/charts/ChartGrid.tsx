@@ -79,7 +79,7 @@ export const ChartGrid = ({
       return Math.max(...cumulativeMaxValues, 0);
     }
     
-    // For net-new view, find the highest individual value
+    // For net-new view, find the highest individual value across all charts to ensure shared scale
     return Math.max(...filteredGroups.flatMap(group => 
       group.data.map(d => d.value !== null ? d.value : 0)
     ), 0);
@@ -89,10 +89,13 @@ export const ChartGrid = ({
   const sharedMaxValue = calculateSharedMaxValue();
   
   // Use the higher of the calculated shared max or the provided maxValue
-  const effectiveMaxValue = Math.max(sharedMaxValue, maxValue || 0);
+  // For incremental (net-new) view, always use calculated max value from actual data to fit the scale
+  const effectiveMaxValue = viewType === 'net-new' 
+    ? sharedMaxValue
+    : Math.max(sharedMaxValue, maxValue || 0, threshold || 0);
   
-  // Force shared max values for 3-day and 7-day views to ensure consistent scaling
-  const shouldUseSharedValues = ['3-day', '7-day'].includes(timeRange) || !individualMaxValues;
+  // Force shared max values for specific views to ensure consistent scaling
+  const shouldUseSharedValues = ['3-day', '7-day'].includes(timeRange) || !individualMaxValues || viewType === 'net-new';
 
   return (
     <>

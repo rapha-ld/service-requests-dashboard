@@ -117,6 +117,11 @@ export const DashboardCharts = ({
       return false;
     }
     
+    // For incremental view, use true shared max based on actual data
+    if (viewType === 'net-new') {
+      return false;
+    }
+    
     // Default behavior
     return false;
   };
