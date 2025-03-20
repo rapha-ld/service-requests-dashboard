@@ -44,10 +44,8 @@ export const TotalChart = ({
     "/service-requests"
   ].includes(location.pathname);
 
-  // For 3-day and 7-day views, we shouldn't accumulate values 
-  // since they represent discrete time periods
-  const shouldAccumulate = viewType === 'cumulative' && 
-    !['3-day', '7-day'].includes(timeRange);
+  // Modified: Always accumulate values in cumulative view, even for 3-day and 7-day views
+  const shouldAccumulate = viewType === 'cumulative';
   
   // Transform data based on view type and if accumulation should happen
   const transformedData = shouldAccumulate
@@ -77,6 +75,7 @@ export const TotalChart = ({
         showThreshold={showThreshold}
         threshold={threshold}
         chartHeight={chartHeight}
+        timeRange={timeRange}
       />
     </div>
   );

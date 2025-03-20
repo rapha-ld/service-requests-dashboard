@@ -3,7 +3,7 @@ import { useRef } from 'react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, Label } from 'recharts';
 import { CustomTooltip } from './CustomTooltip';
 import { formatYAxisTick } from './formatters';
-import { transformData, calculateAverage } from './dataTransformers';
+import { transformData, calculateAverage, formatTooltipDate } from './dataTransformers';
 import { useLocation } from 'react-router-dom';
 
 interface ChartComponentProps {
@@ -15,6 +15,7 @@ interface ChartComponentProps {
   showThreshold?: boolean;
   threshold?: number;
   chartRef: React.MutableRefObject<any>;
+  timeRange?: string;
 }
 
 export const ChartComponent = ({
@@ -25,7 +26,8 @@ export const ChartComponent = ({
   unit,
   showThreshold = false,
   threshold,
-  chartRef
+  chartRef,
+  timeRange = 'month-to-date'
 }: ChartComponentProps) => {
   const location = useLocation();
   
@@ -82,6 +84,12 @@ export const ChartComponent = ({
 
   const calculateXAxisInterval = () => {
     const dataLength = transformedData.length;
+    
+    // For 3-day hourly view, show fewer ticks
+    if (timeRange === '3-day' && dataLength > 24) {
+      return Math.floor(dataLength / 6); // Show ~6 ticks for hourly data
+    }
+    
     if (dataLength <= 7) return 0;
     if (dataLength <= 14) return 1;
     if (dataLength <= 30) return 2;
@@ -89,6 +97,15 @@ export const ChartComponent = ({
   };
 
   const xAxisInterval = calculateXAxisInterval();
+
+  // Format the ticks specifically for 3-day view with hourly data
+  const formatXAxisTick = (tick: string) => {
+    if (timeRange === '3-day' && tick.includes(':')) {
+      // For hourly data, just show the hour
+      return tick.split(', ')[1]; // Return just the hour part (e.g., "12:00")
+    }
+    return tick;
+  };
 
   return (
     <ResponsiveContainer width="100%" height="100%">
@@ -106,6 +123,7 @@ export const ChartComponent = ({
           tickLine={false}
           stroke="currentColor"
           className="text-muted-foreground"
+          tickFormatter={formatXAxisTick}
           ticks={transformedData.length > 0 ? 
             [transformedData[0].day, 
              ...transformedData.slice(1, -1).filter((_, i) => (i + 1) % (xAxisInterval + 1) === 0).map(d => d.day),

@@ -1,5 +1,5 @@
 
-import { format, subMonths, subDays, isAfter, parse, getDate, getMonth } from "date-fns";
+import { format, subMonths, subDays, isAfter, parse, getDate, getMonth, subHours } from "date-fns";
 import { getTotalValue } from "@/components/charts/dataTransformers";
 import { TimeRangeType } from "@/hooks/useExperimentData";
 import { DateRange } from "@/types/mauTypes";
@@ -17,28 +17,31 @@ export const generateLast12MonthsData = (currentData: Record<string, any[]>) => 
   );
 };
 
-// Generate data for 3-day view that represents exactly the last 3 days
+// Generate data for 3-day view with hourly data
 export const generate3DayData = (currentData: Record<string, any[]>) => {
   const today = new Date();
+  const hoursPerDay = 24;
+  const totalHours = 3 * hoursPerDay;
   
   return Object.fromEntries(
     Object.entries(currentData).map(([key, data]) => [
       key,
-      Array.from({ length: 3 }, (_, i) => {
-        const date = subDays(today, 2 - i);
+      Array.from({ length: totalHours }, (_, i) => {
+        const date = subHours(today, totalHours - 1 - i);
         const isFutureDate = isAfter(date, today);
         
-        // Using a specific value for each of the 3 days - no relation to month-to-date
+        // To maintain monthly accumulation logic, generate values that make sense
+        // even when accumulated from the start of the month
         return {
-          day: format(date, 'MMM d'),
-          value: isFutureDate ? null : Math.floor(Math.random() * 80 + 20) // Values between 20-100
+          day: format(date, 'MMM d, HH:00'),
+          value: isFutureDate ? null : Math.floor(Math.random() * 20 + 5) // Smaller hourly values
         };
       })
     ])
   );
 };
 
-// Generate data for 7-day view that represents exactly the last 7 days
+// Generate data for 7-day view
 export const generate7DayData = (currentData: Record<string, any[]>) => {
   const today = new Date();
   
@@ -49,7 +52,7 @@ export const generate7DayData = (currentData: Record<string, any[]>) => {
         const date = subDays(today, 6 - i);
         const isFutureDate = isAfter(date, today);
         
-        // Using a specific value for each of the 7 days - no relation to month-to-date
+        // Using specific daily values that will work well with accumulation
         return {
           day: format(date, 'MMM d'),
           value: isFutureDate ? null : Math.floor(Math.random() * 80 + 20) // Values between 20-100
