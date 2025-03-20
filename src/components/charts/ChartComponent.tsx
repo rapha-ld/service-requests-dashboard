@@ -1,4 +1,3 @@
-
 import { useRef } from 'react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, Label } from 'recharts';
 import { CustomTooltip } from './CustomTooltip';
@@ -29,14 +28,12 @@ export const ChartComponent = ({
 }: ChartComponentProps) => {
   const location = useLocation();
   
-  // Define which routes are diagnostic pages
   const isDiagnosticPage = [
     "/client-connections",
     "/server-mau",
     "/peak-server-connections"
   ].includes(location.pathname);
   
-  // Define which routes are plan usage pages
   const isPlanUsagePage = [
     "/overview",
     "/client-mau",
@@ -45,16 +42,12 @@ export const ChartComponent = ({
   ].includes(location.pathname);
   
   const average = calculateAverage(data);
-  const transformedData = transformData(data, viewType, true, isDiagnosticPage); // Pass isDiagnosticPage flag
+  const transformedData = transformData(data, viewType, true, isDiagnosticPage);
   
-  // Calculate effective max value for the chart
-  // When threshold is shown, make sure y-axis includes it
-  // When threshold is not shown, use the actual data maximum
   const effectiveMaxValue = showThreshold && threshold && threshold > maxValue 
     ? threshold 
     : maxValue;
   
-  // Select the appropriate chart component based on chartType
   let ChartComponent;
   let DataComponent;
   
@@ -69,18 +62,16 @@ export const ChartComponent = ({
     DataComponent = Line;
   }
 
-  // Calculate appropriate interval for x-axis ticks based on data length
   const calculateXAxisInterval = () => {
     const dataLength = transformedData.length;
-    if (dataLength <= 7) return 0; // Show all ticks for small datasets
-    if (dataLength <= 14) return 1; // Show every other tick
-    if (dataLength <= 30) return 2; // Show every third tick
-    return Math.floor(dataLength / 10); // For larger datasets
+    if (dataLength <= 7) return 0;
+    if (dataLength <= 14) return 1;
+    if (dataLength <= 30) return 2;
+    return Math.floor(dataLength / 10);
   };
 
   const xAxisInterval = calculateXAxisInterval();
 
-  // Find the reset points (days that are the 1st of a month) in the transformed data
   const resetPoints = transformedData
     .filter((item: any) => item.isResetPoint)
     .map((item: any) => item.day);
@@ -101,7 +92,6 @@ export const ChartComponent = ({
           tickLine={false}
           stroke="currentColor"
           className="text-muted-foreground"
-          // Ensure the axis always shows the first and last data points
           ticks={transformedData.length > 0 ? 
             [transformedData[0].day, 
              ...transformedData.slice(1, -1).filter((_, i) => (i + 1) % (xAxisInterval + 1) === 0).map(d => d.day),
@@ -177,18 +167,12 @@ export const ChartComponent = ({
             }}
           />
         )}
-        
-        {/* Add vertical reference lines for reset points */}
         {viewType === 'cumulative' && 
          isPlanUsagePage && 
          resetPoints.map((day, index) => {
-           // Find the index of this day in the data
            const dataIndex = transformedData.findIndex((d: any) => d.day === day);
            if (dataIndex === -1) return null;
-           
-           // Only add annotation if it's not the first point
            if (dataIndex === 0) return null;
-           
            return (
              <ReferenceLine 
                key={`reset-${index}`}
@@ -197,12 +181,11 @@ export const ChartComponent = ({
                strokeWidth={1.5}
                strokeDasharray="3 3"
                label={{
-                 value: "Monthly usage resets here",
+                 value: "Monthly usage\nresets here",
                  fill: '#4CAF50',
                  fontSize: 9,
                  position: 'top',
                  offset: 10,
-                 angle: -45,
                  style: { zIndex: 10, textAnchor: 'end' },
                }}
              />
