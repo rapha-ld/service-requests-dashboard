@@ -1,3 +1,4 @@
+
 import { useRef } from 'react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, Label } from 'recharts';
 import { CustomTooltip } from './CustomTooltip';
@@ -43,7 +44,19 @@ export const ChartComponent = ({
   ].includes(location.pathname);
   
   const average = calculateAverage(data);
-  const transformedData = transformData(data, viewType, true, isDiagnosticPage);
+  
+  // Always get the reset points from the transformed data for both view types
+  const transformedDataWithResets = transformData(data, 'cumulative', true, isDiagnosticPage);
+  
+  // Get reset points from the transformed data
+  const resetPoints = transformedDataWithResets
+    .filter((item: any) => item.isResetPoint)
+    .map((item: any) => item.day);
+  
+  // Use the appropriate data based on view type
+  const transformedData = viewType === 'cumulative' 
+    ? transformedDataWithResets 
+    : transformData(data, viewType, true, isDiagnosticPage);
   
   const effectiveMaxValue = showThreshold && threshold && threshold > maxValue 
     ? threshold 
@@ -72,10 +85,6 @@ export const ChartComponent = ({
   };
 
   const xAxisInterval = calculateXAxisInterval();
-
-  const resetPoints = transformedData
-    .filter((item: any) => item.isResetPoint)
-    .map((item: any) => item.day);
 
   return (
     <ResponsiveContainer width="100%" height="100%">
@@ -168,8 +177,7 @@ export const ChartComponent = ({
             }}
           />
         )}
-        {viewType === 'cumulative' && 
-         isPlanUsagePage && 
+        {isPlanUsagePage && 
          resetPoints.map((day, index) => {
            const dataIndex = transformedData.findIndex((d: any) => d.day === day);
            if (dataIndex === -1) return null;
@@ -187,7 +195,7 @@ export const ChartComponent = ({
                  position: 'insideTopLeft',
                  offset: 8,
                  style: { zIndex: 10, textAnchor: 'start' },
-                 dy: 8
+                 dy: -4
                }}
              />
            );
