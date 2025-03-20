@@ -15,6 +15,7 @@ interface ChartComponentProps {
   showThreshold?: boolean;
   threshold?: number;
   chartRef: React.MutableRefObject<any>;
+  timeRange?: string;
 }
 
 export const ChartComponent = ({
@@ -25,7 +26,8 @@ export const ChartComponent = ({
   unit,
   showThreshold = false,
   threshold,
-  chartRef
+  chartRef,
+  timeRange = 'month-to-date'
 }: ChartComponentProps) => {
   const location = useLocation();
   
@@ -82,6 +84,12 @@ export const ChartComponent = ({
 
   const calculateXAxisInterval = () => {
     const dataLength = transformedData.length;
+    
+    // Special case for 3-day with hourly data (72 data points)
+    if (timeRange === '3-day') {
+      return Math.floor(dataLength / 6); // Show roughly 6 ticks for 3-day view
+    }
+    
     if (dataLength <= 7) return 0;
     if (dataLength <= 14) return 1;
     if (dataLength <= 30) return 2;
@@ -89,6 +97,18 @@ export const ChartComponent = ({
   };
 
   const xAxisInterval = calculateXAxisInterval();
+  
+  // Format ticks for 3-day view to be more readable
+  const formatXAxisTick = (tickItem: string) => {
+    if (timeRange === '3-day') {
+      // For 3-day view with hourly data, simplify the tick label
+      const parts = tickItem.split(', ');
+      if (parts.length > 1) {
+        return parts[1]; // Just show the hour part (e.g., "3 PM")
+      }
+    }
+    return tickItem;
+  };
 
   return (
     <ResponsiveContainer width="100%" height="100%">
@@ -106,6 +126,7 @@ export const ChartComponent = ({
           tickLine={false}
           stroke="currentColor"
           className="text-muted-foreground"
+          tickFormatter={formatXAxisTick}
           ticks={transformedData.length > 0 ? 
             [transformedData[0].day, 
              ...transformedData.slice(1, -1).filter((_, i) => (i + 1) % (xAxisInterval + 1) === 0).map(d => d.day),
