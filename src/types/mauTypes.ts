@@ -1,5 +1,5 @@
 
-export type TimeRangeType = 'month-to-date' | 'last-12-months' | 'rolling-30-day' | 'custom';
+export type TimeRangeType = 'month-to-date' | 'last-12-months' | 'rolling-30-day' | '3-day' | '7-day' | 'custom';
 export type EnvironmentData = Array<{ day: string; value: number }>;
 export type EnvironmentsMap = Record<string, EnvironmentData>;
 

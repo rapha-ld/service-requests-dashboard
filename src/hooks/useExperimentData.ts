@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { generateExperimentData } from "@/utils/experimentDataUtils";
 import { DateRange } from "@/types/mauTypes";
 
-export type TimeRangeType = 'month-to-date' | 'last-12-months' | 'rolling-30-day' | 'custom';
+export type TimeRangeType = 'month-to-date' | 'last-12-months' | 'rolling-30-day' | '3-day' | '7-day' | 'custom';
 
 export const useExperimentData = (
   timeRange: TimeRangeType,

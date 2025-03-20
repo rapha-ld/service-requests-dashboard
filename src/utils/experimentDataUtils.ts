@@ -1,3 +1,4 @@
+
 import { calculatePercentChange } from "@/utils/dataTransformers";
 import { TimeRangeType } from "@/hooks/useExperimentData";
 import { DateRange } from "@/types/mauTypes";
@@ -16,6 +17,120 @@ export function generateExperimentData(
   currentDate: Date,
   customDateRange?: DateRange
 ) {
+  if (timeRange === '3-day') {
+    // Generate 3-day data
+    const today = new Date();
+    
+    const generateData = () => {
+      return Array.from({ length: 3 }, (_, i) => {
+        const date = subDays(today, 2 - i);
+        const isFutureDate = isAfter(date, today);
+        
+        return {
+          day: format(date, 'MMM d'),
+          value: isFutureDate ? null : Math.floor(Math.random() * 100)
+        };
+      });
+    };
+    
+    const experimentA = generateData();
+    const experimentB = generateData();
+    const experimentC = generateData();
+    
+    const calculateTotal = (data: Array<{ day: string; value: number | null }>) => {
+      return data.reduce((sum, item) => sum + (item.value || 0), 0);
+    };
+    
+    return {
+      current: {
+        experimentA,
+        experimentB,
+        experimentC
+      },
+      previous: {
+        experimentA: Array.from({ length: 3 }, () => ({
+          day: "day",
+          value: Math.floor(Math.random() * 100)
+        })),
+        experimentB: Array.from({ length: 3 }, () => ({
+          day: "day",
+          value: Math.floor(Math.random() * 100)
+        })),
+        experimentC: Array.from({ length: 3 }, () => ({
+          day: "day",
+          value: Math.floor(Math.random() * 100)
+        }))
+      },
+      currentTotals: {
+        experimentA: calculateTotal(experimentA),
+        experimentB: calculateTotal(experimentB),
+        experimentC: calculateTotal(experimentC)
+      },
+      previousTotals: {
+        experimentA: 230,
+        experimentB: 165,
+        experimentC: 290
+      }
+    };
+  }
+  
+  if (timeRange === '7-day') {
+    // Generate 7-day data
+    const today = new Date();
+    
+    const generateData = () => {
+      return Array.from({ length: 7 }, (_, i) => {
+        const date = subDays(today, 6 - i);
+        const isFutureDate = isAfter(date, today);
+        
+        return {
+          day: format(date, 'MMM d'),
+          value: isFutureDate ? null : Math.floor(Math.random() * 100)
+        };
+      });
+    };
+    
+    const experimentA = generateData();
+    const experimentB = generateData();
+    const experimentC = generateData();
+    
+    const calculateTotal = (data: Array<{ day: string; value: number | null }>) => {
+      return data.reduce((sum, item) => sum + (item.value || 0), 0);
+    };
+    
+    return {
+      current: {
+        experimentA,
+        experimentB,
+        experimentC
+      },
+      previous: {
+        experimentA: Array.from({ length: 7 }, () => ({
+          day: "day",
+          value: Math.floor(Math.random() * 100)
+        })),
+        experimentB: Array.from({ length: 7 }, () => ({
+          day: "day",
+          value: Math.floor(Math.random() * 100)
+        })),
+        experimentC: Array.from({ length: 7 }, () => ({
+          day: "day",
+          value: Math.floor(Math.random() * 100)
+        }))
+      },
+      currentTotals: {
+        experimentA: calculateTotal(experimentA),
+        experimentB: calculateTotal(experimentB),
+        experimentC: calculateTotal(experimentC)
+      },
+      previousTotals: {
+        experimentA: 460,
+        experimentB: 330,
+        experimentC: 580
+      }
+    };
+  }
+  
   if (timeRange === 'rolling-30-day') {
     // Generate rolling 30-day data with reset on the 1st of each month
     const today = new Date();
