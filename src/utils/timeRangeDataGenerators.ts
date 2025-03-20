@@ -40,6 +40,48 @@ export const generateRolling30DayData = (currentData: Record<string, any[]>) => 
   );
 };
 
+// Generate data for 3-day view
+export const generate3DayData = (currentData: Record<string, any[]>) => {
+  const today = new Date();
+  
+  return Object.fromEntries(
+    Object.entries(currentData).map(([key, data]) => [
+      key,
+      Array.from({ length: 3 }, (_, i) => {
+        const date = subDays(today, 2 - i);
+        const isFutureDate = isAfter(date, today);
+        const dayOfMonth = getDate(date);
+        
+        return {
+          day: format(date, 'MMM d'),
+          value: isFutureDate ? null : Math.floor(Math.random() * 500)
+        };
+      })
+    ])
+  );
+};
+
+// Generate data for 7-day view
+export const generate7DayData = (currentData: Record<string, any[]>) => {
+  const today = new Date();
+  
+  return Object.fromEntries(
+    Object.entries(currentData).map(([key, data]) => [
+      key,
+      Array.from({ length: 7 }, (_, i) => {
+        const date = subDays(today, 6 - i);
+        const isFutureDate = isAfter(date, today);
+        const dayOfMonth = getDate(date);
+        
+        return {
+          day: format(date, 'MMM d'),
+          value: isFutureDate ? null : Math.floor(Math.random() * 500)
+        };
+      })
+    ])
+  );
+};
+
 // Generate data for custom date range
 export const generateCustomDateRangeData = (currentData: Record<string, any[]>, dateRange: DateRange) => {
   // In a real implementation, this would fetch data for the specific date range
