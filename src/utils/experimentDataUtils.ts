@@ -1,4 +1,3 @@
-
 import { calculatePercentChange } from "@/utils/dataTransformers";
 import { TimeRangeType } from "@/hooks/useExperimentData";
 import { DateRange } from "@/types/mauTypes";
@@ -22,6 +21,10 @@ export function generateExperimentData(
     const today = new Date();
     
     const generateData = () => {
+      // Calculate how many days we are into the current month
+      const currentDay = today.getDate();
+      const daysIntoMonth = currentDay - 1; // Days before today this month
+      
       return Array.from({ length: 3 }, (_, i) => {
         const date = subDays(today, 2 - i);
         const isFutureDate = isAfter(date, today);
@@ -79,6 +82,10 @@ export function generateExperimentData(
     const today = new Date();
     
     const generateData = () => {
+      // Calculate how many days we are into the current month
+      const currentDay = today.getDate();
+      const daysIntoMonth = currentDay - 1; // Days before today this month
+      
       return Array.from({ length: 7 }, (_, i) => {
         const date = subDays(today, 6 - i);
         const isFutureDate = isAfter(date, today);

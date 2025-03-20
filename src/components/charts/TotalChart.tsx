@@ -38,13 +38,14 @@ export const TotalChart = ({
   const isDiagnosticPage = [
     "/client-connections",
     "/server-mau",
-    "/peak-server-connections"
+    "/peak-server-connections",
+    "/service-requests"
   ].includes(location.pathname);
 
   // Transform data for cumulative view using the same function as other charts
-  // For 30-day view with resets, we need to handle the data differently
+  // Always use handleResets=true to be consistent across all pages
   const transformedData = viewType === 'cumulative' 
-    ? transformData(data, viewType, true, isDiagnosticPage) // Pass isDiagnosticPage to handle resets differently
+    ? transformData(data, viewType, true, isDiagnosticPage) 
     : data;
     
   // Calculate max value based on transformed data
@@ -76,4 +77,3 @@ export const TotalChart = ({
     </div>
   );
 };
-
