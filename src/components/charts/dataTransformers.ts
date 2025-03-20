@@ -1,4 +1,3 @@
-
 import { format, parse, getDate } from 'date-fns';
 
 export const getRequestStatus = (value: number) => {
@@ -31,64 +30,30 @@ export const transformData = (
   // Track reset points for annotations
   const resetPoints: string[] = [];
 
-  // Skip processing if there's no data
-  if (!data.length) return [];
-
   // Get the first day from the data to check if we're starting mid-month
   const firstDay = data[0]?.day;
+  const isStartingMidMonth = firstDay && !firstDay.includes('1') && !firstDay.endsWith(' 1');
   
-  // Check if the first day is NOT the first day of a month
-  // This checks patterns like "Jan 1", "February 1", or just "1" for day number
-  const isStartingMidMonth = firstDay && 
-    !firstDay.includes(' 1') && 
-    !firstDay.endsWith(' 1') && 
-    firstDay !== '1';
-  
-  // Calculate accumulated value before our data window
+  // Start with the actual values that were accumulated before our data window
   let accumulatedValueBeforeWindow = 0;
   
   // If we're starting in the middle of a month, we should include previous days' values
+  // This makes the chart not start at 0 when viewing mid-month data
+  // In real implementation, this would come from the API, but for this demo we'll simulate it
   if (isStartingMidMonth) {
-    // Get the day number from the first day (e.g., extract "15" from "Jan 15")
-    let dayNumber = 1;
-    
-    if (firstDay.includes(' ')) {
-      // Format like "Jan 15"
-      const parts = firstDay.split(' ');
-      if (parts.length > 1) {
-        dayNumber = parseInt(parts[1]);
-      }
-    } else if (/^\d+$/.test(firstDay)) {
-      // Just a number like "15"
-      dayNumber = parseInt(firstDay);
-    } else {
-      // Try to extract any number from the string
-      const match = firstDay.match(/\d+/);
-      if (match) {
-        dayNumber = parseInt(match[0]);
-      }
-    }
-    
-    // Get average daily value from the first few data points that are not null
-    const nonNullValues = data
-      .filter(d => d.value !== null)
-      .slice(0, Math.min(5, data.length));
-      
+    // Estimate a reasonable starting value based on the first few data points
+    // In a real app, this would come from your backend
+    const nonNullValues = data.filter(d => d.value !== null).slice(0, 3);
     if (nonNullValues.length > 0) {
       const avgDailyValue = nonNullValues.reduce((sum, item) => sum + (item.value || 0), 0) / nonNullValues.length;
-      // Estimate accumulated value based on day number (e.g., if it's the 15th, we'd have ~14 days of data already)
+      // Estimate based on the day number (e.g., if it's the 15th, we'd have ~14 days of data already)
+      const dayNumber = parseInt(firstDay?.match(/\d+/)?.[0] || '1');
       accumulatedValueBeforeWindow = Math.round(avgDailyValue * (dayNumber - 1));
-      
-      // Ensure it's a positive value
-      accumulatedValueBeforeWindow = Math.max(0, accumulatedValueBeforeWindow);
-      
-      console.log(`Starting mid-month on day ${dayNumber}, estimated accumulated value: ${accumulatedValueBeforeWindow}`);
     }
   }
 
-  // Now transform the data to cumulative values
   const result = data.reduce((acc, curr, index) => {
-    // For null values, just pass them through
+    // Always include the day, but set future dates or null values to null
     if (curr.value === null) {
       return [...acc, {
         day: curr.day,
@@ -96,11 +61,15 @@ export const transformData = (
       }];
     }
     
-    // Is this a month label (for Last 12 Months view) or a date with a month name?
-    const isMonthlyView = curr.day.includes('Month') || 
-                          /Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec/.test(curr.day);
+    // For Last 12 Months view, treat each month as its own cumulative sequence
+    // if the day includes a "Month" label, it's from the Last 12 Months view
+    const isLast12MonthsView = curr.day.includes('Month') || curr.day.includes('Jan') || curr.day.includes('Feb') || 
+                              curr.day.includes('Mar') || curr.day.includes('Apr') || curr.day.includes('May') || 
+                              curr.day.includes('Jun') || curr.day.includes('Jul') || curr.day.includes('Aug') || 
+                              curr.day.includes('Sep') || curr.day.includes('Oct') || curr.day.includes('Nov') || 
+                              curr.day.includes('Dec');
     
-    // Check if it's the first day of the month (date format like "Jan 1", "Feb 1", etc.)
+    // Check if it's the first day of the month (when a date looks like "Jan 1", "Feb 1", etc.)
     const isFirstOfMonth = curr.day.match(/ 1$/);
     
     if (index === 0) {
@@ -111,11 +80,10 @@ export const transformData = (
       }];
     } else {
       const previousItem = acc[index - 1];
-      const previousValue = previousItem && previousItem.value !== null 
-        ? previousItem.value 
-        : accumulatedValueBeforeWindow;
+      const previousValue = previousItem && previousItem.value !== null ? previousItem.value : accumulatedValueBeforeWindow;
       
-      // Reset cumulative value if it's the first day of a month AND we should handle resets
+      // Reset cumulative value if it's the first day of a month in trailing 30-day view
+      // and shouldHandleResets is true (specifically for plan usage charts)
       if (shouldHandleResets && isFirstOfMonth) {
         // Add to our reset points array for annotation
         resetPoints.push(curr.day);
@@ -134,16 +102,6 @@ export const transformData = (
       }];
     }
   }, [] as Array<{ day: string; value: number | null, isResetPoint?: boolean }>);
-
-  // Logging to help with debugging
-  if (isStartingMidMonth) {
-    console.log('Cumulative data with mid-month start:', {
-      firstDay,
-      accumulatedValueBeforeWindow,
-      firstDataPoint: result[0],
-      lastDataPoint: result[result.length - 1]
-    });
-  }
 
   return result;
 };
