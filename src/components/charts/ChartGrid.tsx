@@ -3,6 +3,7 @@ import { SmallMultiple } from "@/components/SmallMultiple";
 import { ChartSearch } from "@/components/charts/ChartSearch";
 import { LayoutToggle } from "@/components/charts/LayoutToggle";
 import { useState } from "react";
+import { transformData } from "@/components/charts/dataTransformers";
 
 interface ChartGroup {
   id: string;
@@ -55,26 +56,33 @@ export const ChartGrid = ({
     }
   };
 
-  // Calculate the shared maximum value for all charts based on the highest value chart
+  // Calculate the shared maximum value for all charts
   const calculateSharedMaxValue = () => {
     if (filteredGroups.length === 0) return maxValue;
     
-    // For each chart, determine its maximum value based on the view type
-    const chartMaxValues = filteredGroups.map(group => {
-      if (viewType === 'net-new') {
-        return Math.max(...group.data.map(d => d.value), 0);
-      } else {
-        // For cumulative, calculate the sum
-        return group.data.reduce((sum, curr) => sum + curr.value, 0);
-      }
-    });
+    // For cumulative view, we need to calculate the maximum possible accumulated value for each chart
+    if (viewType === 'cumulative') {
+      // Transform each chart's data to get cumulative values
+      const cumulativeMaxValues = filteredGroups.map(group => {
+        const transformedData = transformData(group.data, 'cumulative', true);
+        return Math.max(...transformedData.map(d => d.value !== null ? d.value : 0), 0);
+      });
+      
+      // Return the highest value among all charts
+      return Math.max(...cumulativeMaxValues, 0);
+    }
     
-    // Return the highest value among all charts
-    return Math.max(...chartMaxValues, 0);
+    // For net-new view, find the highest individual value
+    return Math.max(...filteredGroups.flatMap(group => 
+      group.data.map(d => d.value)
+    ), 0);
   };
   
   // Get the shared max value for all small charts
   const sharedMaxValue = calculateSharedMaxValue();
+  
+  // Use the higher of the calculated shared max or the provided maxValue
+  const effectiveMaxValue = Math.max(sharedMaxValue, maxValue);
 
   return (
     <>
@@ -99,7 +107,7 @@ export const ChartGrid = ({
             color="#2AB4FF"
             unit={unitLabel}
             viewType={viewType}
-            maxValue={sharedMaxValue}
+            maxValue={effectiveMaxValue}
             chartType={chartType}
             chartRef={chartRefs.current[group.title]}
             onExport={onExportChart}

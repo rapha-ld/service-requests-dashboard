@@ -65,18 +65,19 @@ export const ChartComponent = ({
     ? threshold 
     : maxValue;
   
-  let ChartComponent;
-  let DataComponent;
+  // Determine which chart component to use based on chartType
+  let ChartComp: typeof AreaChart | typeof BarChart | typeof LineChart;
+  let DataComp: typeof Area | typeof Bar | typeof Line;
   
   if (chartType === 'area') {
-    ChartComponent = AreaChart;
-    DataComponent = Area;
+    ChartComp = AreaChart;
+    DataComp = Area;
   } else if (chartType === 'bar') {
-    ChartComponent = BarChart;
-    DataComponent = Bar;
-  } else if (chartType === 'line') {
-    ChartComponent = LineChart;
-    DataComponent = Line;
+    ChartComp = BarChart;
+    DataComp = Bar;
+  } else { // line is the default
+    ChartComp = LineChart;
+    DataComp = Line;
   }
 
   const calculateXAxisInterval = () => {
@@ -91,7 +92,7 @@ export const ChartComponent = ({
 
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <ChartComponent ref={chartRef} data={transformedData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
+      <ChartComp ref={chartRef} data={transformedData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
         <defs>
           <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#30459B" stopOpacity={0.5} />
@@ -202,7 +203,7 @@ export const ChartComponent = ({
              />
            );
          })}
-      </ChartComponent>
+      </ChartComp>
     </ResponsiveContainer>
   );
 };
