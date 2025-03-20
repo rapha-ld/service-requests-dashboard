@@ -26,8 +26,7 @@ export function generateExperimentData(
         const isFutureDate = isAfter(date, today);
         const dayOfMonth = getDate(date);
         
-        // Ensure proper formatting for the 1st of the month to ensure annotations work
-        // Format as "MMM d" to get format like "Jan 1", "Feb 1", etc.
+        // Reset to 0 on the 1st of each month
         return {
           day: format(date, 'MMM d'),
           value: isFutureDate ? null : (dayOfMonth === 1 ? 0 : Math.floor(Math.random() * 100))
