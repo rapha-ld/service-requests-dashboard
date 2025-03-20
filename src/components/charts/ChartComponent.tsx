@@ -1,18 +1,10 @@
 
 import { useRef } from 'react';
-import { Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, Label } from 'recharts';
 import { CustomTooltip } from './CustomTooltip';
+import { formatYAxisTick } from './formatters';
+import { transformData, calculateAverage } from './dataTransformers';
 import { useLocation } from 'react-router-dom';
-import { DataComponent, getChartComponent } from './ChartTypes';
-import { ChartGradients } from './ChartGradients';
-import { ChartAxes } from './ChartAxes';
-import { ThresholdLine, AverageLine, ResetPoints } from './ReferenceLines';
-import { 
-  calculateXAxisInterval, 
-  prepareChartData, 
-  getEffectiveMaxValue,
-  isDiagnosticRoute 
-} from './ChartHelpers';
 
 interface ChartComponentProps {
   data: Array<{ day: string; value: number | null }>;
@@ -37,54 +29,180 @@ export const ChartComponent = ({
 }: ChartComponentProps) => {
   const location = useLocation();
   
-  // Determine if we're on a diagnostic page
-  const isDiagnosticPage = isDiagnosticRoute(location.pathname);
+  // Define which routes are diagnostic pages
+  const isDiagnosticPage = [
+    "/client-connections",
+    "/server-mau",
+    "/peak-server-connections",
+    "/service-requests"
+  ].includes(location.pathname);
   
-  // Prepare chart data
-  const { transformedData, resetPoints } = prepareChartData(data, viewType, isDiagnosticPage);
+  // Define which routes are plan usage pages
+  const isPlanUsagePage = [
+    "/overview",
+    "/client-mau",
+    "/experiments",
+    "/data-export",
+    "/service-connections"
+  ].includes(location.pathname);
   
-  // Calculate effective maximum value
-  const effectiveMaxValue = getEffectiveMaxValue(maxValue, showThreshold, threshold);
+  const average = calculateAverage(data);
   
-  // Calculate x-axis tick interval
-  const xAxisInterval = calculateXAxisInterval(transformedData.length);
+  // Always get the reset points from the transformed data for both view types
+  const transformedDataWithResets = transformData(data, 'cumulative', true, false); // Don't skip resets for annotations
   
-  // Get the appropriate chart component based on chart type
-  const ChartComp = getChartComponent(chartType);
+  // Get reset points from the transformed data
+  const resetPoints = transformedDataWithResets
+    .filter((item: any) => item.isResetPoint)
+    .map((item: any) => item.day);
+  
+  // Use the appropriate data based on view type
+  const transformedData = viewType === 'cumulative' 
+    ? transformedDataWithResets 
+    : transformData(data, viewType, true, isDiagnosticPage);
+  
+  const effectiveMaxValue = showThreshold && threshold && threshold > maxValue 
+    ? threshold 
+    : maxValue;
+  
+  // Determine which chart component to use based on chartType
+  let ChartComp: typeof AreaChart | typeof BarChart | typeof LineChart;
+  let DataComp: typeof Area | typeof Bar | typeof Line;
+  
+  if (chartType === 'area') {
+    ChartComp = AreaChart;
+    DataComp = Area;
+  } else if (chartType === 'bar') {
+    ChartComp = BarChart;
+    DataComp = Bar;
+  } else { // line is the default
+    ChartComp = LineChart;
+    DataComp = Line;
+  }
+
+  const calculateXAxisInterval = () => {
+    const dataLength = transformedData.length;
+    if (dataLength <= 7) return 0;
+    if (dataLength <= 14) return 1;
+    if (dataLength <= 30) return 2;
+    return Math.floor(dataLength / 10);
+  };
+
+  const xAxisInterval = calculateXAxisInterval();
 
   return (
     <ResponsiveContainer width="100%" height="100%">
       <ChartComp ref={chartRef} data={transformedData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
-        <ChartGradients />
-        
-        <ChartAxes 
-          transformedData={transformedData} 
-          effectiveMaxValue={effectiveMaxValue}
-          xAxisInterval={xAxisInterval}
+        <defs>
+          <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#30459B" stopOpacity={0.5} />
+            <stop offset="100%" stopColor="#30459B" stopOpacity={0} />
+          </linearGradient>
+        </defs>
+        <XAxis 
+          dataKey="day" 
+          tick={{ fontSize: 10 }}
+          interval={xAxisInterval}
+          tickLine={false}
+          stroke="currentColor"
+          className="text-muted-foreground"
+          ticks={transformedData.length > 0 ? 
+            [transformedData[0].day, 
+             ...transformedData.slice(1, -1).filter((_, i) => (i + 1) % (xAxisInterval + 1) === 0).map(d => d.day),
+             transformedData[transformedData.length - 1].day] 
+            : []}
         />
-        
+        <YAxis 
+          tick={{ fontSize: 10 }}
+          tickLine={false}
+          axisLine={false}
+          domain={[0, effectiveMaxValue]}
+          width={40}
+          stroke="currentColor"
+          className="text-muted-foreground"
+          tickFormatter={formatYAxisTick}
+        />
         <Tooltip content={<CustomTooltip unit={unit} />} />
-        
-        <DataComponent 
-          type={chartType}
-          dataKey="value"
-          stroke="#30459B"
-          strokeWidth={2}
-          connectNulls={true}
-        />
-        
+        {chartType === 'area' && (
+          <Area
+            type="monotone"
+            dataKey="value"
+            stroke="#30459B"
+            fill="url(#colorGradient)"
+            strokeWidth={2}
+            connectNulls={true}
+          />
+        )}
+        {chartType === 'bar' && (
+          <Bar
+            dataKey="value"
+            fill="#30459B"
+            radius={[1.5, 1.5, 0, 0]}
+          />
+        )}
+        {chartType === 'line' && (
+          <Line
+            type="monotone"
+            dataKey="value"
+            stroke="#30459B"
+            strokeWidth={2}
+            dot={false}
+            connectNulls={true}
+          />
+        )}
         {viewType === 'net-new' && (
-          <AverageLine data={data} unit={unit} />
+          <ReferenceLine 
+            y={average}
+            stroke="currentColor"
+            strokeDasharray="3 3"
+            strokeOpacity={0.5}
+            label={{
+              value: `Avg: ${average.toFixed(1)}${unit}`,
+              fill: 'hsl(var(--secondary-foreground))',
+              fontSize: 10,
+              position: 'insideTopRight',
+              style: { zIndex: 10 },
+              dy: -15
+            }}
+          />
         )}
-        
         {showThreshold && threshold && (
-          <ThresholdLine threshold={threshold} />
+          <ReferenceLine 
+            y={threshold}
+            stroke="#DB2251"
+            strokeWidth={1.5}
+            strokeDasharray="3 3"
+            label={{
+              value: `Limit: ${threshold.toLocaleString()}${unit}`,
+              fill: '#DB2251',
+              fontSize: 10,
+              position: 'insideTopRight',
+              style: { zIndex: 10 },
+            }}
+          />
         )}
-        
-        <ResetPoints 
-          resetPoints={resetPoints} 
-          transformedData={transformedData} 
-        />
+        {resetPoints.map((day, index) => {
+           const dataIndex = transformedData.findIndex((d: any) => d.day === day);
+           if (dataIndex === -1) return null;
+           if (dataIndex === 0) return null;
+           return (
+             <ReferenceLine 
+               key={`reset-${index}`}
+               x={day}
+               stroke="hsl(var(--muted-foreground))"
+               strokeWidth={1.5}
+               label={{
+                 value: "Monthly usage reset",
+                 fill: 'hsl(var(--muted-foreground))',
+                 fontSize: 9,
+                 position: 'insideTopLeft',
+                 offset: 8,
+                 style: { zIndex: 10, textAnchor: 'start' },
+                 dy: -4
+               }}
+             />
+           );
+         })}
       </ChartComp>
     </ResponsiveContainer>
   );
