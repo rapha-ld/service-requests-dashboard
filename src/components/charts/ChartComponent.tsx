@@ -29,24 +29,27 @@ export const ChartComponent = ({
 }: ChartComponentProps) => {
   const location = useLocation();
   
+  // Define which routes are diagnostic pages
   const isDiagnosticPage = [
     "/client-connections",
     "/server-mau",
-    "/peak-server-connections"
+    "/peak-server-connections",
+    "/service-requests"
   ].includes(location.pathname);
   
+  // Define which routes are plan usage pages
   const isPlanUsagePage = [
     "/overview",
     "/client-mau",
     "/experiments",
     "/data-export",
-    "/service-requests"
+    "/service-connections"
   ].includes(location.pathname);
   
   const average = calculateAverage(data);
   
   // Always get the reset points from the transformed data for both view types
-  const transformedDataWithResets = transformData(data, 'cumulative', true, isDiagnosticPage);
+  const transformedDataWithResets = transformData(data, 'cumulative', true, false); // Don't skip resets for annotations
   
   // Get reset points from the transformed data
   const resetPoints = transformedDataWithResets
@@ -177,8 +180,7 @@ export const ChartComponent = ({
             }}
           />
         )}
-        {isPlanUsagePage && 
-         resetPoints.map((day, index) => {
+        {resetPoints.map((day, index) => {
            const dataIndex = transformedData.findIndex((d: any) => d.day === day);
            if (dataIndex === -1) return null;
            if (dataIndex === 0) return null;
