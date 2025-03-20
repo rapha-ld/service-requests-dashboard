@@ -59,22 +59,37 @@ export const ChartGrid = ({
   const calculateSharedMaxValue = () => {
     if (filteredGroups.length === 0) return maxValue;
     
-    // For each chart, determine its maximum value based on the view type
-    const chartMaxValues = filteredGroups.map(group => {
-      if (viewType === 'net-new') {
-        return Math.max(...group.data.map(d => d.value), 0);
-      } else {
-        // For cumulative, calculate the sum
-        return group.data.reduce((sum, curr) => sum + curr.value, 0);
-      }
-    });
-    
-    // Return the highest value among all charts
-    return Math.max(...chartMaxValues, 0);
+    if (viewType === 'net-new') {
+      // For net-new view, use the provided maxValue or calculate from individual max values
+      return maxValue;
+    } else {
+      // For cumulative view, calculate the maximum cumulative value across all charts
+      // For each chart, calculate its max cumulative value
+      const chartMaxCumulativeValues = filteredGroups.map(group => {
+        let runningSum = 0;
+        let maxRunningSum = 0;
+        
+        group.data.forEach(dataPoint => {
+          if (dataPoint.value !== null && dataPoint.value !== undefined) {
+            runningSum += dataPoint.value;
+            maxRunningSum = Math.max(maxRunningSum, runningSum);
+          }
+        });
+        
+        return maxRunningSum;
+      });
+      
+      // Return the highest cumulative value across all charts
+      return Math.max(...chartMaxCumulativeValues, 0);
+    }
   };
   
   // Get the shared max value for all small charts
   const sharedMaxValue = calculateSharedMaxValue();
+  
+  // If we're in cumulative view, ensure all charts use the shared max value
+  // In net-new view, we can use the provided maxValue
+  const effectiveMaxValue = viewType === 'cumulative' ? sharedMaxValue : maxValue;
 
   return (
     <>
@@ -99,7 +114,7 @@ export const ChartGrid = ({
             color="#2AB4FF"
             unit={unitLabel}
             viewType={viewType}
-            maxValue={sharedMaxValue}
+            maxValue={effectiveMaxValue}
             chartType={chartType}
             chartRef={chartRefs.current[group.title]}
             onExport={onExportChart}

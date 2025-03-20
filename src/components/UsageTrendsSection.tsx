@@ -23,6 +23,13 @@ interface UsageTrendsSectionProps {
 }
 
 export const UsageTrendsSection: React.FC<UsageTrendsSectionProps> = ({ chartData, metricsInfo }) => {
+  // Calculate the maximum limit across all metrics for consistent y-axis scaling
+  const maxLimit = Math.max(
+    metricsInfo.clientMAU.limit,
+    metricsInfo.experimentEvents.limit,
+    metricsInfo.dataExportEvents.limit
+  );
+
   return (
     <>
       <h3 className="text-sm font-semibold text-muted-foreground mb-9 text-left">Cumulative Monthly Usage</h3>
@@ -33,9 +40,10 @@ export const UsageTrendsSection: React.FC<UsageTrendsSectionProps> = ({ chartDat
           color="#394497"
           unit=" users"
           viewType="cumulative"
-          maxValue={metricsInfo.clientMAU.limit}
+          maxValue={maxLimit}
           chartType="area"
           showThreshold={true}
+          threshold={metricsInfo.clientMAU.limit}
           className="mb-12"
         />
         <SmallMultiple
@@ -44,9 +52,10 @@ export const UsageTrendsSection: React.FC<UsageTrendsSectionProps> = ({ chartDat
           color="#394497"
           unit=""
           viewType="cumulative"
-          maxValue={metricsInfo.experimentEvents.limit}
+          maxValue={maxLimit}
           chartType="area"
           showThreshold={true}
+          threshold={metricsInfo.experimentEvents.limit}
           className="mb-12"
         />
         <SmallMultiple
@@ -55,9 +64,10 @@ export const UsageTrendsSection: React.FC<UsageTrendsSectionProps> = ({ chartDat
           color="#394497"
           unit=""
           viewType="cumulative"
-          maxValue={metricsInfo.dataExportEvents.limit}
+          maxValue={maxLimit}
           chartType="area"
           showThreshold={true}
+          threshold={metricsInfo.dataExportEvents.limit}
           className="mb-12"
         />
       </div>
