@@ -181,13 +181,13 @@ export const ChartComponent = ({
                stroke="hsl(var(--muted-foreground))"
                strokeWidth={1.5}
                label={{
-                 value: "Monthly usage\nresets here",
+                 value: "Monthly usage reset",
                  fill: 'hsl(var(--muted-foreground))',
                  fontSize: 9,
                  position: 'insideTopLeft',
-                 offset: 0,
+                 offset: 8,
                  style: { zIndex: 10, textAnchor: 'start' },
-                 dy: 20
+                 dy: 8
                }}
              />
            );
