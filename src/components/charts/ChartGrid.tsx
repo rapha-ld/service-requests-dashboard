@@ -67,32 +67,11 @@ export const ChartGrid = ({
   const calculateSharedMaxValue = () => {
     if (filteredGroups.length === 0) return maxValue;
     
-    // For time ranges like 3-day and 7-day, ensure proper scale calculation
-    if (['3-day', '7-day'].includes(timeRange)) {
-      // For cumulative view, calculate the maximum possible accumulated value
-      if (viewType === 'cumulative') {
-        // Transform each chart's data to get cumulative values
-        const cumulativeMaxValues = filteredGroups.map(group => {
-          // Don't handle resets for 3-day and 7-day views
-          const transformedData = transformData(group.data, 'cumulative', false);
-          return Math.max(...transformedData.map(d => d.value !== null ? d.value : 0), 0);
-        });
-        
-        // Return the highest value among all charts
-        return Math.max(...cumulativeMaxValues, 0);
-      }
-      
-      // For net-new view, find the highest individual value
-      return Math.max(...filteredGroups.flatMap(group => 
-        group.data.map(d => d.value !== null ? d.value : 0)
-      ), 0);
-    }
-    
     // For cumulative view, we need to calculate the maximum possible accumulated value for each chart
     if (viewType === 'cumulative') {
       // Transform each chart's data to get cumulative values
       const cumulativeMaxValues = filteredGroups.map(group => {
-        const transformedData = transformData(group.data, 'cumulative', true, false);
+        const transformedData = transformData(group.data, 'cumulative', true);
         return Math.max(...transformedData.map(d => d.value !== null ? d.value : 0), 0);
       });
       
@@ -102,7 +81,7 @@ export const ChartGrid = ({
     
     // For net-new view, find the highest individual value
     return Math.max(...filteredGroups.flatMap(group => 
-      group.data.map(d => d.value !== null ? d.value : 0)
+      group.data.map(d => d.value)
     ), 0);
   };
   
@@ -142,7 +121,6 @@ export const ChartGrid = ({
             useViewDetails={useViewDetailsButton}
             showThreshold={showThreshold}
             threshold={threshold}
-            timeRange={timeRange}
           />
         ))}
       </div>

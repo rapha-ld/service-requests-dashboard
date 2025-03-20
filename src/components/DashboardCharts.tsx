@@ -140,8 +140,6 @@ export const DashboardCharts = ({
           onViewDetails={handleViewDetails}
           useViewDetailsButton={useViewDetailsButton}
           unitLabel={unitLabel}
-          showThreshold={showThreshold}
-          threshold={threshold}
           timeRange={timeRange}
         />
       )}
