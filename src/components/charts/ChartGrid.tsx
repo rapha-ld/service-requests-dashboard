@@ -13,35 +13,42 @@ interface ChartGroup {
 
 interface ChartGridProps {
   sortedGroups: ChartGroup[];
-  layoutMode: 'compact' | 'expanded';
   viewType: 'net-new' | 'cumulative';
   chartType: 'area' | 'bar' | 'line';
   maxValue: number;
   chartRefs: React.MutableRefObject<{ [key: string]: any }>;
   onExportChart: (title: string) => void;
+  expandedCharts?: string[];
+  onToggleExpand?: (id: string) => void;
+  formatValue?: (value: number) => string;
+  onViewDetails?: (dimensionValue: string) => void;
   useViewDetailsButton: boolean;
   unitLabel: string;
   showThreshold?: boolean;
   threshold?: number;
   individualMaxValues?: boolean;
-  onLayoutModeChange: (mode: 'compact' | 'expanded') => void;
+  timeRange?: string;
 }
 
 export const ChartGrid = ({
   sortedGroups,
-  layoutMode,
   viewType,
   chartType,
   maxValue,
   chartRefs,
   onExportChart,
+  expandedCharts = [],
+  onToggleExpand = () => {},
+  formatValue = (value) => value.toLocaleString(),
+  onViewDetails = () => {},
   useViewDetailsButton,
   unitLabel,
   showThreshold = false,
   threshold,
   individualMaxValues = false,
-  onLayoutModeChange
+  timeRange = 'month-to-date'
 }: ChartGridProps) => {
+  const [layoutMode, setLayoutMode] = useState<'compact' | 'expanded'>('compact');
   const [filteredGroups, setFilteredGroups] = useState(sortedGroups);
 
   // Handle search filtering
@@ -90,7 +97,7 @@ export const ChartGrid = ({
         <ChartSearch onSearch={handleSearch} />
         <LayoutToggle 
           layoutMode={layoutMode}
-          setLayoutMode={onLayoutModeChange}
+          setLayoutMode={setLayoutMode}
         />
       </div>
       
