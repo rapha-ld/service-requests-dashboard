@@ -1,3 +1,4 @@
+
 import { useRef } from 'react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, Label } from 'recharts';
 import { CustomTooltip } from './CustomTooltip';
@@ -184,9 +185,10 @@ export const ChartComponent = ({
                  value: "Monthly usage\nresets here",
                  fill: '#4CAF50',
                  fontSize: 9,
-                 position: 'top',
-                 offset: 10,
-                 style: { zIndex: 10, textAnchor: 'end' },
+                 position: 'insideTopLeft',
+                 offset: 0,
+                 style: { zIndex: 10, textAnchor: 'start' },
+                 dy: 20
                }}
              />
            );
