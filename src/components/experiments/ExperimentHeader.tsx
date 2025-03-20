@@ -1,4 +1,3 @@
-
 import { DateRange } from "@/types/mauTypes";
 import { TimeRangeControls } from "@/components/dashboard/TimeRangeControls";
 import { MonthSelector } from "@/components/dashboard/MonthSelector";
@@ -9,11 +8,11 @@ interface ExperimentHeaderProps {
   viewType: 'net-new' | 'cumulative';
   selectedMonth: number;
   sortDirection: 'desc' | 'asc';
-  timeRange: 'month-to-date' | 'last-12-months' | 'rolling-30-day' | 'custom';
+  timeRange: 'month-to-date' | 'last-12-months' | 'rolling-30-day' | '3-day' | '7-day' | 'custom';
   onViewTypeChange: (value: 'net-new' | 'cumulative') => void;
   onSortDirectionChange: () => void;
   onMonthChange: (value: string) => void;
-  onTimeRangeChange: (value: 'month-to-date' | 'last-12-months' | 'rolling-30-day' | 'custom') => void;
+  onTimeRangeChange: (value: 'month-to-date' | 'last-12-months' | 'rolling-30-day' | '3-day' | '7-day' | 'custom') => void;
   customDateRange?: DateRange;
   onCustomDateRangeChange?: (dateRange: DateRange) => void;
   showViewTypeToggle?: boolean;

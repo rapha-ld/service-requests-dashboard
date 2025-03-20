@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { DateRangePicker } from "@/components/mau/DateRangePicker";
 import { DateRange } from "@/types/mauTypes";
-import { TimeRangeType } from "@/hooks/useExperimentData";
+import { TimeRangeType } from "@/types/mauTypes";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { CalendarIcon } from "lucide-react";
 
