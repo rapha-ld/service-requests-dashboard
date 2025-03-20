@@ -17,8 +17,7 @@ export const generateLast12MonthsData = (currentData: Record<string, any[]>) => 
   );
 };
 
-// Generate data for 3-day view with values that represent daily increments
-// These will be properly accumulated from the beginning of month in the transformData function
+// Generate data for 3-day view that represents exactly the last 3 days
 export const generate3DayData = (currentData: Record<string, any[]>) => {
   const today = new Date();
   
@@ -28,21 +27,18 @@ export const generate3DayData = (currentData: Record<string, any[]>) => {
       Array.from({ length: 3 }, (_, i) => {
         const date = subDays(today, 2 - i);
         const isFutureDate = isAfter(date, today);
-        const dayOfMonth = getDate(date);
         
-        // For consistency with other views, generate daily values that will be accumulated
-        // based on the day of month in the transformData function
+        // Using a specific value for each of the 3 days - no relation to month-to-date
         return {
           day: format(date, 'MMM d'),
-          value: isFutureDate ? null : Math.floor(Math.random() * 100 + 50)
+          value: isFutureDate ? null : Math.floor(Math.random() * 80 + 20) // Values between 20-100
         };
       })
     ])
   );
 };
 
-// Generate data for 7-day view with values that represent daily increments
-// These will be properly accumulated from the beginning of month in the transformData function
+// Generate data for 7-day view that represents exactly the last 7 days
 export const generate7DayData = (currentData: Record<string, any[]>) => {
   const today = new Date();
   
@@ -52,13 +48,11 @@ export const generate7DayData = (currentData: Record<string, any[]>) => {
       Array.from({ length: 7 }, (_, i) => {
         const date = subDays(today, 6 - i);
         const isFutureDate = isAfter(date, today);
-        const dayOfMonth = getDate(date);
         
-        // For consistency with other views, generate daily values that will be accumulated
-        // based on the day of month in the transformData function
+        // Using a specific value for each of the 7 days - no relation to month-to-date
         return {
           day: format(date, 'MMM d'),
-          value: isFutureDate ? null : Math.floor(Math.random() * 100 + 50)
+          value: isFutureDate ? null : Math.floor(Math.random() * 80 + 20) // Values between 20-100
         };
       })
     ])

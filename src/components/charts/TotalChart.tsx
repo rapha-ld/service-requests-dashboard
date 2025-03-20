@@ -16,6 +16,7 @@ interface TotalChartProps {
   threshold?: number;
   showTitle?: boolean;
   chartHeight?: number;
+  timeRange?: string;
 }
 
 export const TotalChart = ({
@@ -30,7 +31,8 @@ export const TotalChart = ({
   showThreshold = false,
   threshold,
   showTitle = true,
-  chartHeight = 192 // Default height
+  chartHeight = 192, // Default height
+  timeRange = 'month-to-date'
 }: TotalChartProps) => {
   const location = useLocation();
   
@@ -42,16 +44,18 @@ export const TotalChart = ({
     "/service-requests"
   ].includes(location.pathname);
 
-  // Transform data for cumulative view using the same function as other charts
-  // Always use handleResets=true to be consistent across all pages
-  const transformedData = viewType === 'cumulative' 
-    ? transformData(data, viewType, true, isDiagnosticPage) 
-    : data;
+  // For 3-day and 7-day views, we don't need to accumulate values since they're exact periods
+  // but for other views we maintain the cumulative behavior
+  const shouldAccumulate = viewType === 'cumulative' && 
+    !['3-day', '7-day'].includes(timeRange as string);
+  
+  // Transform data based on the time range and view type
+  const transformedData = shouldAccumulate
+    ? transformData(data, viewType, true, isDiagnosticPage)
+    : viewType === 'net-new' ? data : transformData(data, viewType, false, false);
     
   // Calculate max value based on transformed data
-  const maxValue = viewType === 'cumulative' 
-    ? Math.max(...transformedData.map(d => d.value !== null ? d.value : 0))
-    : Math.max(...data.map(d => d.value));
+  const maxValue = Math.max(...transformedData.map(d => (d.value !== null ? d.value : 0)));
 
   // If threshold is provided and showing threshold is enabled, ensure maxValue is at least the threshold
   const effectiveMaxValue = showThreshold && threshold && threshold > maxValue ? threshold : maxValue;

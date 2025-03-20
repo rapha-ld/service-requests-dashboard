@@ -1,36 +1,31 @@
-
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { TotalChart } from "@/components/charts/TotalChart";
-import { LayoutToggle } from "@/components/charts/LayoutToggle";
 import { ChartGrid } from "@/components/charts/ChartGrid";
-import { getTotalTitle } from "@/utils/chartUtils";
 import { ViewTypeToggle } from "@/components/dashboard/ViewTypeToggle";
-import { TimeRangeMessage } from "@/components/dashboard/TimeRangeMessage";
-import { TimeRangeType } from "@/types/mauTypes";
-
-interface ChartGroup {
-  id: string;
-  title: string;
-  data: Array<{ day: string; value: number }>;
-}
+import { SmallMultiple } from "@/components/SmallMultiple";
+import { transformData } from "@/components/charts/dataTransformers";
+import { Button } from "@/components/ui/button";
+import { MousePointerSquare } from "lucide-react";
+import { useLocation } from "react-router-dom";
+import { useTheme } from "@/hooks/useTheme";
 
 interface DashboardChartsProps {
-  allEnvironmentsData: Array<{ day: string; value: number }>;
-  sortedGroups: ChartGroup[];
+  allEnvironmentsData: Array<{ day: string, value: number }>;
+  sortedGroups: Array<any>;
   viewType: 'net-new' | 'cumulative';
   chartType: 'area' | 'bar' | 'line';
   maxValue: number;
   grouping: 'all' | 'environment' | 'relayId' | 'userAgent';
   chartRefs: React.MutableRefObject<{ [key: string]: any }>;
   onExportChart: (title: string) => void;
+  showOnlyTotal?: boolean;
   useViewDetailsButton?: boolean;
   unitLabel?: string;
   showThreshold?: boolean;
   threshold?: number;
-  showOnlyTotal?: boolean;
   onViewTypeChange?: (value: 'net-new' | 'cumulative') => void;
   disableViewTypeToggle?: boolean;
-  timeRange?: TimeRangeType;
+  timeRange?: string;
 }
 
 export const DashboardCharts = ({
@@ -42,76 +37,111 @@ export const DashboardCharts = ({
   grouping,
   chartRefs,
   onExportChart,
+  showOnlyTotal = false,
   useViewDetailsButton = true,
-  unitLabel = "reqs",
+  unitLabel = "daily active users",
   showThreshold = false,
   threshold,
-  showOnlyTotal = false,
   onViewTypeChange,
   disableViewTypeToggle = false,
-  timeRange
+  timeRange = 'month-to-date'
 }: DashboardChartsProps) => {
-  const [layoutMode, setLayoutMode] = useState<'compact' | 'expanded'>('compact');
-  const totalTitle = getTotalTitle(grouping);
+  const { isDarkMode } = useTheme();
+  const location = useLocation();
+  const [expandedCharts, setExpandedCharts] = useState<string[]>([]);
   
-  // Only show the threshold on the Total chart when viewType is cumulative
-  const shouldShowThreshold = showThreshold && viewType === 'cumulative';
-  
-  // Apply doubled height when "All dimensions" is selected
-  const chartHeight = grouping === 'all' ? 384 : 192; // 192 * 2 = 384
+  // Define which routes are diagnostic pages
+  const isDiagnosticPage = [
+    "/client-connections",
+    "/server-mau",
+    "/peak-server-connections",
+    "/service-requests"
+  ].includes(location.pathname);
 
-  // For 30-day timeframe, always show the toggle regardless of disableViewTypeToggle
-  const showToggle = timeRange === 'rolling-30-day' || (onViewTypeChange && !disableViewTypeToggle);
+  // Reset expanded charts when view changes
+  useEffect(() => {
+    setExpandedCharts([]);
+  }, [viewType, chartType, grouping]);
+
+  // Handle chart expand/collapse
+  const toggleChartExpansion = (id: string) => {
+    setExpandedCharts(prev => 
+      prev.includes(id) 
+        ? prev.filter(chartId => chartId !== id) 
+        : [...prev, id]
+    );
+  };
+
+  // Format value for tooltips
+  const formatValue = (value: number) => {
+    return value.toLocaleString();
+  };
+
+  // Handle "View Details" button click
+  const handleViewDetails = (dimensionValue: string) => {
+    const baseUrl = location.pathname;
+    let viewDetailsUrl = `${baseUrl}/details?dimension=${grouping}&value=${dimensionValue}`;
+    
+    // Open the details page in a new tab
+    window.open(viewDetailsUrl, '_blank');
+  };
+
+  // Render view type toggle if not disabled
+  const renderViewTypeToggle = () => {
+    if (disableViewTypeToggle || !onViewTypeChange) {
+      return null;
+    }
+
+    return (
+      <ViewTypeToggle
+        viewType={viewType}
+        onViewTypeChange={onViewTypeChange}
+        visible={true}
+      />
+    );
+  };
 
   return (
-    <>
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center space-x-4">
-          {showToggle && onViewTypeChange && (
-            <ViewTypeToggle
-              viewType={viewType}
-              onViewTypeChange={onViewTypeChange}
-              visible={true}
-            />
-          )}
-          
-          {timeRange && (
-            <TimeRangeMessage timeRange={timeRange} viewType={viewType} />
-          )}
-        </div>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        {renderViewTypeToggle()}
       </div>
       
-      <TotalChart
-        title={totalTitle}
-        data={allEnvironmentsData}
-        viewType={viewType}
-        chartType={chartType}
-        chartRef={chartRefs.current[totalTitle]}
-        onExportChart={onExportChart}
-        useViewDetailsButton={useViewDetailsButton}
-        unitLabel={unitLabel}
-        showThreshold={shouldShowThreshold}
-        threshold={threshold}
-        showTitle={grouping !== 'all'} // Hide title when "All dimensions" is selected
-        chartHeight={chartHeight} // Pass the height value based on grouping
-      />
-
-      {!showOnlyTotal && (
+      {/* Total Chart Section */}
+      {grouping === 'all' && allEnvironmentsData && (
+        <TotalChart
+          title="Total"
+          data={allEnvironmentsData}
+          viewType={viewType}
+          chartType={chartType}
+          chartRef={chartRefs.current.total}
+          onExportChart={onExportChart}
+          useViewDetailsButton={useViewDetailsButton}
+          unitLabel={unitLabel}
+          showThreshold={showThreshold}
+          threshold={threshold}
+          timeRange={timeRange}
+        />
+      )}
+      
+      {/* Individual Charts Grid */}
+      {!showOnlyTotal && sortedGroups && (
         <ChartGrid
-          sortedGroups={sortedGroups}
-          layoutMode={layoutMode}
+          groups={sortedGroups}
           viewType={viewType}
           chartType={chartType}
           maxValue={maxValue}
           chartRefs={chartRefs}
           onExportChart={onExportChart}
+          expandedCharts={expandedCharts}
+          onToggleExpand={toggleChartExpansion}
+          formatValue={formatValue}
+          onViewDetails={handleViewDetails}
           useViewDetailsButton={useViewDetailsButton}
           unitLabel={unitLabel}
-          showThreshold={false} // Never show threshold on individual charts
-          threshold={threshold}
-          onLayoutModeChange={setLayoutMode}
+          timeRange={timeRange}
         />
       )}
-    </>
+    </div>
   );
 };
