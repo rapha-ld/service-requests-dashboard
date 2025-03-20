@@ -1,6 +1,6 @@
 
 import { format, subMonths, subDays, isAfter, parse, getDate, getMonth } from "date-fns";
-import { getTotalValue } from "./dataTransformers";
+import { getTotalValue } from "@/components/charts/dataTransformers";
 import { TimeRangeType } from "@/hooks/useExperimentData";
 import { DateRange } from "@/types/mauTypes";
 

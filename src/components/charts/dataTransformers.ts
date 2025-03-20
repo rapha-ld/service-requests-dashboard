@@ -1,4 +1,3 @@
-
 import { format, parse, getDate, startOfMonth, differenceInDays } from 'date-fns';
 
 export const getRequestStatus = (value: number) => {
@@ -63,8 +62,6 @@ export const transformData = (
           
           // Estimate accumulated value based on days already passed
           accumulatedValueBeforeWindow = Math.round(avgDailyValue * (startDayOfMonth - 1));
-          
-          console.log(`Starting mid-month on day ${startDayOfMonth}. Estimated accumulated value: ${accumulatedValueBeforeWindow}`);
         }
       }
     }
