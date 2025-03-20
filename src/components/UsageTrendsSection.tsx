@@ -58,6 +58,10 @@ export const UsageTrendsSection: React.FC<UsageTrendsSectionProps> = ({ chartDat
   const transformedExperimentEvents = transformData(chartData.experimentEvents, 'cumulative', true, false);
   const transformedDataExportEvents = transformData(chartData.dataExportEvents, 'cumulative', true, false);
   
+  // Only show thresholds in cumulative view (which is the only view used in this component)
+  const viewType = 'cumulative';
+  const showThreshold = viewType === 'cumulative';
+  
   return (
     <>
       <h3 className="text-sm font-semibold text-muted-foreground mb-9 text-left">Cumulative Monthly Usage</h3>
@@ -70,7 +74,7 @@ export const UsageTrendsSection: React.FC<UsageTrendsSectionProps> = ({ chartDat
           viewType="cumulative"
           maxValue={sharedMaxValue}
           chartType="area"
-          showThreshold={true}
+          showThreshold={showThreshold}
           threshold={metricsInfo.clientMAU.limit}
           className="mb-12"
         />
@@ -82,7 +86,7 @@ export const UsageTrendsSection: React.FC<UsageTrendsSectionProps> = ({ chartDat
           viewType="cumulative"
           maxValue={sharedMaxValue}
           chartType="area"
-          showThreshold={true}
+          showThreshold={showThreshold}
           threshold={metricsInfo.experimentEvents.limit}
           className="mb-12"
         />
@@ -94,7 +98,7 @@ export const UsageTrendsSection: React.FC<UsageTrendsSectionProps> = ({ chartDat
           viewType="cumulative"
           maxValue={sharedMaxValue}
           chartType="area"
-          showThreshold={true}
+          showThreshold={showThreshold}
           threshold={metricsInfo.dataExportEvents.limit}
           className="mb-12"
         />

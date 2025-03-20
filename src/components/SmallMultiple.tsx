@@ -88,6 +88,9 @@ export const SmallMultiple = ({
   // Filter out null values for better visualization
   const validData = data.filter(item => item.value !== null);
 
+  // Only show threshold in cumulative view
+  const shouldShowThreshold = showThreshold && viewType === 'cumulative' && threshold !== undefined;
+
   return (
     <div className={cn("bg-card dark:bg-card/80 p-4 rounded-lg shadow-sm animate-fade-in", className)}>
       <ChartTitle title={title} useViewDetails={useViewDetails} />
@@ -98,7 +101,7 @@ export const SmallMultiple = ({
           chartType={chartType}
           maxValue={effectiveMaxValue}
           unit={unit}
-          showThreshold={showThreshold}
+          showThreshold={shouldShowThreshold}
           threshold={threshold}
           chartRef={effectiveChartRef}
           timeRange={timeRange}

@@ -61,7 +61,9 @@ export const TotalChart = ({
   const maxValue = Math.max(...transformedData.map(d => (d.value !== null ? d.value : 0)));
 
   // If threshold is provided and showing threshold is enabled, ensure maxValue is at least the threshold
-  const effectiveMaxValue = showThreshold && threshold && threshold > maxValue ? threshold : maxValue;
+  // Only apply this for cumulative view
+  const shouldShowThreshold = showThreshold && viewType === 'cumulative';
+  const effectiveMaxValue = shouldShowThreshold && threshold && threshold > maxValue ? threshold : maxValue;
 
   return (
     <div className="mb-6">
@@ -77,7 +79,7 @@ export const TotalChart = ({
         chartRef={chartRef}
         onExport={onExportChart}
         useViewDetails={useViewDetailsButton}
-        showThreshold={showThreshold}
+        showThreshold={shouldShowThreshold}
         threshold={threshold}
         chartHeight={chartHeight}
         timeRange={timeRange}

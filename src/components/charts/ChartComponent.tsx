@@ -1,4 +1,3 @@
-
 import { useRef } from 'react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, Label } from 'recharts';
 import { CustomTooltip } from './CustomTooltip';
@@ -63,7 +62,8 @@ export const ChartComponent = ({
     ? transformedDataWithResets 
     : transformData(data, viewType, true, isDiagnosticPage);
   
-  const effectiveMaxValue = showThreshold && threshold && threshold > maxValue 
+  // Only apply threshold to the max value if in cumulative view
+  const effectiveMaxValue = showThreshold && threshold && threshold > maxValue && viewType === 'cumulative'
     ? threshold 
     : maxValue;
   
@@ -184,7 +184,7 @@ export const ChartComponent = ({
             }}
           />
         )}
-        {showThreshold && threshold && (
+        {showThreshold && threshold && viewType === 'cumulative' && (
           <ReferenceLine 
             y={threshold}
             stroke="#DB2251"
