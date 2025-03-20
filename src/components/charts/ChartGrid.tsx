@@ -81,7 +81,7 @@ export const ChartGrid = ({
     
     // For net-new view, find the highest individual value
     return Math.max(...filteredGroups.flatMap(group => 
-      group.data.map(d => d.value)
+      group.data.map(d => d.value !== null ? d.value : 0)
     ), 0);
   };
   
@@ -89,7 +89,10 @@ export const ChartGrid = ({
   const sharedMaxValue = calculateSharedMaxValue();
   
   // Use the higher of the calculated shared max or the provided maxValue
-  const effectiveMaxValue = Math.max(sharedMaxValue, maxValue);
+  const effectiveMaxValue = Math.max(sharedMaxValue, maxValue || 0);
+  
+  // Force shared max values for 3-day and 7-day views to ensure consistent scaling
+  const shouldUseSharedValues = ['3-day', '7-day'].includes(timeRange) || !individualMaxValues;
 
   return (
     <>
@@ -114,13 +117,14 @@ export const ChartGrid = ({
             color="#2AB4FF"
             unit={unitLabel}
             viewType={viewType}
-            maxValue={individualMaxValues ? undefined : effectiveMaxValue}
+            maxValue={shouldUseSharedValues ? effectiveMaxValue : undefined}
             chartType={chartType}
             chartRef={chartRefs.current[group.title]}
             onExport={onExportChart}
             useViewDetails={useViewDetailsButton}
             showThreshold={showThreshold}
             threshold={threshold}
+            timeRange={timeRange}
           />
         ))}
       </div>

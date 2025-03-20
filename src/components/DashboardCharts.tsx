@@ -59,6 +59,9 @@ export const DashboardCharts = ({
     "/service-requests"
   ].includes(location.pathname);
 
+  // Define which routes need consistent scaling for 3D/7D views
+  const isClientMAUPage = location.pathname.includes("/client-mau");
+
   // Reset expanded charts when view changes
   useEffect(() => {
     setExpandedCharts([]);
@@ -102,6 +105,22 @@ export const DashboardCharts = ({
     );
   };
 
+  // Determine if we should use individualMaxValues based on the page and timeRange
+  const useIndividualMaxValues = () => {
+    // For 3-day and 7-day views, we want to use shared max values for consistency
+    if (['3-day', '7-day'].includes(timeRange)) {
+      return false;
+    }
+    
+    // For client MAU page, we always want to share the scale
+    if (isClientMAUPage) {
+      return false;
+    }
+    
+    // Default behavior
+    return false;
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -140,6 +159,9 @@ export const DashboardCharts = ({
           onViewDetails={handleViewDetails}
           useViewDetailsButton={useViewDetailsButton}
           unitLabel={unitLabel}
+          individualMaxValues={useIndividualMaxValues()}
+          showThreshold={showThreshold}
+          threshold={threshold}
           timeRange={timeRange}
         />
       )}
