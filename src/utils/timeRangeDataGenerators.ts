@@ -17,7 +17,7 @@ export const generateLast12MonthsData = (currentData: Record<string, any[]>) => 
   );
 };
 
-// Generate data for 3-day view with values that can be accumulated from the beginning of the month
+// Generate data for 3-day view with values that represent daily increments, not pre-accumulated values
 export const generate3DayData = (currentData: Record<string, any[]>) => {
   const today = new Date();
   
@@ -29,18 +29,17 @@ export const generate3DayData = (currentData: Record<string, any[]>) => {
         const isFutureDate = isAfter(date, today);
         const dayOfMonth = getDate(date);
         
-        // For consistency with 30-day view, ensure we generate data that represents daily values
-        // rather than pre-accumulated values (accumulation happens in the transform function)
+        // Generate daily values (not accumulated) - accumulation happens in the transform function
         return {
           day: format(date, 'MMM d'),
-          value: isFutureDate ? null : Math.floor(Math.random() * 200)
+          value: isFutureDate ? null : Math.floor(Math.random() * 100)
         };
       })
     ])
   );
 };
 
-// Generate data for 7-day view with values that can be accumulated from the beginning of the month
+// Generate data for 7-day view with values that represent daily increments, not pre-accumulated values
 export const generate7DayData = (currentData: Record<string, any[]>) => {
   const today = new Date();
   
@@ -52,11 +51,10 @@ export const generate7DayData = (currentData: Record<string, any[]>) => {
         const isFutureDate = isAfter(date, today);
         const dayOfMonth = getDate(date);
         
-        // For consistency with 30-day view, ensure we generate data that represents daily values
-        // rather than pre-accumulated values (accumulation happens in the transform function)
+        // Generate daily values (not accumulated) - accumulation happens in the transform function
         return {
           day: format(date, 'MMM d'),
-          value: isFutureDate ? null : Math.floor(Math.random() * 300)
+          value: isFutureDate ? null : Math.floor(Math.random() * 100)
         };
       })
     ])
