@@ -17,7 +17,8 @@ export const generateLast12MonthsData = (currentData: Record<string, any[]>) => 
   );
 };
 
-// Generate data for 3-day view with values that represent daily increments, not pre-accumulated values
+// Generate data for 3-day view with values that represent daily increments
+// These will be properly accumulated from the beginning of month in the transformData function
 export const generate3DayData = (currentData: Record<string, any[]>) => {
   const today = new Date();
   
@@ -29,17 +30,19 @@ export const generate3DayData = (currentData: Record<string, any[]>) => {
         const isFutureDate = isAfter(date, today);
         const dayOfMonth = getDate(date);
         
-        // Generate daily values (not accumulated) - accumulation happens in the transform function
+        // For consistency with other views, generate daily values that will be accumulated
+        // based on the day of month in the transformData function
         return {
           day: format(date, 'MMM d'),
-          value: isFutureDate ? null : Math.floor(Math.random() * 100)
+          value: isFutureDate ? null : Math.floor(Math.random() * 100 + 50)
         };
       })
     ])
   );
 };
 
-// Generate data for 7-day view with values that represent daily increments, not pre-accumulated values
+// Generate data for 7-day view with values that represent daily increments
+// These will be properly accumulated from the beginning of month in the transformData function
 export const generate7DayData = (currentData: Record<string, any[]>) => {
   const today = new Date();
   
@@ -51,10 +54,11 @@ export const generate7DayData = (currentData: Record<string, any[]>) => {
         const isFutureDate = isAfter(date, today);
         const dayOfMonth = getDate(date);
         
-        // Generate daily values (not accumulated) - accumulation happens in the transform function
+        // For consistency with other views, generate daily values that will be accumulated
+        // based on the day of month in the transformData function
         return {
           day: format(date, 'MMM d'),
-          value: isFutureDate ? null : Math.floor(Math.random() * 100)
+          value: isFutureDate ? null : Math.floor(Math.random() * 100 + 50)
         };
       })
     ])
@@ -73,11 +77,13 @@ export const generateRolling30DayData = (currentData: Record<string, any[]>) => 
         const isFutureDate = isAfter(date, today);
         const dayOfMonth = getDate(date);
         
-        // Set value to 0 on the 1st of each month and generate random values for other days
-        // This ensures values reset on the 1st of each month
+        // Generate daily values that will be properly accumulated in the transformData function
+        // Low values on the 1st of each month to simulate resets
+        const baseValue = dayOfMonth === 1 ? 50 : 100;
+        
         return {
           day: format(date, 'MMM d'),
-          value: isFutureDate ? null : (dayOfMonth === 1 ? 0 : Math.floor(Math.random() * 500))
+          value: isFutureDate ? null : Math.floor(Math.random() * baseValue)
         };
       })
     ])

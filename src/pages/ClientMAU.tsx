@@ -43,7 +43,7 @@ const ClientMAU = () => {
     setCustomDateRange(dateRange);
   };
   
-  // Handle view type change - now we allow changing even for rolling-30-day
+  // Handle view type change - allow changing for all time ranges
   const handleViewTypeChange = (newViewType: 'net-new' | 'cumulative') => {
     setViewType(newViewType);
     setChartType(newViewType === 'net-new' ? 'bar' : 'area');
