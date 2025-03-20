@@ -44,14 +44,19 @@ export const TotalChart = ({
     "/service-requests"
   ].includes(location.pathname);
 
-  // Modified: Always accumulate values in cumulative view, even for 3-day and 7-day views
+  // For cumulative view, ALWAYS accumulate values, even for 3-day and 7-day views
+  // This ensures we show the cumulative value from the beginning of the month
   const shouldAccumulate = viewType === 'cumulative';
   
-  // Transform data based on view type and if accumulation should happen
-  const transformedData = shouldAccumulate
-    ? transformData(data, viewType, true, isDiagnosticPage)
-    : viewType === 'net-new' ? data : transformData(data, viewType, false, false);
-    
+  // We want to handle resets only for real monthly resets,
+  // which aren't relevant for 3-day or 7-day views
+  const shouldHandleResets = !['3-day', '7-day'].includes(timeRange || '');
+  
+  // Transform data based on view type and accumulation settings
+  const transformedData = shouldAccumulate 
+    ? transformData(data, viewType, shouldHandleResets, isDiagnosticPage) 
+    : data;
+  
   // Calculate max value based on transformed data
   const maxValue = Math.max(...transformedData.map(d => (d.value !== null ? d.value : 0)));
 

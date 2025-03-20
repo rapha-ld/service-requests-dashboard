@@ -30,11 +30,14 @@ export const generate3DayData = (currentData: Record<string, any[]>) => {
         const date = subHours(today, totalHours - 1 - i);
         const isFutureDate = isAfter(date, today);
         
-        // To maintain monthly accumulation logic, generate values that make sense
-        // even when accumulated from the start of the month
+        // Generate daily values that make sense in both cumulative and net-new views
+        // For cumulative view, these will be properly accumulated in the client
+        const dayOfMonth = getDate(date);
+        const dayMultiplier = Math.min(dayOfMonth, 15) / 15;  // Scale factor based on day of month
+        
         return {
           day: format(date, 'MMM d, HH:00'),
-          value: isFutureDate ? null : Math.floor(Math.random() * 20 + 5) // Smaller hourly values
+          value: isFutureDate ? null : Math.floor(Math.random() * 20 + 5 * dayMultiplier)
         };
       })
     ])
@@ -52,10 +55,14 @@ export const generate7DayData = (currentData: Record<string, any[]>) => {
         const date = subDays(today, 6 - i);
         const isFutureDate = isAfter(date, today);
         
-        // Using specific daily values that will work well with accumulation
+        // Generate daily values that make sense in both cumulative and net-new views
+        // For cumulative view, these will be properly accumulated in the client
+        const dayOfMonth = getDate(date);
+        const dayMultiplier = Math.min(dayOfMonth, 20) / 20;  // Scale factor based on day of month
+        
         return {
           day: format(date, 'MMM d'),
-          value: isFutureDate ? null : Math.floor(Math.random() * 80 + 20) // Values between 20-100
+          value: isFutureDate ? null : Math.floor(Math.random() * 80 + 20 * dayMultiplier) // Values between 20-100
         };
       })
     ])
