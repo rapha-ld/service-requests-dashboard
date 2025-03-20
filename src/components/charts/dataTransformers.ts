@@ -38,14 +38,14 @@ export const transformData = (
   const firstDay = data[0]?.day;
   if (!firstDay) return data;
 
-  // Detect if we're in a rolling view (dates like "Feb 19", "Mar 1", etc.)
-  const isRollingDayFormat = firstDay.includes(' ');
+  // Detect if we're in a rolling 30-day view (dates like "Feb 19", "Mar 1", etc.)
+  const isRolling30DayFormat = firstDay.includes(' ');
   
-  // For rolling day view (3D, 7D, 30D), check if we're starting mid-month
+  // Only for rolling 30-day view, check if we're starting mid-month
   let accumulatedValueBeforeWindow = 0;
   let startDayOfMonth = 1;
   
-  if (isRollingDayFormat) {
+  if (isRolling30DayFormat) {
     // Parse the day number from the first data point
     const match = firstDay.match(/\w+ (\d+)/);
     if (match && match[1]) {
@@ -77,8 +77,8 @@ export const transformData = (
       }];
     }
     
-    // For day views (3D, 7D, 30D), check if it's the first of a month (e.g., "Mar 1")
-    const isFirstOfMonth = isRollingDayFormat && curr.day.match(/ 1$/);
+    // For 30-day view, check if it's the first of a month (e.g., "Mar 1")
+    const isFirstOfMonth = isRolling30DayFormat && curr.day.match(/ 1$/);
     
     if (index === 0) {
       // For the first data point, include the pre-accumulated value
