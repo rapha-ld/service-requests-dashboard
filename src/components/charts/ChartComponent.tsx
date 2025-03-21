@@ -131,7 +131,7 @@ export const ChartComponent = ({
       selectedYear === today.getFullYear();
     
     if (isCurrentMonthAndYear) {
-      // Get today's date formatted as "Jan 15" style 
+      // Get today's date formatted as "MMM d" style 
       const todayFormatted = format(today, 'MMM d');
       
       // Find index of today in the data

@@ -1,3 +1,4 @@
+
 import { format, subMonths, subDays, isAfter, parse, getDate, getMonth, subHours } from "date-fns";
 import { getTotalValue } from "@/components/charts/dataTransformers";
 import { TimeRangeType } from "@/hooks/useExperimentData";
@@ -7,6 +8,7 @@ import { generateDailyData } from "./chartDataGenerator";
 // Generate data for last 12 months view
 export const generateLast12MonthsData = (currentData: Record<string, any[]>, selectedYear: number = new Date().getFullYear()) => {
   const today = new Date();
+  console.log(`Generating last 12 months data for year: ${selectedYear}`);
   
   return Object.fromEntries(
     Object.entries(currentData).map(([key, data]) => [

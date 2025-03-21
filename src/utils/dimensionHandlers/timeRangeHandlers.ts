@@ -8,14 +8,14 @@ import { DateRange } from "@/types/mauTypes";
 
 // Generate month-to-date data for the specified month
 export const generateMonthToDateData = (data: Record<string, any[]>, selectedDate: Date) => {
+  const selectedMonth = selectedDate.getMonth();
+  const selectedYear = selectedDate.getFullYear();
+  
+  console.log(`Generating MTD data for ${selectedMonth + 1}/${selectedYear}`);
+  
   // Create new data for each dimension with days from the selected month
   return Object.fromEntries(
     Object.entries(data).map(([key, _]) => {
-      // Get month name for display
-      const monthName = format(selectedDate, 'MMM');
-      const year = selectedDate.getFullYear();
-      const daysInMonth = new Date(year, selectedDate.getMonth() + 1, 0).getDate();
-      
       // Generate daily values for the selected month
       const targetValue = Math.floor(5000 + Math.random() * 5000); // Random target between 5000-10000
       const monthData = generateDailyData(targetValue, 'steady', selectedDate);
@@ -34,6 +34,8 @@ export const handleTimeRangeForAllDimensions = (
   selectedDate: Date,
   customDateRange?: DateRange
 ) => {
+  console.log(`Processing time range ${timeRange} for date: ${format(selectedDate, 'yyyy-MM-dd')}`);
+  
   if (timeRange === 'last-12-months') {
     const selectedYear = selectedDate.getFullYear();
     const environmentLast12Months = generateLast12MonthsData(environmentData, selectedYear);
@@ -95,6 +97,8 @@ export const handleTimeRangeForDimension = (
   selectedDate: Date,
   customDateRange?: DateRange
 ) => {
+  console.log(`Processing dimension time range ${timeRange} for date: ${format(selectedDate, 'yyyy-MM-dd')}`);
+  
   if (timeRange === 'last-12-months') {
     const selectedYear = selectedDate.getFullYear();
     const last12MonthsData = generateLast12MonthsData(currentData, selectedYear);

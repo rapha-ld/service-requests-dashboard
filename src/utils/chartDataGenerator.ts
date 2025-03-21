@@ -8,7 +8,9 @@ export const generateDailyData = (targetValue: number, growthPattern: 'steady' |
   const currentYear = today.getFullYear();
   const currentMonth = today.getMonth();
   
-  // Start date: 1st day of current month
+  console.log(`Generating daily data for ${currentMonth + 1}/${currentYear} with target: ${targetValue}`);
+  
+  // Start date: 1st day of selected month
   const startDate = new Date(currentYear, currentMonth, 1);
   // End date: Today's date or end of selected month if in the past
   const now = new Date();
@@ -17,7 +19,7 @@ export const generateDailyData = (targetValue: number, growthPattern: 'steady' |
     ? new Date(currentYear, currentMonth, now.getDate())
     : new Date(currentYear, currentMonth + 1, 0); // Last day of selected month
   
-  // Full month end date: Last day of current month
+  // Full month end date: Last day of selected month
   const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
   
   // Calculate different growth patterns for daily values

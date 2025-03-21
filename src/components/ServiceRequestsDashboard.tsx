@@ -86,6 +86,11 @@ export const ServiceRequestsDashboard = () => {
     timeRange === 'custom' ? customDateRange : undefined
   );
 
+  // Log for debugging
+  useEffect(() => {
+    console.log(`Dashboard rendering with month: ${selectedMonth + 1}, year: ${selectedYear}`);
+  }, [selectedMonth, selectedYear]);
+
   if (isLoading) return <div className="p-6">Loading data...</div>;
   if (error) return <div className="p-6">Error loading data: {String(error)}</div>;
   if (!serviceData) return <div className="p-6">No data available</div>;
