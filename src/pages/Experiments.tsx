@@ -12,59 +12,84 @@ import {
 } from "@/utils/experiments";
 import { DateRange } from "@/types/mauTypes";
 import { ViewType } from "@/types/serviceData";
+import { useUrlParams } from "@/hooks/useUrlParams";
 
 // Experiment events threshold from Overview page
 const EXPERIMENT_EVENTS_THRESHOLD = 500000;
 
 const Experiments = () => {
-  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
-  const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
-  const [viewType, setViewType] = useState<ViewType>('cumulative'); 
-  const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>('area'); 
-  const [timeRange, setTimeRange] = useState<TimeRangeType>('month-to-date');
-  const [customDateRange, setCustomDateRange] = useState<DateRange>({
-    from: new Date(),
-    to: new Date()
-  });
+  const urlParams = useUrlParams();
+  
+  const [selectedMonth, setSelectedMonth] = useState(urlParams.getSelectedMonth());
+  const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>(urlParams.getSortDirection());
+  const [viewType, setViewType] = useState<ViewType>(urlParams.getViewType());
+  const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>(urlParams.getChartType());
+  const [timeRange, setTimeRange] = useState<TimeRangeType>(urlParams.getTimeRange());
+  const [customDateRange, setCustomDateRange] = useState<DateRange>(urlParams.getCustomDateRange());
+  
   const chartRefs = useRef<{ [key: string]: any }>({});
 
   useEffect(() => {
     if (viewType === 'net-new') {
       setChartType('bar');
+      urlParams.setChartType('bar');
     } else if (viewType === 'rolling-30d') {
       setChartType('line');
+      urlParams.setChartType('line');
     } else {
       setChartType('area');
+      urlParams.setChartType('area');
     }
   }, [viewType]);
   
   // Handle time range change with special behavior for 12M
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
     setTimeRange(newTimeRange);
+    urlParams.setTimeRange(newTimeRange);
     
     // Force net-new view when 12M is selected
     if (newTimeRange === 'last-12-months') {
       setViewType('net-new');
+      urlParams.setViewType('net-new');
       setChartType('bar');
+      urlParams.setChartType('bar');
     }
   };
   
   const handleCustomDateRangeChange = (dateRange: DateRange) => {
     setCustomDateRange(dateRange);
+    urlParams.setCustomDateRange(dateRange);
   };
   
   // Handle view type change - but only if not in 12M view
   const handleViewTypeChange = (newViewType: ViewType) => {
     if (timeRange !== 'last-12-months') {
       setViewType(newViewType);
+      urlParams.setViewType(newViewType);
+      
       if (newViewType === 'net-new') {
         setChartType('bar');
+        urlParams.setChartType('bar');
       } else if (newViewType === 'rolling-30d') {
         setChartType('line');
+        urlParams.setChartType('line');
       } else {
         setChartType('area');
+        urlParams.setChartType('area');
       }
     }
+  };
+  
+  const handleSortDirectionChange = () => {
+    const newSortDirection = sortDirection === 'desc' ? 'asc' : 'desc';
+    setSortDirection(newSortDirection);
+    urlParams.setSortDirection(newSortDirection);
+  };
+  
+  const handleMonthChange = (value: string) => {
+    const newMonth = parseInt(value);
+    setSelectedMonth(newMonth);
+    urlParams.setSelectedMonth(newMonth);
   };
 
   const currentDate = new Date(new Date().getFullYear(), selectedMonth);
@@ -91,8 +116,8 @@ const Experiments = () => {
           sortDirection={sortDirection}
           timeRange={timeRange}
           onViewTypeChange={handleViewTypeChange}
-          onSortDirectionChange={() => setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc')}
-          onMonthChange={(value) => setSelectedMonth(parseInt(value))}
+          onSortDirectionChange={handleSortDirectionChange}
+          onMonthChange={handleMonthChange}
           onTimeRangeChange={handleTimeRangeChange}
           customDateRange={customDateRange}
           onCustomDateRangeChange={handleCustomDateRangeChange}

@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useSearchParams, useNavigate } from "react-router-dom";
 import { NavigationTabs } from "./components/NavigationTabs";
 import { AppSidebar } from "./components/AppSidebar";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
@@ -57,7 +57,7 @@ function AppContent() {
               <Routes>
                 <Route path="/" element={<Navigate to="/overview" replace />} />
                 <Route path="/service-requests" element={<Index />} />
-                <Route path="/service-connections" element={<ServiceRequestsDashboard />} /> {/* Add new route */}
+                <Route path="/service-connections" element={<ServiceRequestsDashboard />} />
                 <Route path="/overview" element={<Overview />} />
                 <Route path="/client-mau" element={<ClientMAU />} />
                 <Route path="/client-connections" element={<ClientConnections />} />
@@ -67,7 +67,6 @@ function AppContent() {
                 <Route path="/peak-server-connections" element={<PeakServerConnections />} />
                 <Route path="/details" element={<Details />} />
                 <Route path="/diagnostics" element={<Diagnostics />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </div>

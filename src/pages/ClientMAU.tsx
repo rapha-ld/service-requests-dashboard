@@ -11,56 +11,82 @@ import {
   getLast12MonthsData, 
   calculateMaxValue
 } from "@/utils/mauDataTransformers";
+import { useUrlParams } from "@/hooks/useUrlParams";
 
 const USER_LIMIT = 25000;
 
 const ClientMAU = () => {
-  // State management
-  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
-  const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
-  const [viewType, setViewType] = useState<'net-new' | 'cumulative'>('cumulative');
-  const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>('area');
-  const [timeRange, setTimeRange] = useState<TimeRangeType>('month-to-date');
-  const [selectedProject, setSelectedProject] = useState<string>("all");
-  const [customDateRange, setCustomDateRange] = useState<DateRange>({
-    from: new Date(),
-    to: new Date()
-  });
+  const urlParams = useUrlParams();
+  
+  // State management with values from URL parameters
+  const [selectedMonth, setSelectedMonth] = useState(urlParams.getSelectedMonth());
+  const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>(urlParams.getSortDirection());
+  const [viewType, setViewType] = useState<'net-new' | 'cumulative'>(
+    urlParams.getViewType() === 'rolling-30d' ? 'cumulative' : urlParams.getViewType() as 'net-new' | 'cumulative'
+  );
+  const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>(urlParams.getChartType());
+  const [timeRange, setTimeRange] = useState<TimeRangeType>(urlParams.getTimeRange());
+  const [selectedProject, setSelectedProject] = useState<string>(urlParams.getSelectedProject());
+  const [customDateRange, setCustomDateRange] = useState<DateRange>(urlParams.getCustomDateRange());
+  
   const chartRefs = useRef<{ [key: string]: any }>({});
 
   // Effect to set chart type based on view type
   useEffect(() => {
     setChartType(viewType === 'net-new' ? 'bar' : 'area');
+    urlParams.setChartType(viewType === 'net-new' ? 'bar' : 'area');
   }, [viewType]);
   
   // Handle time range change - allow all view types for all time ranges
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
     setTimeRange(newTimeRange);
+    urlParams.setTimeRange(newTimeRange);
   };
   
   // Handle custom date range change
   const handleCustomDateRangeChange = (dateRange: DateRange) => {
     setCustomDateRange(dateRange);
+    urlParams.setCustomDateRange(dateRange);
   };
   
   // Handle view type change - allow changing for all time ranges 
   const handleViewTypeChange = (newViewType: 'net-new' | 'cumulative') => {
     setViewType(newViewType);
+    urlParams.setViewType(newViewType);
+    
     setChartType(newViewType === 'net-new' ? 'bar' : 'area');
+    urlParams.setChartType(newViewType === 'net-new' ? 'bar' : 'area');
   };
   
   // Handle chart type change
   const handleChartTypeChange = (newChartType: 'area' | 'bar' | 'line') => {
     setChartType(newChartType);
+    urlParams.setChartType(newChartType);
+  };
+  
+  // Handle sort direction change
+  const handleSortDirectionChange = () => {
+    const newSortDirection = sortDirection === 'desc' ? 'asc' : 'desc';
+    setSortDirection(newSortDirection);
+    urlParams.setSortDirection(newSortDirection);
+  };
+  
+  // Handle month change
+  const handleMonthChange = (value: string) => {
+    const newMonth = parseInt(value);
+    setSelectedMonth(newMonth);
+    urlParams.setSelectedMonth(newMonth);
   };
   
   // Error handling wrapper for state setters
   const safeSetSelectedProject = (project: string) => {
     try {
       setSelectedProject(project || "all");
+      urlParams.setSelectedProject(project || "all");
     } catch (error) {
       console.error("Error setting project:", error);
       setSelectedProject("all");
+      urlParams.setSelectedProject("all");
     }
   };
 
@@ -120,8 +146,8 @@ const ClientMAU = () => {
           setSelectedProject={safeSetSelectedProject}
           onViewTypeChange={handleViewTypeChange}
           onChartTypeChange={handleChartTypeChange}
-          onSortDirectionChange={() => setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc')}
-          onMonthChange={(value) => setSelectedMonth(parseInt(value))}
+          onSortDirectionChange={handleSortDirectionChange}
+          onMonthChange={handleMonthChange}
           onTimeRangeChange={handleTimeRangeChange}
           customDateRange={customDateRange}
           onCustomDateRangeChange={handleCustomDateRangeChange}
