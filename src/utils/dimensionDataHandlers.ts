@@ -23,9 +23,10 @@ export const handleAllDimensionsData = (
   // Use selected month and year for generating data
   const selectedDate = new Date(selectedYear, selectedMonth);
   
-  const environmentData = getMockData('environment', selectedDate);
-  const relayIdData = getMockData('relayId', selectedDate);
-  const userAgentData = getMockData('userAgent', selectedDate);
+  // Update the calls to match getMockData's signature
+  const environmentData = getMockData('environment');
+  const relayIdData = getMockData('relayId');
+  const userAgentData = getMockData('userAgent');
   
   if (timeRange === 'last-12-months') {
     const environmentLast12Months = generateLast12MonthsData(environmentData, selectedYear);
@@ -86,9 +87,10 @@ export const handleSpecificDimensionData = (
   // Use selected month and year for generating data
   const selectedDate = new Date(selectedYear, selectedMonth);
   
+  // Update the calls to match getMockData's signature
   // Convert the grouping string to the correct type for getMockData
-  const current = getMockData(grouping as 'environment' | 'relayId' | 'userAgent', selectedDate);
-  const previous = getMockData(grouping as 'environment' | 'relayId' | 'userAgent', selectedDate);
+  const current = getMockData(grouping as 'environment' | 'relayId' | 'userAgent');
+  const previous = getMockData(grouping as 'environment' | 'relayId' | 'userAgent');
 
   if (timeRange === 'last-12-months') {
     const last12MonthsData = generateLast12MonthsData(current, selectedYear);
