@@ -29,6 +29,7 @@ export const generate3DayData = (currentData: Record<string, any[]>, selectedDat
   
   // If selected date is in the future, use current date
   const baseDate = isAfter(selectedDate, new Date()) ? new Date() : selectedDate;
+  console.log(`Generating 3-day data for base date: ${format(baseDate, 'yyyy-MM-dd')}`);
   
   return Object.fromEntries(
     Object.entries(currentData).map(([key, data]) => [
@@ -61,6 +62,7 @@ export const generate3DayData = (currentData: Record<string, any[]>, selectedDat
 export const generate7DayData = (currentData: Record<string, any[]>, selectedDate: Date = new Date()) => {
   // If selected date is in the future, use current date
   const baseDate = isAfter(selectedDate, new Date()) ? new Date() : selectedDate;
+  console.log(`Generating 7-day data for base date: ${format(baseDate, 'yyyy-MM-dd')}`);
   
   return Object.fromEntries(
     Object.entries(currentData).map(([key, data]) => [
@@ -93,6 +95,7 @@ export const generate7DayData = (currentData: Record<string, any[]>, selectedDat
 export const generateRolling30DayData = (currentData: Record<string, any[]>, selectedDate: Date = new Date()) => {
   // If selected date is in the future, use current date
   const baseDate = isAfter(selectedDate, new Date()) ? new Date() : selectedDate;
+  console.log(`Generating 30-day data for base date: ${format(baseDate, 'yyyy-MM-dd')}`);
   
   return Object.fromEntries(
     Object.entries(currentData).map(([key, data]) => [
@@ -123,7 +126,7 @@ export const generateCustomDateRangeData = (currentData: Record<string, any[]>, 
 };
 
 // Combine data from multiple data sets into a single dataset
-export const combineDataSets = (dataSets: Record<string, Array<{ day: string; value: number }>>[]) => {
+export const combineDataSets = (dataSets: Record<string, Array<{ day: string; value: number | null }>>[]) => {
   const firstDataSet = dataSets[0];
   const firstKey = Object.keys(firstDataSet)[0];
   const template = firstDataSet[firstKey].map(item => ({ day: item.day, value: 0 }));
@@ -131,7 +134,9 @@ export const combineDataSets = (dataSets: Record<string, Array<{ day: string; va
   dataSets.forEach(dataSet => {
     Object.values(dataSet).forEach(dimensionData => {
       dimensionData.forEach((dayData, index) => {
-        template[index].value += dayData.value;
+        if (template[index] && dayData.value !== null) {
+          template[index].value += dayData.value;
+        }
       });
     });
   });
@@ -140,7 +145,7 @@ export const combineDataSets = (dataSets: Record<string, Array<{ day: string; va
 };
 
 // Process the combined data to include totals
-export const processCombinedData = (combined: { total: Array<{ day: string; value: number }> }) => {
+export const processCombinedData = (combined: { total: Array<{ day: string; value: number | null }> }) => {
   return {
     current: combined,
     previous: combined,

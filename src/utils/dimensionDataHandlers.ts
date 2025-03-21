@@ -12,6 +12,7 @@ import {
 import { TimeRangeType, GroupingType } from "@/types/serviceData";
 import { DateRange } from "@/types/mauTypes";
 import { format } from "date-fns";
+import { generateDailyData } from "./chartDataGenerator";
 
 // Handle 'all' dimensions data
 export const handleAllDimensionsData = (
@@ -22,6 +23,7 @@ export const handleAllDimensionsData = (
 ) => {
   // Use selected month and year for generating data
   const selectedDate = new Date(selectedYear, selectedMonth);
+  console.log(`Generating all dimensions data for date: ${format(selectedDate, 'yyyy-MM-dd')}`);
   
   // Update the calls to match getMockData's signature
   const environmentData = getMockData('environment');
@@ -71,9 +73,43 @@ export const handleAllDimensionsData = (
     return processCombinedData(combined);
   }
   
-  // Default for month-to-date
-  const combined = combineDataSets([environmentData, relayIdData, userAgentData]);
+  // Default for month-to-date - Generate data for the selected month
+  // We need to modify this to generate data based on the selected month
+  const environmentMTD = generateMonthToDateData(environmentData, selectedDate);
+  const relayIdMTD = generateMonthToDateData(relayIdData, selectedDate);
+  const userAgentMTD = generateMonthToDateData(userAgentData, selectedDate);
+  
+  const combined = combineDataSets([environmentMTD, relayIdMTD, userAgentMTD]);
   return processCombinedData(combined);
+};
+
+// Generate month-to-date data for the specified month
+const generateMonthToDateData = (data: Record<string, any[]>, selectedDate: Date) => {
+  // Create new data for each dimension with days from the selected month
+  return Object.fromEntries(
+    Object.entries(data).map(([key, value]) => {
+      // Get month name for display
+      const monthName = format(selectedDate, 'MMM');
+      const year = selectedDate.getFullYear();
+      const daysInMonth = new Date(year, selectedDate.getMonth() + 1, 0).getDate();
+      
+      // Generate daily values for the selected month
+      const monthData = Array.from({ length: daysInMonth }, (_, i) => {
+        const day = i + 1;
+        const currentDate = new Date(year, selectedDate.getMonth(), day);
+        
+        // For dates in the future, use null value
+        const isInFuture = currentDate > new Date();
+        
+        return {
+          day: `${monthName} ${day}`,
+          value: isInFuture ? null : Math.floor(50 + Math.random() * 150)
+        };
+      });
+      
+      return [key, monthData];
+    })
+  );
 };
 
 // Handle specific dimension data
@@ -86,6 +122,7 @@ export const handleSpecificDimensionData = (
 ) => {
   // Use selected month and year for generating data
   const selectedDate = new Date(selectedYear, selectedMonth);
+  console.log(`Generating specific dimension data for date: ${format(selectedDate, 'yyyy-MM-dd')}`);
   
   // Update the calls to match getMockData's signature
   // Convert the grouping string to the correct type for getMockData
@@ -163,12 +200,14 @@ export const handleSpecificDimensionData = (
     };
   }
 
-  // Default for month-to-date
+  // Default for month-to-date - Generate data for the selected month
+  const dataMTD = generateMonthToDateData(current, selectedDate);
+  
   return {
-    current,
+    current: dataMTD,
     previous,
     currentTotals: Object.fromEntries(
-      Object.entries(current).map(([key, data]) => [key, getTotalValue(data)])
+      Object.entries(dataMTD).map(([key, data]) => [key, getTotalValue(data as any)])
     ),
     previousTotals: Object.fromEntries(
       Object.entries(previous).map(([key, data]) => [key, getTotalValue(data)])
