@@ -11,6 +11,7 @@ import { DateRange } from "@/types/mauTypes";
 export const ServiceRequestsDashboard = () => {
   // State hooks
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
   const [viewType, setViewType] = useState<ViewType>('net-new');
   const [chartType, setChartType] = useState<ChartType>('bar');
@@ -66,9 +67,17 @@ export const ServiceRequestsDashboard = () => {
     }
   };
   
+  // Handle month change with new format
+  const handleMonthChange = (value: string) => {
+    const [year, month] = value.split('-');
+    setSelectedYear(parseInt(year));
+    setSelectedMonth(parseInt(month));
+  };
+  
   // Fetch data using custom hook
   const { data: serviceData } = useServiceData(
     selectedMonth, 
+    selectedYear,
     grouping, 
     timeRange,
     timeRange === 'custom' ? customDateRange : undefined
@@ -98,7 +107,7 @@ export const ServiceRequestsDashboard = () => {
           onGroupingChange={setGrouping}
           onViewTypeChange={handleViewTypeChange}
           onSortDirectionChange={() => setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc')}
-          onMonthChange={(value) => setSelectedMonth(parseInt(value))}
+          onMonthChange={handleMonthChange}
           timeRange={timeRange}
           onTimeRangeChange={handleTimeRangeChange}
           showViewTypeToggle={false} // Remove toggle from header
@@ -123,6 +132,8 @@ export const ServiceRequestsDashboard = () => {
           onViewTypeChange={handleViewTypeChange}
           disableViewTypeToggle={timeRange === 'last-12-months'} // Disable toggle for 12M view
           timeRange={timeRange}
+          selectedMonth={selectedMonth}
+          selectedYear={selectedYear}
         />
       </div>
     </div>

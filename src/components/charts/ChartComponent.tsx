@@ -5,7 +5,7 @@ import { CustomTooltip } from './CustomTooltip';
 import { formatYAxisTick } from './formatters';
 import { transformData, calculateAverage, formatTooltipDate } from './dataTransformers';
 import { useLocation } from 'react-router-dom';
-import { format } from 'date-fns';
+import { format, getDate, getDaysInMonth } from 'date-fns';
 
 interface ChartComponentProps {
   data: Array<{ day: string; value: number | null }>;
@@ -17,6 +17,8 @@ interface ChartComponentProps {
   threshold?: number;
   chartRef: React.MutableRefObject<any>;
   timeRange?: string;
+  selectedMonth?: number;
+  selectedYear?: number;
 }
 
 export const ChartComponent = ({
@@ -28,7 +30,9 @@ export const ChartComponent = ({
   showThreshold = false,
   threshold,
   chartRef,
-  timeRange = 'month-to-date'
+  timeRange = 'month-to-date',
+  selectedMonth = new Date().getMonth(),
+  selectedYear = new Date().getFullYear()
 }: ChartComponentProps) => {
   const location = useLocation();
   
@@ -114,24 +118,45 @@ export const ChartComponent = ({
   // Only show monthly reset lines in cumulative view, not in rolling-30d
   const shouldShowResetLines = viewType === 'cumulative';
 
-  // For month-to-date view, ensure the last tick is today's date
+  // For month-to-date view, ensure the last tick is today's date or the last day of the month
   const getXAxisTicks = () => {
     if (!transformedData.length) return [];
     
+    const today = new Date();
+    const selectedDate = new Date(selectedYear, selectedMonth);
+    const lastDayOfMonth = getDaysInMonth(selectedDate);
+    
+    // Is the selected month/year the current month/year?
+    const isCurrentMonth = selectedMonth === today.getMonth() && selectedYear === today.getFullYear();
+    
+    // For current month, use today's date as the end date
+    // For past months, use the last day of the month
+    const endDay = isCurrentMonth ? getDate(today) : lastDayOfMonth;
+    
     // Set up the initial ticks using current data
+    if (transformedData.length <= 7) {
+      // For small datasets, show all ticks
+      return transformedData.map(d => d.day);
+    }
+    
+    // For larger datasets, show a subset of ticks
     const firstTick = transformedData[0].day;
     const intervalTicks = transformedData
       .slice(1, -1)
       .filter((_, i) => (i + 1) % (xAxisInterval + 1) === 0)
       .map(d => d.day);
     
-    // For month-to-date view, always use today's date as the last tick
+    // For month-to-date view, use the correct end date
     let lastTick;
     if (timeRange === 'month-to-date') {
-      const today = new Date();
-      lastTick = format(today, 'MMM d'); // Format it in the same style as other ticks
-    } else {
+      // Format it in the same style as other ticks (e.g., "Mar 25")
+      const monthName = format(selectedDate, 'MMM');
+      lastTick = `${monthName} ${endDay}`;
+    } else if (transformedData.length > 0) {
+      // For other views, use the last data point
       lastTick = transformedData[transformedData.length - 1].day;
+    } else {
+      lastTick = firstTick;
     }
     
     return [firstTick, ...intervalTicks, lastTick];

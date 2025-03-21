@@ -17,6 +17,8 @@ interface TotalChartProps {
   showTitle?: boolean;
   chartHeight?: number;
   timeRange?: string;
+  selectedMonth?: number;
+  selectedYear?: number;
 }
 
 export const TotalChart = ({
@@ -32,7 +34,9 @@ export const TotalChart = ({
   threshold,
   showTitle = true,
   chartHeight = 192, // Default height
-  timeRange = 'month-to-date'
+  timeRange = 'month-to-date',
+  selectedMonth = new Date().getMonth(),
+  selectedYear = new Date().getFullYear()
 }: TotalChartProps) => {
   const location = useLocation();
   
@@ -94,6 +98,8 @@ export const TotalChart = ({
         threshold={threshold}
         chartHeight={chartHeight}
         timeRange={timeRange}
+        selectedMonth={selectedMonth}
+        selectedYear={selectedYear}
       />
     </div>
   );

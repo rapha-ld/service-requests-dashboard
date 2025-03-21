@@ -22,7 +22,7 @@ export const MonthSelector = ({
       const value = `${date.getFullYear()}-${date.getMonth()}`;
       return {
         value,
-        label: format(date, "MMM ''yy") // Format as "Mar '25"
+        label: format(date, "MMM 'yy") // Format as "Mar 25"
       };
     });
   };
@@ -41,8 +41,9 @@ export const MonthSelector = ({
     <Select
       value={selectedValue}
       onValueChange={(value) => {
-        const [_, month] = value.split('-');
-        onMonthChange(month);
+        const [year, month] = value.split('-');
+        // Pass both year and month so we can create proper date objects
+        onMonthChange(`${year}-${month}`);
       }}
     >
       <SelectTrigger className="w-[140px] h-10 dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]">
