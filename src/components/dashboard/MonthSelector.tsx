@@ -1,5 +1,5 @@
 
-import { format } from "date-fns";
+import { format, subMonths } from "date-fns";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface MonthSelectorProps {
@@ -9,14 +9,18 @@ interface MonthSelectorProps {
 }
 
 export const MonthSelector = ({ selectedMonth, onMonthChange, visible }: MonthSelectorProps) => {
-  // Generate abbreviated month options with year
+  // Generate abbreviated month options with year, starting from current month
   const getMonthOptions = () => {
-    const currentYear = new Date().getFullYear();
-    return Array.from({ length: 12 }, (_, i) => {
-      const date = new Date(currentYear, i);
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth();
+    
+    // Generate the last 12 months, starting with the current month
+    return Array.from({ length: 13 }, (_, i) => {
+      const date = subMonths(today, i);
       return {
-        value: i.toString(),
-        label: format(date, "MMM ''yy") // Format as "Jan '24"
+        value: date.getMonth().toString(),
+        label: format(date, "MMM ''yy") // Format as "Mar '25"
       };
     });
   };
