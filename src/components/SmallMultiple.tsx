@@ -12,7 +12,7 @@ interface SmallMultipleProps {
   color: string;
   unit: string;
   className?: string;
-  viewType: 'net-new' | 'cumulative';
+  viewType: 'net-new' | 'cumulative' | 'rolling-30d';
   maxValue?: number;
   chartType: 'area' | 'bar' | 'line';
   showThreshold?: boolean;

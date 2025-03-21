@@ -13,7 +13,7 @@ interface ChartGroup {
 
 interface ChartGridProps {
   sortedGroups: ChartGroup[];
-  viewType: 'net-new' | 'cumulative';
+  viewType: 'net-new' | 'cumulative' | 'rolling-30d';
   chartType: 'area' | 'bar' | 'line';
   maxValue: number;
   chartRefs: React.MutableRefObject<{ [key: string]: any }>;
