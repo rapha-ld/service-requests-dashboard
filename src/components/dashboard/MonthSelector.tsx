@@ -20,7 +20,7 @@ export const MonthSelector = ({ selectedMonth, onMonthChange, visible }: MonthSe
       const date = subMonths(today, i);
       return {
         value: date.getMonth().toString(),
-        label: format(date, "MMM ''yy") // Format as "Mar '25"
+        label: format(date, "MMM yy") // Format as "Mar 25" (removed the extra quotes)
       };
     });
   };
