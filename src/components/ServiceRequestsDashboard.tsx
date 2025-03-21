@@ -74,10 +74,11 @@ export const ServiceRequestsDashboard = () => {
     const [month, year] = value.split(',').map(Number);
     setSelectedMonth(month);
     setSelectedYear(year);
+    console.log(`Month changed to: ${month}, Year: ${year}`);
   };
   
   // Fetch data using custom hook
-  const { data: serviceData } = useServiceData(
+  const { data: serviceData, isLoading, error } = useServiceData(
     selectedMonth, 
     selectedYear,
     grouping, 
@@ -85,7 +86,9 @@ export const ServiceRequestsDashboard = () => {
     timeRange === 'custom' ? customDateRange : undefined
   );
 
-  if (!serviceData) return null;
+  if (isLoading) return <div className="p-6">Loading data...</div>;
+  if (error) return <div className="p-6">Error loading data: {String(error)}</div>;
+  if (!serviceData) return <div className="p-6">No data available</div>;
   
   // Process data for display
   const { sortedGroups } = processServiceData(serviceData, sortDirection);

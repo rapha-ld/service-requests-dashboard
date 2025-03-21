@@ -87,25 +87,15 @@ export const handleAllDimensionsData = (
 const generateMonthToDateData = (data: Record<string, any[]>, selectedDate: Date) => {
   // Create new data for each dimension with days from the selected month
   return Object.fromEntries(
-    Object.entries(data).map(([key, value]) => {
+    Object.entries(data).map(([key, _]) => {
       // Get month name for display
       const monthName = format(selectedDate, 'MMM');
       const year = selectedDate.getFullYear();
       const daysInMonth = new Date(year, selectedDate.getMonth() + 1, 0).getDate();
       
       // Generate daily values for the selected month
-      const monthData = Array.from({ length: daysInMonth }, (_, i) => {
-        const day = i + 1;
-        const currentDate = new Date(year, selectedDate.getMonth(), day);
-        
-        // For dates in the future, use null value
-        const isInFuture = currentDate > new Date();
-        
-        return {
-          day: `${monthName} ${day}`,
-          value: isInFuture ? null : Math.floor(50 + Math.random() * 150)
-        };
-      });
+      const targetValue = Math.floor(5000 + Math.random() * 5000); // Random target between 5000-10000
+      const monthData = generateDailyData(targetValue, 'steady', selectedDate);
       
       return [key, monthData];
     })
@@ -214,3 +204,4 @@ export const handleSpecificDimensionData = (
     )
   };
 };
+

@@ -1,8 +1,8 @@
-
 import { format, subMonths, subDays, isAfter, parse, getDate, getMonth, subHours } from "date-fns";
 import { getTotalValue } from "@/components/charts/dataTransformers";
 import { TimeRangeType } from "@/hooks/useExperimentData";
 import { DateRange } from "@/types/mauTypes";
+import { generateDailyData } from "./chartDataGenerator";
 
 // Generate data for last 12 months view
 export const generateLast12MonthsData = (currentData: Record<string, any[]>, selectedYear: number = new Date().getFullYear()) => {
@@ -13,9 +13,23 @@ export const generateLast12MonthsData = (currentData: Record<string, any[]>, sel
       key,
       Array.from({ length: 12 }, (_, i) => {
         const date = subMonths(today, i);
+        // Adjust the year to match selectedYear for months in that year
+        const adjustedDate = new Date(
+          // If the month is in the current year in the sequence, use selectedYear
+          // Otherwise use the year before selectedYear for earlier months
+          date.getMonth() <= today.getMonth() ? selectedYear : selectedYear - 1,
+          date.getMonth(),
+          1
+        );
+        
+        // Generate meaningful data based on month and year
+        const monthIndex = adjustedDate.getMonth(); // 0-11
+        const baseValue = 500 + (monthIndex * 50); // Higher values in later months
+        const randomFactor = 0.8 + (Math.random() * 0.4); // 20% random variation
+        
         return {
-          day: format(date, 'MMM'),
-          value: Math.floor(Math.random() * 1000)
+          day: format(adjustedDate, 'MMM'),
+          value: Math.floor(baseValue * randomFactor)
         };
       }).reverse()
     ])
