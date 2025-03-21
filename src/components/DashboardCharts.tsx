@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { TotalChart } from "@/components/charts/TotalChart";
 import { ChartGrid } from "@/components/charts/ChartGrid";
@@ -11,7 +10,7 @@ import { useLocation } from "react-router-dom";
 import { useTheme } from "@/hooks/useTheme";
 
 interface DashboardChartsProps {
-  allEnvironmentsData: Array<{ day: string, value: number }>;
+  allEnvironmentsData: Array<{ day: string; value: number }>;
   sortedGroups: Array<any>;
   viewType: 'net-new' | 'cumulative' | 'rolling-30d';
   chartType: 'area' | 'bar' | 'line';
@@ -27,6 +26,8 @@ interface DashboardChartsProps {
   onViewTypeChange?: (value: 'net-new' | 'cumulative' | 'rolling-30d') => void;
   disableViewTypeToggle?: boolean;
   timeRange?: string;
+  selectedMonth?: number;
+  selectedYear?: number;
 }
 
 export const DashboardCharts = ({
@@ -45,7 +46,9 @@ export const DashboardCharts = ({
   threshold,
   onViewTypeChange,
   disableViewTypeToggle = false,
-  timeRange = 'month-to-date'
+  timeRange = 'month-to-date',
+  selectedMonth,
+  selectedYear
 }: DashboardChartsProps) => {
   const { theme } = useTheme();
   const location = useLocation();
@@ -163,6 +166,8 @@ export const DashboardCharts = ({
           showThreshold={showThreshold}
           threshold={threshold}
           timeRange={timeRange}
+          selectedMonth={selectedMonth}
+          selectedYear={selectedYear}
         />
       )}
       
