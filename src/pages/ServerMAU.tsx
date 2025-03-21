@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
@@ -10,7 +11,6 @@ import { DateRange } from "@/types/mauTypes";
 const ServerMAU = () => {
   // State hooks
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
   const [viewType, setViewType] = useState<ViewType>('net-new');
   const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>('bar');
@@ -57,17 +57,9 @@ const ServerMAU = () => {
     }
   };
   
-  // Update the month change handler to handle year and month
-  const handleMonthChange = (value: string) => {
-    const [year, month] = value.split('-');
-    setSelectedYear(parseInt(year));
-    setSelectedMonth(parseInt(month));
-  };
-  
   // Fetch data using custom hook
   const { data: serviceData } = useServiceData(
     selectedMonth, 
-    selectedYear,
     grouping, 
     timeRange,
     timeRange === 'custom' ? customDateRange : undefined
@@ -104,7 +96,7 @@ const ServerMAU = () => {
           onGroupingChange={setGrouping}
           onViewTypeChange={handleViewTypeChange}
           onSortDirectionChange={() => setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc')}
-          onMonthChange={handleMonthChange}
+          onMonthChange={(value) => setSelectedMonth(parseInt(value))}
           timeRange={timeRange}
           onTimeRangeChange={handleTimeRangeChange}
           showViewTypeToggle={false} // Remove toggle from header
@@ -128,8 +120,6 @@ const ServerMAU = () => {
           onViewTypeChange={handleViewTypeChange}
           disableViewTypeToggle={false} // Always allow toggle
           timeRange={timeRange}
-          selectedMonth={selectedMonth}
-          selectedYear={selectedYear}
         />
       </div>
     </div>

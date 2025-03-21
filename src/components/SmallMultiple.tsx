@@ -1,3 +1,4 @@
+
 import { useRef } from 'react';
 import { cn } from "@/lib/utils";
 import { Download } from 'lucide-react';
@@ -21,8 +22,6 @@ interface SmallMultipleProps {
   useViewDetails?: boolean;
   chartHeight?: number;
   timeRange?: string;
-  selectedMonth?: number;
-  selectedYear?: number;
 }
 
 export const SmallMultiple = ({ 
@@ -40,9 +39,7 @@ export const SmallMultiple = ({
   onExport,
   useViewDetails = true,
   chartHeight = 192,
-  timeRange,
-  selectedMonth,
-  selectedYear
+  timeRange
 }: SmallMultipleProps) => {
   const internalChartRef = useRef<any>(null);
   const effectiveChartRef = chartRef || internalChartRef;
@@ -108,8 +105,6 @@ export const SmallMultiple = ({
           threshold={threshold}
           chartRef={effectiveChartRef}
           timeRange={timeRange}
-          selectedMonth={selectedMonth}
-          selectedYear={selectedYear}
         />
       </div>
     </div>
