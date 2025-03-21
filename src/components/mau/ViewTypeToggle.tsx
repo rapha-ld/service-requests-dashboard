@@ -17,7 +17,7 @@ export const ViewTypeToggle = ({
         { 
           value: 'cumulative', 
           label: 'Cumulative',
-          icon: <LineChart className="h-4 w-4 mr-1" />,
+          icon: <AreaChart className="h-4 w-4 mr-1" />,
           tooltip: "Counting resets monthly"
         },
         { 
@@ -30,7 +30,7 @@ export const ViewTypeToggle = ({
         { 
           value: 'rolling-30d', 
           label: 'Rolling 30D',
-          icon: <AreaChart className="h-4 w-4 mr-1" />,
+          icon: <LineChart className="h-4 w-4 mr-1" />,
           tooltip: "30-day rolling unique count, reported daily"
         }
       ]}
