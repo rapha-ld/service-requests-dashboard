@@ -92,5 +92,22 @@ export const generateDailyData = (targetValue: number, growthPattern: 'steady' |
     });
   }
   
+  // Ensure the data includes today's date
+  const today_formatted = today.toLocaleDateString('en-US', { 
+    month: 'short', 
+    day: 'numeric' 
+  });
+  
+  // Check if today's date is already in the data
+  const todayExists = data.some(d => d.day === today_formatted);
+  
+  // If not, add it
+  if (!todayExists) {
+    data.push({
+      day: today_formatted,
+      value: null
+    });
+  }
+  
   return data;
 };

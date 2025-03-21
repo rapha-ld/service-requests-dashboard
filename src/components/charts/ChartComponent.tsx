@@ -5,6 +5,7 @@ import { CustomTooltip } from './CustomTooltip';
 import { formatYAxisTick } from './formatters';
 import { transformData, calculateAverage, formatTooltipDate } from './dataTransformers';
 import { useLocation } from 'react-router-dom';
+import { format } from 'date-fns';
 
 interface ChartComponentProps {
   data: Array<{ day: string; value: number | null }>;
@@ -113,6 +114,31 @@ export const ChartComponent = ({
   // Only show monthly reset lines in cumulative view, not in rolling-30d
   const shouldShowResetLines = viewType === 'cumulative';
 
+  // For month-to-date view, ensure the last tick is today's date
+  const getXAxisTicks = () => {
+    if (!transformedData.length) return [];
+    
+    // Set up the initial ticks using current data
+    const firstTick = transformedData[0].day;
+    const intervalTicks = transformedData
+      .slice(1, -1)
+      .filter((_, i) => (i + 1) % (xAxisInterval + 1) === 0)
+      .map(d => d.day);
+    
+    // For month-to-date view, always use today's date as the last tick
+    let lastTick;
+    if (timeRange === 'month-to-date') {
+      const today = new Date();
+      lastTick = format(today, 'MMM d'); // Format it in the same style as other ticks
+    } else {
+      lastTick = transformedData[transformedData.length - 1].day;
+    }
+    
+    return [firstTick, ...intervalTicks, lastTick];
+  };
+
+  const xAxisTicks = getXAxisTicks();
+
   return (
     <ResponsiveContainer width="100%" height="100%">
       <ChartComp ref={chartRef} data={transformedData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
@@ -130,11 +156,7 @@ export const ChartComponent = ({
           stroke="currentColor"
           className="text-muted-foreground"
           tickFormatter={formatXAxisTick}
-          ticks={transformedData.length > 0 ? 
-            [transformedData[0].day, 
-             ...transformedData.slice(1, -1).filter((_, i) => (i + 1) % (xAxisInterval + 1) === 0).map(d => d.day),
-             transformedData[transformedData.length - 1].day] 
-            : []}
+          ticks={xAxisTicks}
         />
         <YAxis 
           tick={{ fontSize: 10 }}
