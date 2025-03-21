@@ -1,7 +1,7 @@
 import { calculatePercentChange } from "@/utils/dataTransformers";
 import { TimeRangeType } from "@/hooks/useExperimentData";
 import { DateRange } from "@/types/mauTypes";
-import { format, subDays, isAfter, getDate, getMonth } from "date-fns";
+import { format, subDays, isAfter, getDate, getMonth, subMonths } from "date-fns";
 
 export interface ExperimentGroup {
   id: string;
@@ -16,6 +16,62 @@ export function generateExperimentData(
   currentDate: Date,
   customDateRange?: DateRange
 ) {
+  if (timeRange === 'last-12-months') {
+    // Generate monthly data for the last 12 months
+    const today = new Date();
+    
+    const generateMonthlyData = () => {
+      return Array.from({ length: 12 }, (_, i) => {
+        const date = subMonths(today, 11 - i);
+        
+        return {
+          day: format(date, 'MMM'),
+          value: Math.floor(Math.random() * 1000)
+        };
+      });
+    };
+    
+    const experimentA = generateMonthlyData();
+    const experimentB = generateMonthlyData();
+    const experimentC = generateMonthlyData();
+    
+    const calculateTotal = (data: Array<{ day: string; value: number }>) => {
+      return data.reduce((sum, item) => sum + (item.value || 0), 0);
+    };
+    
+    return {
+      current: {
+        experimentA,
+        experimentB,
+        experimentC
+      },
+      previous: {
+        experimentA: Array.from({ length: 12 }, () => ({
+          day: "month",
+          value: Math.floor(Math.random() * 1000)
+        })),
+        experimentB: Array.from({ length: 12 }, () => ({
+          day: "month",
+          value: Math.floor(Math.random() * 1000)
+        })),
+        experimentC: Array.from({ length: 12 }, () => ({
+          day: "month",
+          value: Math.floor(Math.random() * 1000)
+        }))
+      },
+      currentTotals: {
+        experimentA: calculateTotal(experimentA),
+        experimentB: calculateTotal(experimentB),
+        experimentC: calculateTotal(experimentC)
+      },
+      previousTotals: {
+        experimentA: 8500,
+        experimentB: 7200,
+        experimentC: 9800
+      }
+    };
+  }
+  
   if (timeRange === '3-day') {
     // Generate 3-day data
     const today = new Date();
@@ -297,11 +353,9 @@ export function getExperimentsTotalData(
     }, 0);
 
     return {
-      day: timeRange === 'rolling-30-day'
+      day: ['rolling-30-day', 'last-12-months', '3-day', '7-day'].includes(timeRange)
         ? dataPoint.day
-        : timeRange === 'last-12-months'
-          ? serviceData.current[firstKey][index].day
-          : (index + 1).toString(),
+        : (index + 1).toString(),
       value: totalValue as number // Ensure the value is explicitly typed as number
     };
   });
