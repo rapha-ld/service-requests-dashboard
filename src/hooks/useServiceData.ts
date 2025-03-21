@@ -1,6 +1,6 @@
 
 import { useQuery } from "@tanstack/react-query";
-import { handleAllDimensionsData, handleSpecificDimensionData } from "@/utils/dimensionDataHandlers";
+import { handleAllDimensionsData, handleSpecificDimensionData } from "@/utils/dimensionHandlers";
 import { GroupingType, TimeRangeType, ViewType, ChartType } from "@/types/serviceData";
 import { DateRange } from "@/types/mauTypes";
 
