@@ -10,9 +10,7 @@ import { DateRange } from "@/types/mauTypes";
 
 export const ServiceRequestsDashboard = () => {
   // State hooks
-  const currentDate = new Date();
-  const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth());
-  const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
   const [viewType, setViewType] = useState<ViewType>('net-new');
   const [chartType, setChartType] = useState<ChartType>('bar');
@@ -68,32 +66,15 @@ export const ServiceRequestsDashboard = () => {
     }
   };
   
-  // Handle month change
-  const handleMonthChange = (value: string) => {
-    // Value now contains both month and year, separated by a comma
-    const [month, year] = value.split(',').map(Number);
-    setSelectedMonth(month);
-    setSelectedYear(year);
-    console.log(`Month changed to: ${month}, Year: ${year}`);
-  };
-  
   // Fetch data using custom hook
-  const { data: serviceData, isLoading, error } = useServiceData(
+  const { data: serviceData } = useServiceData(
     selectedMonth, 
-    selectedYear,
     grouping, 
     timeRange,
     timeRange === 'custom' ? customDateRange : undefined
   );
 
-  // Log for debugging
-  useEffect(() => {
-    console.log(`Dashboard rendering with month: ${selectedMonth + 1}, year: ${selectedYear}`);
-  }, [selectedMonth, selectedYear]);
-
-  if (isLoading) return <div className="p-6">Loading data...</div>;
-  if (error) return <div className="p-6">Error loading data: {String(error)}</div>;
-  if (!serviceData) return <div className="p-6">No data available</div>;
+  if (!serviceData) return null;
   
   // Process data for display
   const { sortedGroups } = processServiceData(serviceData, sortDirection);
@@ -117,7 +98,7 @@ export const ServiceRequestsDashboard = () => {
           onGroupingChange={setGrouping}
           onViewTypeChange={handleViewTypeChange}
           onSortDirectionChange={() => setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc')}
-          onMonthChange={handleMonthChange}
+          onMonthChange={(value) => setSelectedMonth(parseInt(value))}
           timeRange={timeRange}
           onTimeRangeChange={handleTimeRangeChange}
           showViewTypeToggle={false} // Remove toggle from header
@@ -142,8 +123,6 @@ export const ServiceRequestsDashboard = () => {
           onViewTypeChange={handleViewTypeChange}
           disableViewTypeToggle={timeRange === 'last-12-months'} // Disable toggle for 12M view
           timeRange={timeRange}
-          selectedMonth={selectedMonth}
-          selectedYear={selectedYear}
         />
       </div>
     </div>

@@ -3,56 +3,32 @@ import { format, subMonths, subDays, isAfter, parse, getDate, getMonth, subHours
 import { getTotalValue } from "@/components/charts/dataTransformers";
 import { TimeRangeType } from "@/hooks/useExperimentData";
 import { DateRange } from "@/types/mauTypes";
-import { generateDailyData } from "./chartDataGenerator";
 
 // Generate data for last 12 months view
-export const generateLast12MonthsData = (currentData: Record<string, any[]>, selectedYear: number = new Date().getFullYear()) => {
-  const today = new Date();
-  console.log(`Generating last 12 months data for year: ${selectedYear}`);
-  
+export const generateLast12MonthsData = (currentData: Record<string, any[]>) => {
   return Object.fromEntries(
     Object.entries(currentData).map(([key, data]) => [
       key,
-      Array.from({ length: 12 }, (_, i) => {
-        const date = subMonths(today, i);
-        // Adjust the year to match selectedYear for months in that year
-        const adjustedDate = new Date(
-          // If the month is in the current year in the sequence, use selectedYear
-          // Otherwise use the year before selectedYear for earlier months
-          date.getMonth() <= today.getMonth() ? selectedYear : selectedYear - 1,
-          date.getMonth(),
-          1
-        );
-        
-        // Generate meaningful data based on month and year
-        const monthIndex = adjustedDate.getMonth(); // 0-11
-        const baseValue = 500 + (monthIndex * 50); // Higher values in later months
-        const randomFactor = 0.8 + (Math.random() * 0.4); // 20% random variation
-        
-        return {
-          day: format(adjustedDate, 'MMM'),
-          value: Math.floor(baseValue * randomFactor)
-        };
-      }).reverse()
+      Array.from({ length: 12 }, (_, i) => ({
+        day: format(subMonths(new Date(), i), 'MMM'),
+        value: Math.floor(Math.random() * 1000)
+      })).reverse()
     ])
   );
 };
 
 // Generate data for 3-day view with hourly data
-export const generate3DayData = (currentData: Record<string, any[]>, selectedDate: Date = new Date()) => {
+export const generate3DayData = (currentData: Record<string, any[]>) => {
+  const today = new Date();
   const hoursPerDay = 24;
   const totalHours = 3 * hoursPerDay;
-  
-  // If selected date is in the future, use current date
-  const baseDate = isAfter(selectedDate, new Date()) ? new Date() : selectedDate;
-  console.log(`Generating 3-day data for base date: ${format(baseDate, 'yyyy-MM-dd')}`);
   
   return Object.fromEntries(
     Object.entries(currentData).map(([key, data]) => [
       key,
       Array.from({ length: totalHours }, (_, i) => {
-        const date = subHours(baseDate, totalHours - 1 - i);
-        const isFutureDate = isAfter(date, new Date());
+        const date = subHours(today, totalHours - 1 - i);
+        const isFutureDate = isAfter(date, today);
         
         // Generate daily values that simulate realistic accumulation when viewed cumulatively
         // Higher values on later days in the month to show natural growth
@@ -75,17 +51,15 @@ export const generate3DayData = (currentData: Record<string, any[]>, selectedDat
 };
 
 // Generate data for 7-day view
-export const generate7DayData = (currentData: Record<string, any[]>, selectedDate: Date = new Date()) => {
-  // If selected date is in the future, use current date
-  const baseDate = isAfter(selectedDate, new Date()) ? new Date() : selectedDate;
-  console.log(`Generating 7-day data for base date: ${format(baseDate, 'yyyy-MM-dd')}`);
+export const generate7DayData = (currentData: Record<string, any[]>) => {
+  const today = new Date();
   
   return Object.fromEntries(
     Object.entries(currentData).map(([key, data]) => [
       key,
       Array.from({ length: 7 }, (_, i) => {
-        const date = subDays(baseDate, 6 - i);
-        const isFutureDate = isAfter(date, new Date());
+        const date = subDays(today, 6 - i);
+        const isFutureDate = isAfter(date, today);
         
         // Generate values that simulate realistic accumulation when viewed cumulatively
         // Higher values on later days in the month
@@ -108,17 +82,15 @@ export const generate7DayData = (currentData: Record<string, any[]>, selectedDat
 };
 
 // Generate data for rolling 30 days view with reset on the 1st of each month
-export const generateRolling30DayData = (currentData: Record<string, any[]>, selectedDate: Date = new Date()) => {
-  // If selected date is in the future, use current date
-  const baseDate = isAfter(selectedDate, new Date()) ? new Date() : selectedDate;
-  console.log(`Generating 30-day data for base date: ${format(baseDate, 'yyyy-MM-dd')}`);
+export const generateRolling30DayData = (currentData: Record<string, any[]>) => {
+  const today = new Date();
   
   return Object.fromEntries(
     Object.entries(currentData).map(([key, data]) => [
       key,
       Array.from({ length: 30 }, (_, i) => {
-        const date = subDays(baseDate, 29 - i);
-        const isFutureDate = isAfter(date, new Date());
+        const date = subDays(today, 29 - i);
+        const isFutureDate = isAfter(date, today);
         const dayOfMonth = getDate(date);
         
         // Generate daily values that will be properly accumulated in the transformData function
@@ -142,7 +114,7 @@ export const generateCustomDateRangeData = (currentData: Record<string, any[]>, 
 };
 
 // Combine data from multiple data sets into a single dataset
-export const combineDataSets = (dataSets: Record<string, Array<{ day: string; value: number | null }>>[]) => {
+export const combineDataSets = (dataSets: Record<string, Array<{ day: string; value: number }>>[]) => {
   const firstDataSet = dataSets[0];
   const firstKey = Object.keys(firstDataSet)[0];
   const template = firstDataSet[firstKey].map(item => ({ day: item.day, value: 0 }));
@@ -150,9 +122,7 @@ export const combineDataSets = (dataSets: Record<string, Array<{ day: string; va
   dataSets.forEach(dataSet => {
     Object.values(dataSet).forEach(dimensionData => {
       dimensionData.forEach((dayData, index) => {
-        if (template[index] && dayData.value !== null) {
-          template[index].value += dayData.value;
-        }
+        template[index].value += dayData.value;
       });
     });
   });
@@ -161,7 +131,7 @@ export const combineDataSets = (dataSets: Record<string, Array<{ day: string; va
 };
 
 // Process the combined data to include totals
-export const processCombinedData = (combined: { total: Array<{ day: string; value: number | null }> }) => {
+export const processCombinedData = (combined: { total: Array<{ day: string; value: number }> }) => {
   return {
     current: combined,
     previous: combined,

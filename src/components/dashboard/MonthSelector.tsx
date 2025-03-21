@@ -19,7 +19,7 @@ export const MonthSelector = ({ selectedMonth, onMonthChange, visible }: MonthSe
     return Array.from({ length: 13 }, (_, i) => {
       const date = subMonths(today, i);
       return {
-        value: `${date.getMonth()},${date.getFullYear()}`,
+        value: date.getMonth().toString(),
         label: format(date, "MMM ''yy") // Format as "Mar '25"
       };
     });

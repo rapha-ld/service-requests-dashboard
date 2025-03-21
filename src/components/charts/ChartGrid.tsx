@@ -28,8 +28,6 @@ interface ChartGridProps {
   threshold?: number;
   individualMaxValues?: boolean;
   timeRange?: string;
-  selectedMonth?: number;
-  selectedYear?: number;
 }
 
 export const ChartGrid = ({
@@ -48,9 +46,7 @@ export const ChartGrid = ({
   showThreshold = false,
   threshold,
   individualMaxValues = false,
-  timeRange = 'month-to-date',
-  selectedMonth = new Date().getMonth(),
-  selectedYear = new Date().getFullYear()
+  timeRange = 'month-to-date'
 }: ChartGridProps) => {
   const [layoutMode, setLayoutMode] = useState<'compact' | 'expanded'>('compact');
   const [filteredGroups, setFilteredGroups] = useState(sortedGroups);
@@ -138,8 +134,6 @@ export const ChartGrid = ({
             showThreshold={showThreshold && effectiveViewType === 'cumulative'}
             threshold={threshold}
             timeRange={timeRange}
-            selectedMonth={selectedMonth}
-            selectedYear={selectedYear}
           />
         ))}
       </div>

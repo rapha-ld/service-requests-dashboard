@@ -1,25 +1,18 @@
 
 // Generate non-cumulative daily data that will add up to the target value
-export const generateDailyData = (targetValue: number, growthPattern: 'steady' | 'exponential' | 'stepwise', selectedDate?: Date) => {
+export const generateDailyData = (targetValue: number, growthPattern: 'steady' | 'exponential' | 'stepwise') => {
   const data = [];
   
-  // Calculate dates for the month
-  const today = selectedDate || new Date();
+  // Calculate dates for the current month
+  const today = new Date();
   const currentYear = today.getFullYear();
   const currentMonth = today.getMonth();
   
-  console.log(`Generating daily data for ${currentMonth + 1}/${currentYear} with target: ${targetValue}`);
-  
-  // Start date: 1st day of selected month
+  // Start date: 1st day of current month
   const startDate = new Date(currentYear, currentMonth, 1);
-  // End date: Today's date or end of selected month if in the past
-  const now = new Date();
-  const isCurrentMonth = currentMonth === now.getMonth() && currentYear === now.getFullYear();
-  const endDate = isCurrentMonth 
-    ? new Date(currentYear, currentMonth, now.getDate())
-    : new Date(currentYear, currentMonth + 1, 0); // Last day of selected month
-  
-  // Full month end date: Last day of selected month
+  // End date: Today's date
+  const endDate = new Date(currentYear, currentMonth, today.getDate());
+  // Full month end date: Last day of current month
   const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
   
   // Calculate different growth patterns for daily values
@@ -95,6 +88,23 @@ export const generateDailyData = (targetValue: number, growthPattern: 'steady' |
     
     data.push({
       day: formattedDate,
+      value: null
+    });
+  }
+  
+  // Ensure the data includes today's date
+  const today_formatted = today.toLocaleDateString('en-US', { 
+    month: 'short', 
+    day: 'numeric' 
+  });
+  
+  // Check if today's date is already in the data
+  const todayExists = data.some(d => d.day === today_formatted);
+  
+  // If not, add it
+  if (!todayExists) {
+    data.push({
+      day: today_formatted,
       value: null
     });
   }

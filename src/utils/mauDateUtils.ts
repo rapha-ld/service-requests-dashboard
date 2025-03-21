@@ -1,5 +1,5 @@
 
-import { format, subMonths, subDays, getDaysInMonth } from "date-fns";
+import { format, subMonths, subDays } from "date-fns";
 
 // Helper function to convert month abbreviation to month number
 export const getMonthNumber = (monthAbbr: string): number => {
@@ -24,13 +24,4 @@ export const generateLast12MonthsDateStrings = () => {
   return Array.from({ length: 12 }, (_, i) => 
     format(subMonths(new Date(), i), 'MMM')
   ).reverse();
-};
-
-// Generate date strings for specific month
-export const generateMonthDateStrings = (month: number, year: number) => {
-  const daysInMonth = getDaysInMonth(new Date(year, month));
-  return Array.from({ length: daysInMonth }, (_, i) => {
-    const date = new Date(year, month, i + 1);
-    return format(date, 'MMM d');
-  });
 };

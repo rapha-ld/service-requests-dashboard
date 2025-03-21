@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
@@ -10,7 +11,6 @@ import { DateRange } from "@/types/mauTypes";
 const PeakServerConnections = () => {
   // State hooks
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
   const [viewType, setViewType] = useState<ViewType>('net-new');
   const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>('bar');
@@ -57,18 +57,9 @@ const PeakServerConnections = () => {
     }
   };
   
-  // Handle month change with proper parsing
-  const handleMonthChange = (value: string) => {
-    // Value now contains both month and year, separated by a comma
-    const [month, year] = value.split(',').map(Number);
-    setSelectedMonth(month);
-    setSelectedYear(year);
-  };
-  
   // Fetch data using custom hook
   const { data: serviceData } = useServiceData(
     selectedMonth, 
-    selectedYear,
     grouping, 
     timeRange,
     timeRange === 'custom' ? customDateRange : undefined
@@ -105,10 +96,10 @@ const PeakServerConnections = () => {
           onGroupingChange={setGrouping}
           onViewTypeChange={handleViewTypeChange}
           onSortDirectionChange={() => setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc')}
-          onMonthChange={handleMonthChange}
+          onMonthChange={(value) => setSelectedMonth(parseInt(value))}
           timeRange={timeRange}
           onTimeRangeChange={handleTimeRangeChange}
-          showViewTypeToggle={false}
+          showViewTypeToggle={false} // Remove toggle from header
           customDateRange={customDateRange}
           onCustomDateRangeChange={handleCustomDateRangeChange}
         />
@@ -127,10 +118,8 @@ const PeakServerConnections = () => {
           useViewDetailsButton={false}
           showOnlyTotal={grouping === 'all'}
           onViewTypeChange={handleViewTypeChange}
-          disableViewTypeToggle={false}
+          disableViewTypeToggle={false} // Always allow toggle
           timeRange={timeRange}
-          selectedMonth={selectedMonth}
-          selectedYear={selectedYear}
         />
       </div>
     </div>
