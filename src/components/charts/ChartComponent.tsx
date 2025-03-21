@@ -111,8 +111,8 @@ export const ChartComponent = ({
     return tick;
   };
   
-  // Only show monthly reset lines in cumulative view, not in rolling-30d
-  const shouldShowResetLines = viewType === 'cumulative';
+  // Show monthly reset lines in both cumulative and net-new views, but not in rolling-30d
+  const shouldShowResetLines = viewType !== 'rolling-30d';
 
   // For month-to-date view, ensure the last tick is today's date
   const getXAxisTicks = () => {
