@@ -7,23 +7,54 @@ export function useUrlParams() {
   const [searchParams, setSearchParams] = useSearchParams();
   
   // Get values from URL params with defaults
-  const getViewType = (): ViewType => 
-    (searchParams.get("viewType") as ViewType) || "net-new";
+  const getViewType = (): ViewType => {
+    const viewType = searchParams.get("viewType") as ViewType;
+    // Validate that the viewType is one of the allowed values
+    if (["net-new", "cumulative", "rolling-30d"].includes(viewType)) {
+      return viewType;
+    }
+    return "net-new"; // default
+  };
   
-  const getGrouping = (): GroupingType => 
-    (searchParams.get("grouping") as GroupingType) || "all";
+  const getGrouping = (): GroupingType => {
+    const grouping = searchParams.get("grouping") as GroupingType;
+    if (["all", "environment", "relayId", "userAgent"].includes(grouping)) {
+      return grouping;
+    }
+    return "all"; // default
+  };
   
-  const getTimeRange = (): TimeRangeType => 
-    (searchParams.get("timeRange") as TimeRangeType) || "month-to-date";
+  const getTimeRange = (): TimeRangeType => {
+    const timeRange = searchParams.get("timeRange") as TimeRangeType;
+    if (["3-day", "7-day", "rolling-30-day", "month-to-date", "last-12-months", "custom"].includes(timeRange)) {
+      return timeRange;
+    }
+    return "month-to-date"; // default
+  };
   
-  const getSelectedMonth = (): number => 
-    parseInt(searchParams.get("month") || new Date().getMonth().toString());
+  const getSelectedMonth = (): number => {
+    const monthParam = searchParams.get("month");
+    if (monthParam && !isNaN(parseInt(monthParam))) {
+      return parseInt(monthParam);
+    }
+    return new Date().getMonth(); // default to current month
+  };
   
-  const getSortDirection = (): 'asc' | 'desc' => 
-    (searchParams.get("sort") as 'asc' | 'desc') || "desc";
+  const getSortDirection = (): 'asc' | 'desc' => {
+    const sort = searchParams.get("sort") as 'asc' | 'desc';
+    if (["asc", "desc"].includes(sort)) {
+      return sort;
+    }
+    return "desc"; // default
+  };
   
-  const getChartType = (): ChartType => 
-    (searchParams.get("chartType") as ChartType) || "bar";
+  const getChartType = (): ChartType => {
+    const chartType = searchParams.get("chartType") as ChartType;
+    if (["bar", "area", "line"].includes(chartType)) {
+      return chartType;
+    }
+    return "bar"; // default
+  };
   
   const getSelectedProject = (): string => 
     searchParams.get("project") || "all";
@@ -32,9 +63,13 @@ export function useUrlParams() {
     const fromParam = searchParams.get("from");
     const toParam = searchParams.get("to");
     
+    const today = new Date();
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(today.getDate() - 30);
+    
     return {
-      from: fromParam ? new Date(fromParam) : new Date(),
-      to: toParam ? new Date(toParam) : new Date()
+      from: fromParam ? new Date(fromParam) : thirtyDaysAgo,
+      to: toParam ? new Date(toParam) : today
     };
   };
   

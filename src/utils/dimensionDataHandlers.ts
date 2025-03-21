@@ -18,6 +18,8 @@ export const handleAllDimensionsData = (timeRange: TimeRangeType, customDateRang
   const relayIdData = getMockData('relayId');
   const userAgentData = getMockData('userAgent');
   
+  // Use appropriate time range data generator based on the selected time range
+  // Each generator uses the same consistent historical data pattern with different window sizes
   if (timeRange === 'last-12-months') {
     const environmentLast12Months = generateLast12MonthsData(environmentData);
     const relayIdLast12Months = generateLast12MonthsData(relayIdData);
@@ -72,6 +74,8 @@ export const handleSpecificDimensionData = (grouping: GroupingType, timeRange: T
   const current = getMockData(grouping as 'environment' | 'relayId' | 'userAgent');
   const previous = getMockData(grouping as 'environment' | 'relayId' | 'userAgent');
 
+  // Use appropriate time range data generator based on the selected time range
+  // Each generator uses the same consistent historical data pattern with different window sizes
   if (timeRange === 'last-12-months') {
     const last12MonthsData = generateLast12MonthsData(current);
     return {
