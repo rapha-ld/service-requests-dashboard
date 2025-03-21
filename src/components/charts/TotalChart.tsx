@@ -44,9 +44,15 @@ export const TotalChart = ({
     "/service-requests"
   ].includes(location.pathname);
 
+  // Force net-new view for 12M timeRange
+  const effectiveViewType = timeRange === 'last-12-months' ? 'net-new' : viewType;
+  
+  // Force bar chart for net-new view
+  const effectiveChartType = effectiveViewType === 'net-new' ? 'bar' : chartType;
+
   // For cumulative view, ALWAYS accumulate values, even for 3-day and 7-day views
   // This ensures we show the cumulative value from the beginning of the month
-  const shouldAccumulate = viewType === 'cumulative';
+  const shouldAccumulate = effectiveViewType === 'cumulative';
   
   // We want to handle resets only for real monthly resets,
   // which aren't relevant for 3-day or 7-day views
@@ -54,7 +60,7 @@ export const TotalChart = ({
   
   // Transform data based on view type and accumulation settings
   const transformedData = shouldAccumulate 
-    ? transformData(data, viewType, shouldHandleResets, isDiagnosticPage) 
+    ? transformData(data, effectiveViewType, shouldHandleResets, isDiagnosticPage) 
     : data;
   
   // Calculate max value based on transformed data
@@ -62,7 +68,7 @@ export const TotalChart = ({
 
   // If threshold is provided and showing threshold is enabled, ensure maxValue is at least the threshold
   // Only apply this for cumulative view
-  const shouldShowThreshold = showThreshold && viewType === 'cumulative';
+  const shouldShowThreshold = showThreshold && effectiveViewType === 'cumulative';
   const effectiveMaxValue = shouldShowThreshold && threshold && threshold > maxValue ? threshold : maxValue;
 
   return (
@@ -72,9 +78,9 @@ export const TotalChart = ({
         data={transformedData}
         color="#2AB4FF"
         unit={unitLabel}
-        viewType={viewType}
+        viewType={effectiveViewType}
         maxValue={effectiveMaxValue}
-        chartType={chartType}
+        chartType={effectiveChartType}
         className="w-full"
         chartRef={chartRef}
         onExport={onExportChart}

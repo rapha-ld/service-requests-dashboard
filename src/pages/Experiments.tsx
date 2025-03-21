@@ -31,19 +31,27 @@ const Experiments = () => {
     setChartType(viewType === 'net-new' ? 'bar' : 'area');
   }, [viewType]);
   
-  // Handle time range change - no longer force cumulative for 30D
+  // Handle time range change with special behavior for 12M
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
     setTimeRange(newTimeRange);
+    
+    // Force net-new view when 12M is selected
+    if (newTimeRange === 'last-12-months') {
+      setViewType('net-new');
+      setChartType('bar');
+    }
   };
   
   const handleCustomDateRangeChange = (dateRange: DateRange) => {
     setCustomDateRange(dateRange);
   };
   
-  // Handle view type change - now we allow changing even for rolling-30-day
+  // Handle view type change - but only if not in 12M view
   const handleViewTypeChange = (newViewType: 'net-new' | 'cumulative') => {
-    setViewType(newViewType);
-    setChartType(newViewType === 'net-new' ? 'bar' : 'area');
+    if (timeRange !== 'last-12-months') {
+      setViewType(newViewType);
+      setChartType(newViewType === 'net-new' ? 'bar' : 'area');
+    }
   };
 
   const currentDate = new Date(new Date().getFullYear(), selectedMonth);
@@ -92,7 +100,7 @@ const Experiments = () => {
           showThreshold={true}
           threshold={EXPERIMENT_EVENTS_THRESHOLD}
           onViewTypeChange={handleViewTypeChange}
-          disableViewTypeToggle={false} // Always allow toggle
+          disableViewTypeToggle={timeRange === 'last-12-months'} // Disable toggle for 12M view
           timeRange={timeRange}
         />
       </div>

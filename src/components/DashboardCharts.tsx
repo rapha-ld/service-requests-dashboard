@@ -90,9 +90,15 @@ export const DashboardCharts = ({
     window.open(viewDetailsUrl, '_blank');
   };
 
-  // Render view type toggle if not disabled
+  // Render view type toggle based on conditions
   const renderViewTypeToggle = () => {
+    // Don't show toggle if disabled or no change handler provided
     if (disableViewTypeToggle || !onViewTypeChange) {
+      return null;
+    }
+    
+    // Don't show toggle when using 12M view
+    if (timeRange === 'last-12-months') {
       return null;
     }
 
@@ -126,6 +132,12 @@ export const DashboardCharts = ({
     return false;
   };
 
+  // Determine the effective view type based on timeRange
+  const effectiveViewType = timeRange === 'last-12-months' ? 'net-new' : viewType;
+  
+  // Determine chart type based on effective view type
+  const effectiveChartType = effectiveViewType === 'net-new' ? 'bar' : chartType;
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -137,8 +149,8 @@ export const DashboardCharts = ({
         <TotalChart
           title="Total"
           data={allEnvironmentsData}
-          viewType={viewType}
-          chartType={chartType}
+          viewType={effectiveViewType}
+          chartType={effectiveChartType}
           chartRef={chartRefs.current.total}
           onExportChart={onExportChart}
           useViewDetailsButton={useViewDetailsButton}
@@ -153,8 +165,8 @@ export const DashboardCharts = ({
       {!showOnlyTotal && sortedGroups && (
         <ChartGrid
           sortedGroups={sortedGroups}
-          viewType={viewType}
-          chartType={chartType}
+          viewType={effectiveViewType}
+          chartType={effectiveChartType}
           maxValue={maxValue}
           chartRefs={chartRefs}
           onExportChart={onExportChart}

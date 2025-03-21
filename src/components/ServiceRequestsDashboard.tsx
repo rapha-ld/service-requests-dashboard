@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { DashboardSummary } from "@/components/DashboardSummary";
@@ -30,6 +31,12 @@ export const ServiceRequestsDashboard = () => {
   // Handle time range change
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
     setTimeRange(newTimeRange);
+    
+    // Force net-new view when 12M is selected
+    if (newTimeRange === 'last-12-months') {
+      setViewType('net-new');
+      setChartType('bar');
+    }
   };
   
   // Handle custom date range change
@@ -37,11 +44,14 @@ export const ServiceRequestsDashboard = () => {
     setCustomDateRange(dateRange);
   };
   
-  // Handle view type change - now we allow changing even for rolling-30-day
+  // Handle view type change
   const handleViewTypeChange = (newViewType: ViewType) => {
-    setViewType(newViewType);
-    // Update chart type based on view type
-    setChartType(newViewType === 'net-new' ? 'bar' : 'area');
+    // Only allow changing if not in 12M view
+    if (timeRange !== 'last-12-months') {
+      setViewType(newViewType);
+      // Update chart type based on view type
+      setChartType(newViewType === 'net-new' ? 'bar' : 'area');
+    }
   };
   
   // Fetch data using custom hook
@@ -99,7 +109,7 @@ export const ServiceRequestsDashboard = () => {
           showOnlyTotal={grouping === 'all'}
           unitLabel="connections"
           onViewTypeChange={handleViewTypeChange}
-          disableViewTypeToggle={false} // Always allow toggle
+          disableViewTypeToggle={timeRange === 'last-12-months'} // Disable toggle for 12M view
           timeRange={timeRange}
         />
       </div>

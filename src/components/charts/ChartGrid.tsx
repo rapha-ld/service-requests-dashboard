@@ -50,6 +50,12 @@ export const ChartGrid = ({
 }: ChartGridProps) => {
   const [layoutMode, setLayoutMode] = useState<'compact' | 'expanded'>('compact');
   const [filteredGroups, setFilteredGroups] = useState(sortedGroups);
+  
+  // Force net-new view for 12M timeRange
+  const effectiveViewType = timeRange === 'last-12-months' ? 'net-new' : viewType;
+  
+  // Force bar chart for net-new view
+  const effectiveChartType = effectiveViewType === 'net-new' ? 'bar' : chartType;
 
   // Handle search filtering
   const handleSearch = (term: string) => {
@@ -68,7 +74,7 @@ export const ChartGrid = ({
     if (filteredGroups.length === 0) return maxValue;
     
     // For cumulative view, we need to calculate the maximum possible accumulated value for each chart
-    if (viewType === 'cumulative') {
+    if (effectiveViewType === 'cumulative') {
       // Transform each chart's data to get cumulative values
       const cumulativeMaxValues = filteredGroups.map(group => {
         const transformedData = transformData(group.data, 'cumulative', true);
@@ -90,12 +96,12 @@ export const ChartGrid = ({
   
   // Use the higher of the calculated shared max or the provided maxValue
   // For incremental (net-new) view, always use calculated max value from actual data to fit the scale
-  const effectiveMaxValue = viewType === 'net-new' 
+  const effectiveMaxValue = effectiveViewType === 'net-new' 
     ? sharedMaxValue
     : Math.max(sharedMaxValue, maxValue || 0, threshold || 0);
   
   // Force shared max values for specific views to ensure consistent scaling
-  const shouldUseSharedValues = ['3-day', '7-day'].includes(timeRange) || !individualMaxValues || viewType === 'net-new';
+  const shouldUseSharedValues = ['3-day', '7-day', 'last-12-months'].includes(timeRange) || !individualMaxValues || effectiveViewType === 'net-new';
 
   return (
     <>
@@ -119,13 +125,13 @@ export const ChartGrid = ({
             data={group.data}
             color="#2AB4FF"
             unit={unitLabel}
-            viewType={viewType}
+            viewType={effectiveViewType}
             maxValue={shouldUseSharedValues ? effectiveMaxValue : undefined}
-            chartType={chartType}
+            chartType={effectiveChartType}
             chartRef={chartRefs.current[group.title]}
             onExport={onExportChart}
             useViewDetails={useViewDetailsButton}
-            showThreshold={showThreshold}
+            showThreshold={showThreshold && effectiveViewType === 'cumulative'}
             threshold={threshold}
             timeRange={timeRange}
           />
