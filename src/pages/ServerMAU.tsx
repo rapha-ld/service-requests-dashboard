@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
@@ -11,6 +10,7 @@ import { DateRange } from "@/types/mauTypes";
 const ServerMAU = () => {
   // State hooks
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
   const [viewType, setViewType] = useState<ViewType>('net-new');
   const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>('bar');
@@ -57,9 +57,18 @@ const ServerMAU = () => {
     }
   };
   
+  // Handle month change with proper parsing
+  const handleMonthChange = (value: string) => {
+    // Value now contains both month and year, separated by a comma
+    const [month, year] = value.split(',').map(Number);
+    setSelectedMonth(month);
+    setSelectedYear(year);
+  };
+  
   // Fetch data using custom hook
   const { data: serviceData } = useServiceData(
     selectedMonth, 
+    selectedYear,
     grouping, 
     timeRange,
     timeRange === 'custom' ? customDateRange : undefined
@@ -96,10 +105,10 @@ const ServerMAU = () => {
           onGroupingChange={setGrouping}
           onViewTypeChange={handleViewTypeChange}
           onSortDirectionChange={() => setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc')}
-          onMonthChange={(value) => setSelectedMonth(parseInt(value))}
+          onMonthChange={handleMonthChange}
           timeRange={timeRange}
           onTimeRangeChange={handleTimeRangeChange}
-          showViewTypeToggle={false} // Remove toggle from header
+          showViewTypeToggle={false}
           customDateRange={customDateRange}
           onCustomDateRangeChange={handleCustomDateRangeChange}
         />
@@ -118,8 +127,10 @@ const ServerMAU = () => {
           useViewDetailsButton={false}
           showOnlyTotal={grouping === 'all'}
           onViewTypeChange={handleViewTypeChange}
-          disableViewTypeToggle={false} // Always allow toggle
+          disableViewTypeToggle={false}
           timeRange={timeRange}
+          selectedMonth={selectedMonth}
+          selectedYear={selectedYear}
         />
       </div>
     </div>
