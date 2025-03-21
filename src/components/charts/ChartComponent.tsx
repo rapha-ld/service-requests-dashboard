@@ -1,3 +1,4 @@
+
 import { useRef } from 'react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, Label } from 'recharts';
 import { CustomTooltip } from './CustomTooltip';
@@ -7,7 +8,7 @@ import { useLocation } from 'react-router-dom';
 
 interface ChartComponentProps {
   data: Array<{ day: string; value: number | null }>;
-  viewType: 'net-new' | 'cumulative';
+  viewType: 'net-new' | 'cumulative' | 'rolling-30d';
   chartType: 'area' | 'bar' | 'line';
   maxValue: number;
   unit: string;
@@ -60,7 +61,9 @@ export const ChartComponent = ({
   // Use the appropriate data based on view type
   const transformedData = viewType === 'cumulative' 
     ? transformedDataWithResets 
-    : transformData(data, viewType, true, isDiagnosticPage);
+    : viewType === 'rolling-30d'
+      ? transformData(data, 'rolling-30d', false, false)
+      : transformData(data, viewType, true, isDiagnosticPage);
   
   // Only apply threshold to the max value if in cumulative view
   const effectiveMaxValue = showThreshold && threshold && threshold > maxValue && viewType === 'cumulative'
@@ -106,6 +109,9 @@ export const ChartComponent = ({
     }
     return tick;
   };
+  
+  // Only show monthly reset lines in cumulative view, not in rolling-30d
+  const shouldShowResetLines = viewType === 'cumulative';
 
   return (
     <ResponsiveContainer width="100%" height="100%">
@@ -199,7 +205,7 @@ export const ChartComponent = ({
             }}
           />
         )}
-        {resetPoints.map((day, index) => {
+        {shouldShowResetLines && resetPoints.map((day, index) => {
            const dataIndex = transformedData.findIndex((d: any) => d.day === day);
            if (dataIndex === -1) return null;
            if (dataIndex === 0) return null;

@@ -8,11 +8,11 @@ import { ViewTypeToggle } from "@/components/dashboard/ViewTypeToggle";
 
 interface DashboardHeaderProps {
   grouping: 'all' | 'environment' | 'relayId' | 'userAgent';
-  viewType: 'net-new' | 'cumulative';
+  viewType: 'net-new' | 'cumulative' | 'rolling-30d';
   selectedMonth: number;
   sortDirection: 'desc' | 'asc';
   onGroupingChange: (value: 'all' | 'environment' | 'relayId' | 'userAgent') => void;
-  onViewTypeChange: (value: 'net-new' | 'cumulative') => void;
+  onViewTypeChange: (value: 'net-new' | 'cumulative' | 'rolling-30d') => void;
   onSortDirectionChange: () => void;
   onMonthChange: (value: string) => void;
   timeRange: 'month-to-date' | 'last-12-months' | 'rolling-30-day' | '3-day' | '7-day' | 'custom';

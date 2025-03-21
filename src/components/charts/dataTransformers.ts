@@ -1,3 +1,4 @@
+
 import { format, parse, getDate, startOfMonth, differenceInDays } from 'date-fns';
 
 export const getRequestStatus = (value: number) => {
@@ -18,11 +19,16 @@ export const calculatePercentChange = (currentValue: number, previousValue: numb
 // Transform raw data to cumulative values if needed
 export const transformData = (
   data: Array<{ day: string; value: number | null }>, 
-  viewType: 'net-new' | 'cumulative',
+  viewType: 'net-new' | 'cumulative' | 'rolling-30d',
   handleResets = false,
   isDiagnosticPage = false
 ) => {
   if (viewType === 'net-new') return data;
+  
+  // For rolling-30d, we process data to show rolling 30-day totals
+  if (viewType === 'rolling-30d') {
+    return calculateRolling30DayValues(data);
+  }
   
   // For diagnostic pages, never handle resets even if handleResets is true
   const shouldHandleResets = handleResets && !isDiagnosticPage;
@@ -112,6 +118,40 @@ export const transformData = (
   }, [] as Array<{ day: string; value: number | null, isResetPoint?: boolean }>);
 
   return result;
+};
+
+// Calculate rolling 30-day values for each data point
+const calculateRolling30DayValues = (
+  data: Array<{ day: string; value: number | null }>
+) => {
+  // If there's not enough data, return as-is
+  if (!data || data.length === 0) return data;
+  
+  // Create a new array to store the rolling values
+  return data.map((currentPoint, currentIndex) => {
+    // Skip null values
+    if (currentPoint.value === null) {
+      return { ...currentPoint };
+    }
+    
+    // For each point, sum the value of this point and up to 29 previous points (or fewer if not available)
+    let rollingSum = 0;
+    let count = 0;
+    
+    // Look back up to 30 days (including current day)
+    for (let i = 0; i < 30 && currentIndex - i >= 0; i++) {
+      const point = data[currentIndex - i];
+      if (point && point.value !== null) {
+        rollingSum += point.value;
+        count++;
+      }
+    }
+    
+    return {
+      day: currentPoint.day,
+      value: rollingSum
+    };
+  });
 };
 
 // Calculate average from non-null values

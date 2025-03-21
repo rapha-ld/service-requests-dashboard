@@ -24,8 +24,14 @@ export const ServiceRequestsDashboard = () => {
   
   // Effect to update chart type based on view type
   useEffect(() => {
-    // For net-new view, use bar charts; for cumulative, use area charts
-    setChartType(viewType === 'net-new' ? 'bar' : 'area');
+    // For net-new view, use bar charts; for cumulative, use area charts; for rolling-30d, use line charts
+    if (viewType === 'net-new') {
+      setChartType('bar');
+    } else if (viewType === 'rolling-30d') {
+      setChartType('line');
+    } else {
+      setChartType('area');
+    }
   }, [viewType]);
   
   // Handle time range change
@@ -50,7 +56,13 @@ export const ServiceRequestsDashboard = () => {
     if (timeRange !== 'last-12-months') {
       setViewType(newViewType);
       // Update chart type based on view type
-      setChartType(newViewType === 'net-new' ? 'bar' : 'area');
+      if (newViewType === 'net-new') {
+        setChartType('bar');
+      } else if (newViewType === 'rolling-30d') {
+        setChartType('line');
+      } else {
+        setChartType('area');
+      }
     }
   };
   

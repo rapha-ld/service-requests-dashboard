@@ -16,3 +16,5 @@ export interface ExperimentData {
   currentTotals: Record<string, number>;
   previousTotals: Record<string, number>;
 }
+
+export type ViewType = 'net-new' | 'cumulative' | 'rolling-30d';

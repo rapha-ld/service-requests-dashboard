@@ -1,10 +1,10 @@
 
 import { Toggle } from "@/components/common/Toggle";
-import { BarChart, LineChart } from "lucide-react";
+import { BarChart, LineChart, Calendar } from "lucide-react";
 
 interface ViewTypeToggleProps {
-  viewType: 'net-new' | 'cumulative';
-  onViewTypeChange: (value: 'net-new' | 'cumulative') => void;
+  viewType: 'net-new' | 'cumulative' | 'rolling-30d';
+  onViewTypeChange: (value: 'net-new' | 'cumulative' | 'rolling-30d') => void;
   visible: boolean;
 }
 
@@ -25,10 +25,16 @@ export const ViewTypeToggle = ({ viewType, onViewTypeChange, visible }: ViewType
           label: 'Incremental',
           icon: <BarChart className="h-4 w-4 mr-1" />,
           tooltip: "Unique counting resets monthly" 
+        },
+        { 
+          value: 'rolling-30d', 
+          label: 'Rolling 30D',
+          icon: <Calendar className="h-4 w-4 mr-1" />,
+          tooltip: "Unique count from preceding 30 days"
         }
       ]}
       value={viewType}
-      onChange={(value) => onViewTypeChange(value as 'net-new' | 'cumulative')}
+      onChange={(value) => onViewTypeChange(value as 'net-new' | 'cumulative' | 'rolling-30d')}
     />
   );
 };

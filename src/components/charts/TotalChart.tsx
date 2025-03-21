@@ -6,7 +6,7 @@ import { useLocation } from "react-router-dom";
 interface TotalChartProps {
   title: string;
   data: Array<{ day: string; value: number }>;
-  viewType: 'net-new' | 'cumulative';
+  viewType: 'net-new' | 'cumulative' | 'rolling-30d';
   chartType: 'area' | 'bar' | 'line';
   chartRef: any;
   onExportChart: (title: string) => void;
@@ -47,8 +47,13 @@ export const TotalChart = ({
   // Force net-new view for 12M timeRange
   const effectiveViewType = timeRange === 'last-12-months' ? 'net-new' : viewType;
   
-  // Force bar chart for net-new view
-  const effectiveChartType = effectiveViewType === 'net-new' ? 'bar' : chartType;
+  // Force bar chart for net-new view, line chart for rolling-30d
+  let effectiveChartType = chartType;
+  if (effectiveViewType === 'net-new') {
+    effectiveChartType = 'bar';
+  } else if (effectiveViewType === 'rolling-30d') {
+    effectiveChartType = 'line';
+  }
 
   // For cumulative view, ALWAYS accumulate values, even for 3-day and 7-day views
   // This ensures we show the cumulative value from the beginning of the month

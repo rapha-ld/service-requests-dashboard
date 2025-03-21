@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
@@ -17,7 +18,7 @@ const EXPERIMENT_EVENTS_THRESHOLD = 500000;
 const Experiments = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
-  const [viewType, setViewType] = useState<'net-new' | 'cumulative'>('cumulative'); 
+  const [viewType, setViewType] = useState<'net-new' | 'cumulative' | 'rolling-30d'>('cumulative'); 
   const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>('area'); 
   const [timeRange, setTimeRange] = useState<TimeRangeType>('month-to-date');
   const [customDateRange, setCustomDateRange] = useState<DateRange>({
@@ -27,7 +28,13 @@ const Experiments = () => {
   const chartRefs = useRef<{ [key: string]: any }>({});
 
   useEffect(() => {
-    setChartType(viewType === 'net-new' ? 'bar' : 'area');
+    if (viewType === 'net-new') {
+      setChartType('bar');
+    } else if (viewType === 'rolling-30d') {
+      setChartType('line');
+    } else {
+      setChartType('area');
+    }
   }, [viewType]);
   
   // Handle time range change with special behavior for 12M
@@ -46,10 +53,16 @@ const Experiments = () => {
   };
   
   // Handle view type change - but only if not in 12M view
-  const handleViewTypeChange = (newViewType: 'net-new' | 'cumulative') => {
+  const handleViewTypeChange = (newViewType: 'net-new' | 'cumulative' | 'rolling-30d') => {
     if (timeRange !== 'last-12-months') {
       setViewType(newViewType);
-      setChartType(newViewType === 'net-new' ? 'bar' : 'area');
+      if (newViewType === 'net-new') {
+        setChartType('bar');
+      } else if (newViewType === 'rolling-30d') {
+        setChartType('line');
+      } else {
+        setChartType('area');
+      }
     }
   };
 

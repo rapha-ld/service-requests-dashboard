@@ -13,7 +13,7 @@ import { useTheme } from "@/hooks/useTheme";
 interface DashboardChartsProps {
   allEnvironmentsData: Array<{ day: string, value: number }>;
   sortedGroups: Array<any>;
-  viewType: 'net-new' | 'cumulative';
+  viewType: 'net-new' | 'cumulative' | 'rolling-30d';
   chartType: 'area' | 'bar' | 'line';
   maxValue: number;
   grouping: 'all' | 'environment' | 'relayId' | 'userAgent';
@@ -24,7 +24,7 @@ interface DashboardChartsProps {
   unitLabel?: string;
   showThreshold?: boolean;
   threshold?: number;
-  onViewTypeChange?: (value: 'net-new' | 'cumulative') => void;
+  onViewTypeChange?: (value: 'net-new' | 'cumulative' | 'rolling-30d') => void;
   disableViewTypeToggle?: boolean;
   timeRange?: string;
 }
@@ -136,7 +136,12 @@ export const DashboardCharts = ({
   const effectiveViewType = timeRange === 'last-12-months' ? 'net-new' : viewType;
   
   // Determine chart type based on effective view type
-  const effectiveChartType = effectiveViewType === 'net-new' ? 'bar' : chartType;
+  let effectiveChartType = chartType;
+  if (effectiveViewType === 'net-new') {
+    effectiveChartType = 'bar';
+  } else if (effectiveViewType === 'rolling-30d') {
+    effectiveChartType = 'line';
+  }
 
   return (
     <div className="space-y-6">
