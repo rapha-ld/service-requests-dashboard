@@ -25,6 +25,8 @@ const queryClient = new QueryClient();
 // Create a wrapper component to conditionally render the NavigationTabs
 function AppContent() {
   const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const showTabs = location.pathname !== "/details";
 
   const isUsagePath = [
@@ -42,6 +44,12 @@ function AppContent() {
     "/service-requests"
   ].includes(location.pathname);
 
+  // Function to preserve URL parameters when redirecting
+  const getRedirectPath = (path: string) => {
+    const params = searchParams.toString();
+    return `${path}${params ? `?${params}` : ''}`;
+  };
+
   return (
     <SidebarProvider>
       <div className="flex w-full min-h-screen">
@@ -55,7 +63,7 @@ function AppContent() {
             )}
             <div className={`p-6 ${showTabs && (isUsagePath || isDiagnosticsPath) ? 'pt-20' : ''}`}>
               <Routes>
-                <Route path="/" element={<Navigate to="/overview" replace />} />
+                <Route path="/" element={<Navigate to={getRedirectPath("/overview")} replace />} />
                 <Route path="/service-requests" element={<Index />} />
                 <Route path="/service-connections" element={<ServiceRequestsDashboard />} />
                 <Route path="/overview" element={<Overview />} />
