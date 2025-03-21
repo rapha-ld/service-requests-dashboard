@@ -1,6 +1,7 @@
 
 import { TimeRangeType } from "@/hooks/useExperimentData";
 import { DateRange } from "@/types/mauTypes";
+import { ViewType } from "@/types/serviceData";
 
 export interface ExperimentGroup {
   id: string;
@@ -16,5 +17,3 @@ export interface ExperimentData {
   currentTotals: Record<string, number>;
   previousTotals: Record<string, number>;
 }
-
-export type ViewType = 'net-new' | 'cumulative' | 'rolling-30d';

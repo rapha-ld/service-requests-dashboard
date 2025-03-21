@@ -1,10 +1,11 @@
 
 import { ExperimentGroup } from "./types";
+import { ViewType } from "@/types/serviceData";
 
 // Calculate maximum value for charts
 export function calculateMaxValue(
   groups: ExperimentGroup[],
-  viewType: 'net-new' | 'cumulative' | 'rolling-30d'
+  viewType: ViewType
 ): number {
   if (viewType === 'rolling-30d') {
     // For rolling 30d, find the maximum value across all data points

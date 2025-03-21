@@ -1,6 +1,6 @@
 
 import { calculatePercentChange } from "./dataTransformers";
-import { TimeRangeType } from "@/types/serviceData";
+import { TimeRangeType, ViewType } from "@/types/serviceData";
 
 export type ChartGroup = {
   id: string;
@@ -17,7 +17,7 @@ export const processServiceData = (
   sortedGroups: ChartGroup[];
   allEnvironmentsData: Array<{ day: string; value: number }>;
   maxValue: number;
-  viewType: 'net-new' | 'cumulative';
+  viewType: ViewType;
 } => {
   if (!serviceData) return { sortedGroups: [], allEnvironmentsData: [], maxValue: 0, viewType: 'net-new' };
 
@@ -46,8 +46,13 @@ export const processServiceData = (
 
 export const calculateMaxValue = (
   groups: ChartGroup[],
-  viewType: 'net-new' | 'cumulative'
+  viewType: ViewType
 ) => {
+  if (viewType === 'rolling-30d') {
+    // For rolling 30d, find the maximum value across all data points
+    return Math.max(...groups.flatMap(env => env.data.map(d => d.value)));
+  }
+  
   return viewType === 'net-new'
     ? Math.max(...groups.flatMap(env => env.data.map(d => d.value)))
     : Math.max(...groups.map(env => 

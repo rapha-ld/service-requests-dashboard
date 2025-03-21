@@ -4,7 +4,7 @@ import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { useServiceData } from "@/hooks/useServiceData";
-import { GroupingType, TimeRangeType } from "@/types/serviceData";
+import { GroupingType, TimeRangeType, ViewType } from "@/types/serviceData";
 import { processServiceData, calculateMaxValue, getAllEnvironmentsData } from "@/utils/serviceDataUtils";
 import { DateRange } from "@/types/mauTypes";
 
@@ -12,7 +12,7 @@ const ServerMAU = () => {
   // State hooks
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
-  const [viewType, setViewType] = useState<'net-new' | 'cumulative'>('net-new');
+  const [viewType, setViewType] = useState<ViewType>('net-new');
   const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>('bar');
   const [grouping, setGrouping] = useState<GroupingType>('all');
   const [timeRange, setTimeRange] = useState<TimeRangeType>('month-to-date');
@@ -24,8 +24,14 @@ const ServerMAU = () => {
   
   // Effect to update chart type based on view type
   useEffect(() => {
-    // For net-new view, use bar charts; for cumulative, use area charts
-    setChartType(viewType === 'net-new' ? 'bar' : 'area');
+    // For net-new view, use bar charts; for cumulative, use area charts; for rolling-30d, use line charts
+    if (viewType === 'net-new') {
+      setChartType('bar');
+    } else if (viewType === 'rolling-30d') {
+      setChartType('line');
+    } else {
+      setChartType('area');
+    }
   }, [viewType]);
   
   // Handle time range change - no longer force cumulative for 30D
@@ -39,10 +45,16 @@ const ServerMAU = () => {
   };
   
   // Handle view type change - now we allow changing even for rolling-30-day
-  const handleViewTypeChange = (newViewType: 'net-new' | 'cumulative') => {
+  const handleViewTypeChange = (newViewType: ViewType) => {
     setViewType(newViewType);
     // Update chart type based on view type
-    setChartType(newViewType === 'net-new' ? 'bar' : 'area');
+    if (newViewType === 'net-new') {
+      setChartType('bar');
+    } else if (newViewType === 'rolling-30d') {
+      setChartType('line');
+    } else {
+      setChartType('area');
+    }
   };
   
   // Fetch data using custom hook

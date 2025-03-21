@@ -11,6 +11,7 @@ import {
   ExperimentGroup 
 } from "@/utils/experiments";
 import { DateRange } from "@/types/mauTypes";
+import { ViewType } from "@/types/serviceData";
 
 // Experiment events threshold from Overview page
 const EXPERIMENT_EVENTS_THRESHOLD = 500000;
@@ -18,7 +19,7 @@ const EXPERIMENT_EVENTS_THRESHOLD = 500000;
 const Experiments = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>('desc');
-  const [viewType, setViewType] = useState<'net-new' | 'cumulative' | 'rolling-30d'>('cumulative'); 
+  const [viewType, setViewType] = useState<ViewType>('cumulative'); 
   const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>('area'); 
   const [timeRange, setTimeRange] = useState<TimeRangeType>('month-to-date');
   const [customDateRange, setCustomDateRange] = useState<DateRange>({
@@ -53,7 +54,7 @@ const Experiments = () => {
   };
   
   // Handle view type change - but only if not in 12M view
-  const handleViewTypeChange = (newViewType: 'net-new' | 'cumulative' | 'rolling-30d') => {
+  const handleViewTypeChange = (newViewType: ViewType) => {
     if (timeRange !== 'last-12-months') {
       setViewType(newViewType);
       if (newViewType === 'net-new') {

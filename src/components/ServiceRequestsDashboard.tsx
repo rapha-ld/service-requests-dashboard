@@ -79,7 +79,7 @@ export const ServiceRequestsDashboard = () => {
   // Process data for display
   const { sortedGroups } = processServiceData(serviceData, sortDirection);
   
-  // Calculate maxValue
+  // Calculate maxValue - updated to accept the new ViewType
   const maxValue = calculateMaxValue(sortedGroups, viewType);
   
   // Get data for all environments chart
