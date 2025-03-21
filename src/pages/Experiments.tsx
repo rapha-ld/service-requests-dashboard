@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
@@ -9,7 +8,7 @@ import {
   calculateMaxValue, 
   getExperimentsTotalData,
   ExperimentGroup 
-} from "@/utils/experimentDataUtils";
+} from "@/utils/experiments";
 import { DateRange } from "@/types/mauTypes";
 
 // Experiment events threshold from Overview page
