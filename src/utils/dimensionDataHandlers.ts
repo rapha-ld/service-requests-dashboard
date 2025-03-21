@@ -11,44 +11,53 @@ import {
 } from "./timeRangeDataGenerators";
 import { TimeRangeType, GroupingType } from "@/types/serviceData";
 import { DateRange } from "@/types/mauTypes";
+import { format } from "date-fns";
 
 // Handle 'all' dimensions data
-export const handleAllDimensionsData = (timeRange: TimeRangeType, customDateRange?: DateRange) => {
-  const environmentData = getMockData('environment');
-  const relayIdData = getMockData('relayId');
-  const userAgentData = getMockData('userAgent');
+export const handleAllDimensionsData = (
+  timeRange: TimeRangeType, 
+  selectedMonth: number = new Date().getMonth(),
+  selectedYear: number = new Date().getFullYear(),
+  customDateRange?: DateRange
+) => {
+  // Use selected month and year for generating data
+  const selectedDate = new Date(selectedYear, selectedMonth);
+  
+  const environmentData = getMockData('environment', selectedDate);
+  const relayIdData = getMockData('relayId', selectedDate);
+  const userAgentData = getMockData('userAgent', selectedDate);
   
   if (timeRange === 'last-12-months') {
-    const environmentLast12Months = generateLast12MonthsData(environmentData);
-    const relayIdLast12Months = generateLast12MonthsData(relayIdData);
-    const userAgentLast12Months = generateLast12MonthsData(userAgentData);
+    const environmentLast12Months = generateLast12MonthsData(environmentData, selectedYear);
+    const relayIdLast12Months = generateLast12MonthsData(relayIdData, selectedYear);
+    const userAgentLast12Months = generateLast12MonthsData(userAgentData, selectedYear);
     
     const combined = combineDataSets([environmentLast12Months, relayIdLast12Months, userAgentLast12Months]);
     return processCombinedData(combined);
   }
   
   if (timeRange === 'rolling-30-day') {
-    const environmentRolling30Days = generateRolling30DayData(environmentData);
-    const relayIdRolling30Days = generateRolling30DayData(relayIdData);
-    const userAgentRolling30Days = generateRolling30DayData(userAgentData);
+    const environmentRolling30Days = generateRolling30DayData(environmentData, selectedDate);
+    const relayIdRolling30Days = generateRolling30DayData(relayIdData, selectedDate);
+    const userAgentRolling30Days = generateRolling30DayData(userAgentData, selectedDate);
     
     const combined = combineDataSets([environmentRolling30Days, relayIdRolling30Days, userAgentRolling30Days]);
     return processCombinedData(combined);
   }
   
   if (timeRange === '3-day') {
-    const environment3Day = generate3DayData(environmentData);
-    const relayId3Day = generate3DayData(relayIdData);
-    const userAgent3Day = generate3DayData(userAgentData);
+    const environment3Day = generate3DayData(environmentData, selectedDate);
+    const relayId3Day = generate3DayData(relayIdData, selectedDate);
+    const userAgent3Day = generate3DayData(userAgentData, selectedDate);
     
     const combined = combineDataSets([environment3Day, relayId3Day, userAgent3Day]);
     return processCombinedData(combined);
   }
   
   if (timeRange === '7-day') {
-    const environment7Day = generate7DayData(environmentData);
-    const relayId7Day = generate7DayData(relayIdData);
-    const userAgent7Day = generate7DayData(userAgentData);
+    const environment7Day = generate7DayData(environmentData, selectedDate);
+    const relayId7Day = generate7DayData(relayIdData, selectedDate);
+    const userAgent7Day = generate7DayData(userAgentData, selectedDate);
     
     const combined = combineDataSets([environment7Day, relayId7Day, userAgent7Day]);
     return processCombinedData(combined);
@@ -67,13 +76,22 @@ export const handleAllDimensionsData = (timeRange: TimeRangeType, customDateRang
 };
 
 // Handle specific dimension data
-export const handleSpecificDimensionData = (grouping: GroupingType, timeRange: TimeRangeType, customDateRange?: DateRange) => {
+export const handleSpecificDimensionData = (
+  grouping: GroupingType, 
+  timeRange: TimeRangeType, 
+  selectedMonth: number = new Date().getMonth(),
+  selectedYear: number = new Date().getFullYear(),
+  customDateRange?: DateRange
+) => {
+  // Use selected month and year for generating data
+  const selectedDate = new Date(selectedYear, selectedMonth);
+  
   // Convert the grouping string to the correct type for getMockData
-  const current = getMockData(grouping as 'environment' | 'relayId' | 'userAgent');
-  const previous = getMockData(grouping as 'environment' | 'relayId' | 'userAgent');
+  const current = getMockData(grouping as 'environment' | 'relayId' | 'userAgent', selectedDate);
+  const previous = getMockData(grouping as 'environment' | 'relayId' | 'userAgent', selectedDate);
 
   if (timeRange === 'last-12-months') {
-    const last12MonthsData = generateLast12MonthsData(current);
+    const last12MonthsData = generateLast12MonthsData(current, selectedYear);
     return {
       current: last12MonthsData,
       previous,
@@ -87,7 +105,7 @@ export const handleSpecificDimensionData = (grouping: GroupingType, timeRange: T
   }
   
   if (timeRange === 'rolling-30-day') {
-    const rolling30DayData = generateRolling30DayData(current);
+    const rolling30DayData = generateRolling30DayData(current, selectedDate);
     return {
       current: rolling30DayData,
       previous,
@@ -101,7 +119,7 @@ export const handleSpecificDimensionData = (grouping: GroupingType, timeRange: T
   }
   
   if (timeRange === '3-day') {
-    const data3Day = generate3DayData(current);
+    const data3Day = generate3DayData(current, selectedDate);
     return {
       current: data3Day,
       previous,
@@ -115,7 +133,7 @@ export const handleSpecificDimensionData = (grouping: GroupingType, timeRange: T
   }
   
   if (timeRange === '7-day') {
-    const data7Day = generate7DayData(current);
+    const data7Day = generate7DayData(current, selectedDate);
     return {
       current: data7Day,
       previous,

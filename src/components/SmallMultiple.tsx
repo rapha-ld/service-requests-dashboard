@@ -22,6 +22,8 @@ interface SmallMultipleProps {
   useViewDetails?: boolean;
   chartHeight?: number;
   timeRange?: string;
+  selectedMonth?: number;
+  selectedYear?: number;
 }
 
 export const SmallMultiple = ({ 
@@ -39,7 +41,9 @@ export const SmallMultiple = ({
   onExport,
   useViewDetails = true,
   chartHeight = 192,
-  timeRange
+  timeRange,
+  selectedMonth = new Date().getMonth(),
+  selectedYear = new Date().getFullYear()
 }: SmallMultipleProps) => {
   const internalChartRef = useRef<any>(null);
   const effectiveChartRef = chartRef || internalChartRef;
@@ -105,6 +109,8 @@ export const SmallMultiple = ({
           threshold={threshold}
           chartRef={effectiveChartRef}
           timeRange={timeRange}
+          selectedMonth={selectedMonth}
+          selectedYear={selectedYear}
         />
       </div>
     </div>

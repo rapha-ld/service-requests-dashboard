@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { TotalChart } from "@/components/charts/TotalChart";
 import { ChartGrid } from "@/components/charts/ChartGrid";
@@ -27,6 +26,8 @@ interface DashboardChartsProps {
   onViewTypeChange?: (value: 'net-new' | 'cumulative' | 'rolling-30d') => void;
   disableViewTypeToggle?: boolean;
   timeRange?: string;
+  selectedMonth?: number;
+  selectedYear?: number;
 }
 
 export const DashboardCharts = ({
@@ -45,13 +46,14 @@ export const DashboardCharts = ({
   threshold,
   onViewTypeChange,
   disableViewTypeToggle = false,
-  timeRange = 'month-to-date'
+  timeRange = 'month-to-date',
+  selectedMonth = new Date().getMonth(),
+  selectedYear = new Date().getFullYear()
 }: DashboardChartsProps) => {
   const { theme } = useTheme();
   const location = useLocation();
   const [expandedCharts, setExpandedCharts] = useState<string[]>([]);
   
-  // Define which routes are diagnostic pages
   const isDiagnosticPage = [
     "/client-connections",
     "/server-mau",
@@ -59,15 +61,12 @@ export const DashboardCharts = ({
     "/service-requests"
   ].includes(location.pathname);
 
-  // Define which routes need consistent scaling for 3D/7D views
   const isClientMAUPage = location.pathname.includes("/client-mau");
 
-  // Reset expanded charts when view changes
   useEffect(() => {
     setExpandedCharts([]);
   }, [viewType, chartType, grouping]);
 
-  // Handle chart expand/collapse
   const toggleChartExpansion = (id: string) => {
     setExpandedCharts(prev => 
       prev.includes(id) 
@@ -76,28 +75,22 @@ export const DashboardCharts = ({
     );
   };
 
-  // Format value for tooltips
   const formatValue = (value: number) => {
     return value.toLocaleString();
   };
 
-  // Handle "View Details" button click
   const handleViewDetails = (dimensionValue: string) => {
     const baseUrl = location.pathname;
     let viewDetailsUrl = `${baseUrl}/details?dimension=${grouping}&value=${dimensionValue}`;
     
-    // Open the details page in a new tab
     window.open(viewDetailsUrl, '_blank');
   };
 
-  // Render view type toggle based on conditions
   const renderViewTypeToggle = () => {
-    // Don't show toggle if disabled or no change handler provided
     if (disableViewTypeToggle || !onViewTypeChange) {
       return null;
     }
     
-    // Don't show toggle when using 12M view
     if (timeRange === 'last-12-months') {
       return null;
     }
@@ -111,31 +104,24 @@ export const DashboardCharts = ({
     );
   };
 
-  // Determine if we should use individualMaxValues based on the page and timeRange
   const useIndividualMaxValues = () => {
-    // For 3-day and 7-day views, we want to use shared max values for consistency
     if (['3-day', '7-day'].includes(timeRange)) {
       return false;
     }
     
-    // For client MAU page, we always want to share the scale
     if (isClientMAUPage) {
       return false;
     }
     
-    // For incremental view, use true shared max based on actual data
     if (viewType === 'net-new') {
       return false;
     }
     
-    // Default behavior
     return false;
   };
 
-  // Determine the effective view type based on timeRange
   const effectiveViewType = timeRange === 'last-12-months' ? 'net-new' : viewType;
   
-  // Determine chart type based on effective view type
   let effectiveChartType = chartType;
   if (effectiveViewType === 'net-new') {
     effectiveChartType = 'bar';
@@ -149,7 +135,6 @@ export const DashboardCharts = ({
         {renderViewTypeToggle()}
       </div>
       
-      {/* Total Chart Section */}
       {grouping === 'all' && allEnvironmentsData && (
         <TotalChart
           title="Total"
@@ -163,10 +148,11 @@ export const DashboardCharts = ({
           showThreshold={showThreshold}
           threshold={threshold}
           timeRange={timeRange}
+          selectedMonth={selectedMonth}
+          selectedYear={selectedYear}
         />
       )}
       
-      {/* Individual Charts Grid */}
       {!showOnlyTotal && sortedGroups && (
         <ChartGrid
           sortedGroups={sortedGroups}
@@ -185,6 +171,8 @@ export const DashboardCharts = ({
           showThreshold={showThreshold}
           threshold={threshold}
           timeRange={timeRange}
+          selectedMonth={selectedMonth}
+          selectedYear={selectedYear}
         />
       )}
     </div>
