@@ -1,10 +1,10 @@
+
 import { useRef } from 'react';
 import { cn } from "@/lib/utils";
 import { Download } from 'lucide-react';
 import { ChartTitle } from './charts/ChartTitle';
 import { ChartComponent } from './charts/ChartComponent';
-import { exportChartAsSVG } from './charts/exportChart';
-import { Button } from './ui/button';
+import { exportChartAsPNG } from './charts/exportChart';
 
 interface SmallMultipleProps {
   title: string;
@@ -44,13 +44,11 @@ export const SmallMultiple = ({
   const internalChartRef = useRef<any>(null);
   const effectiveChartRef = chartRef || internalChartRef;
   
-  const handleExport = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-    if (onExport && typeof onExport === 'function') {
+  const handleExport = () => {
+    if (onExport) {
       onExport(title);
-    } else if (effectiveChartRef.current) {
-      exportChartAsSVG(effectiveChartRef, title);
+    } else {
+      exportChartAsPNG(effectiveChartRef, title);
     }
   };
 
@@ -95,25 +93,15 @@ export const SmallMultiple = ({
 
   return (
     <div className={cn("bg-card dark:bg-card/80 p-4 rounded-lg shadow-sm animate-fade-in", className)}>
-      <div className="flex justify-between items-center">
-        <ChartTitle title={title} useViewDetails={useViewDetails} />
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={handleExport}
-          title="Download chart as SVG"
-        >
-          <Download className="h-4 w-4 text-muted-foreground" />
-        </Button>
-      </div>
+      <ChartTitle title={title} useViewDetails={useViewDetails} />
       <div style={{ height: `${chartHeight}px` }}>
         <ChartComponent
-          data={data}
+          data={data}  // Keep all data including nulls for proper date ranges
           viewType={viewType}
           chartType={chartType}
-          maxValue={maxValue}
+          maxValue={effectiveMaxValue}
           unit={unit}
-          showThreshold={showThreshold}
+          showThreshold={shouldShowThreshold}
           threshold={threshold}
           chartRef={effectiveChartRef}
           timeRange={timeRange}

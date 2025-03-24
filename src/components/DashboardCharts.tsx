@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { MousePointer } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { useTheme } from "@/hooks/useTheme";
-import { exportChartAsSVG } from "./charts/exportChart";
 
 interface DashboardChartsProps {
   allEnvironmentsData: Array<{ day: string, value: number }>;
@@ -91,20 +90,6 @@ export const DashboardCharts = ({
     window.open(viewDetailsUrl, '_blank');
   };
 
-  // Handle chart export
-  const handleExportChart = (title: string) => {
-    if (onExportChart && typeof onExportChart === 'function') {
-      onExportChart(title);
-    } else {
-      // If no export handler provided, use the default one
-      if (title === 'Total' && chartRefs.current.total) {
-        exportChartAsSVG(chartRefs.current.total, title);
-      } else if (chartRefs.current[title]) {
-        exportChartAsSVG(chartRefs.current[title], title);
-      }
-    }
-  };
-
   // Render view type toggle based on conditions
   const renderViewTypeToggle = () => {
     // Don't show toggle if disabled or no change handler provided
@@ -172,7 +157,7 @@ export const DashboardCharts = ({
           viewType={effectiveViewType}
           chartType={effectiveChartType}
           chartRef={chartRefs.current.total}
-          onExportChart={handleExportChart}
+          onExportChart={onExportChart}
           useViewDetailsButton={useViewDetailsButton}
           unitLabel={unitLabel}
           showThreshold={showThreshold}
@@ -189,7 +174,7 @@ export const DashboardCharts = ({
           chartType={effectiveChartType}
           maxValue={maxValue}
           chartRefs={chartRefs}
-          onExportChart={handleExportChart}
+          onExportChart={onExportChart}
           expandedCharts={expandedCharts}
           onToggleExpand={toggleChartExpansion}
           formatValue={formatValue}
