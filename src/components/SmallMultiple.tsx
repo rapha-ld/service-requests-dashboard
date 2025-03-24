@@ -4,7 +4,8 @@ import { cn } from "@/lib/utils";
 import { Download } from 'lucide-react';
 import { ChartTitle } from './charts/ChartTitle';
 import { ChartComponent } from './charts/ChartComponent';
-import { exportChartAsPNG } from './charts/exportChart';
+import { exportChartAsSVG } from './charts/exportChart';
+import { Button } from './ui/button';
 
 interface SmallMultipleProps {
   title: string;
@@ -44,11 +45,12 @@ export const SmallMultiple = ({
   const internalChartRef = useRef<any>(null);
   const effectiveChartRef = chartRef || internalChartRef;
   
-  const handleExport = () => {
+  const handleExport = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (onExport) {
       onExport(title);
     } else {
-      exportChartAsPNG(effectiveChartRef, title);
+      exportChartAsSVG(effectiveChartRef, title);
     }
   };
 
@@ -93,7 +95,17 @@ export const SmallMultiple = ({
 
   return (
     <div className={cn("bg-card dark:bg-card/80 p-4 rounded-lg shadow-sm animate-fade-in", className)}>
-      <ChartTitle title={title} useViewDetails={useViewDetails} />
+      <div className="flex justify-between items-center">
+        <ChartTitle title={title} useViewDetails={useViewDetails} />
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={handleExport}
+          title="Download chart as SVG"
+        >
+          <Download className="h-4 w-4 text-muted-foreground" />
+        </Button>
+      </div>
       <div style={{ height: `${chartHeight}px` }}>
         <ChartComponent
           data={data}  // Keep all data including nulls for proper date ranges

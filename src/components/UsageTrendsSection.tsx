@@ -1,7 +1,8 @@
 
-import React from "react";
+import React, { useRef } from "react";
 import { SmallMultiple } from "@/components/SmallMultiple";
 import { transformData } from "@/components/charts/dataTransformers";
+import { exportChartAsSVG } from "./charts/exportChart";
 
 interface ChartData {
   clientMAU: Array<{ day: string; value: number | null }>;
@@ -24,6 +25,11 @@ interface UsageTrendsSectionProps {
 }
 
 export const UsageTrendsSection: React.FC<UsageTrendsSectionProps> = ({ chartData, metricsInfo }) => {
+  // Create refs for each chart
+  const clientMAUChartRef = useRef(null);
+  const experimentEventsChartRef = useRef(null);
+  const dataExportEventsChartRef = useRef(null);
+
   // Calculate maximum cumulative value for all datasets to ensure consistent y-axis scale
   const calculateSharedMaxValue = () => {
     const datasets = [
@@ -61,6 +67,11 @@ export const UsageTrendsSection: React.FC<UsageTrendsSectionProps> = ({ chartDat
   // Only show thresholds in cumulative view (which is the only view used in this component)
   const viewType = 'cumulative';
   const showThreshold = viewType === 'cumulative';
+
+  // Handle export
+  const handleExport = (chartRef: React.RefObject<any>, title: string) => {
+    exportChartAsSVG(chartRef, title);
+  };
   
   return (
     <>
@@ -77,6 +88,8 @@ export const UsageTrendsSection: React.FC<UsageTrendsSectionProps> = ({ chartDat
           showThreshold={showThreshold}
           threshold={metricsInfo.clientMAU.limit}
           className="mb-12"
+          chartRef={clientMAUChartRef}
+          onExport={() => handleExport(clientMAUChartRef, "Client MAU")}
         />
         <SmallMultiple
           title="Experiment Events"
@@ -89,6 +102,8 @@ export const UsageTrendsSection: React.FC<UsageTrendsSectionProps> = ({ chartDat
           showThreshold={showThreshold}
           threshold={metricsInfo.experimentEvents.limit}
           className="mb-12"
+          chartRef={experimentEventsChartRef}
+          onExport={() => handleExport(experimentEventsChartRef, "Experiment Events")}
         />
         <SmallMultiple
           title="Data Export Events"
@@ -101,6 +116,8 @@ export const UsageTrendsSection: React.FC<UsageTrendsSectionProps> = ({ chartDat
           showThreshold={showThreshold}
           threshold={metricsInfo.dataExportEvents.limit}
           className="mb-12"
+          chartRef={dataExportEventsChartRef}
+          onExport={() => handleExport(dataExportEventsChartRef, "Data Export Events")}
         />
       </div>
     </>

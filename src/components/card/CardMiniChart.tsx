@@ -4,6 +4,9 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveCo
 import { CustomTooltip } from '../charts/CustomTooltip';
 import { formatYAxisTick } from '../charts/formatters';
 import { transformData } from '../charts/dataTransformers';
+import { Download } from "lucide-react";
+import { exportChartAsSVG } from '../charts/exportChart';
+import { Button } from "../ui/button";
 
 interface CardMiniChartProps {
   chartData: Array<{ day: string; value: number | null }>;
@@ -18,15 +21,31 @@ export const CardMiniChart: React.FC<CardMiniChartProps> = ({
   unit, 
   limit 
 }) => {
+  const chartRef = React.useRef<any>(null);
   const transformedChartData = chartData ? transformData(chartData, 'cumulative') : [];
+
+  const handleDownload = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    exportChartAsSVG(chartRef, title);
+  };
 
   return (
     <>
       <div className="h-px bg-gray-200 dark:bg-gray-700 my-8 mb-12"></div>
       
-      <div className="h-[152px]">
+      <div className="h-[152px] relative">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="absolute right-0 top-0 z-10" 
+          onClick={handleDownload}
+          title="Download chart as SVG"
+        >
+          <Download className="h-4 w-4 text-muted-foreground" />
+        </Button>
+        
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={transformedChartData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
+          <AreaChart ref={chartRef} data={transformedChartData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
             <defs>
               <linearGradient id={`colorGradient-${title.replace(/\s+/g, '')}`} x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#30459B" stopOpacity={0.5} />

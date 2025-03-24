@@ -3,14 +3,42 @@ import { toast } from '@/components/ui/use-toast';
 
 export const exportChartAsSVG = (chartRef: React.RefObject<any>, title: string) => {
   try {
-    if (!chartRef.current) return;
+    if (!chartRef.current) {
+      console.error('Chart reference is missing');
+      toast({
+        title: "Export failed",
+        description: "Chart reference not found.",
+        variant: "destructive",
+      });
+      return;
+    }
 
-    const svgElement = chartRef.current.container.children[0];
+    const svgElement = chartRef.current.container?.children[0];
+    if (!svgElement) {
+      console.error('SVG element not found in chart reference');
+      toast({
+        title: "Export failed",
+        description: "SVG element not found.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Clone the SVG to avoid modifying the original
     const svgClone = svgElement.cloneNode(true) as SVGElement;
+    
+    // Set some attributes for better rendering
+    svgClone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
     svgClone.style.backgroundColor = 'white';
+    
+    // Serialize to string
     const svgString = new XMLSerializer().serializeToString(svgClone);
+    
+    // Create a blob and download link
     const blob = new Blob([svgString], { type: 'image/svg+xml' });
     const url = URL.createObjectURL(blob);
+    
+    // Create download link
     const link = document.createElement('a');
     link.href = url;
     link.download = `${title.toLowerCase().replace(/\s+/g, '-')}-chart.svg`;

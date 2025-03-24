@@ -2,6 +2,8 @@
 import { SmallMultiple } from "@/components/SmallMultiple";
 import { transformData } from "@/components/charts/dataTransformers";
 import { useLocation } from "react-router-dom";
+import { useRef } from "react";
+import { exportChartAsSVG } from "@/components/charts/exportChart";
 
 interface TotalChartProps {
   title: string;
@@ -76,6 +78,15 @@ export const TotalChart = ({
   const shouldShowThreshold = showThreshold && effectiveViewType === 'cumulative';
   const effectiveMaxValue = shouldShowThreshold && threshold && threshold > maxValue ? threshold : maxValue;
 
+  // Use default export handler if none provided
+  const handleExport = (title: string) => {
+    if (onExportChart && typeof onExportChart === 'function') {
+      onExportChart(title);
+    } else {
+      exportChartAsSVG(chartRef, title);
+    }
+  };
+
   return (
     <div className="mb-6">
       <SmallMultiple
@@ -88,7 +99,7 @@ export const TotalChart = ({
         chartType={effectiveChartType}
         className="w-full"
         chartRef={chartRef}
-        onExport={onExportChart}
+        onExport={handleExport}
         useViewDetails={useViewDetailsButton}
         showThreshold={shouldShowThreshold}
         threshold={threshold}
