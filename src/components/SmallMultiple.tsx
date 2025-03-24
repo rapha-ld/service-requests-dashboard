@@ -1,7 +1,6 @@
 
 import { useRef } from 'react';
 import { cn } from "@/lib/utils";
-import { Download } from 'lucide-react';
 import { ChartTitle } from './charts/ChartTitle';
 import { ChartComponent } from './charts/ChartComponent';
 import { exportChartAsPNG } from './charts/exportChart';
@@ -105,6 +104,7 @@ export const SmallMultiple = ({
           threshold={threshold}
           chartRef={effectiveChartRef}
           timeRange={timeRange}
+          title={title} // Pass title to ChartComponent for SVG export
         />
       </div>
     </div>
