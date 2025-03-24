@@ -1,4 +1,3 @@
-
 import { useRef } from 'react';
 import { cn } from "@/lib/utils";
 import { Download } from 'lucide-react';
@@ -47,9 +46,10 @@ export const SmallMultiple = ({
   
   const handleExport = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (onExport) {
+    e.preventDefault();
+    if (onExport && typeof onExport === 'function') {
       onExport(title);
-    } else {
+    } else if (effectiveChartRef.current) {
       exportChartAsSVG(effectiveChartRef, title);
     }
   };
@@ -108,12 +108,12 @@ export const SmallMultiple = ({
       </div>
       <div style={{ height: `${chartHeight}px` }}>
         <ChartComponent
-          data={data}  // Keep all data including nulls for proper date ranges
+          data={data}
           viewType={viewType}
           chartType={chartType}
-          maxValue={effectiveMaxValue}
+          maxValue={maxValue}
           unit={unit}
-          showThreshold={shouldShowThreshold}
+          showThreshold={showThreshold}
           threshold={threshold}
           chartRef={effectiveChartRef}
           timeRange={timeRange}

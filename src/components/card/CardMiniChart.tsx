@@ -26,7 +26,10 @@ export const CardMiniChart: React.FC<CardMiniChartProps> = ({
 
   const handleDownload = (e: React.MouseEvent) => {
     e.stopPropagation();
-    exportChartAsSVG(chartRef, title);
+    e.preventDefault();
+    if (chartRef.current) {
+      exportChartAsSVG(chartRef, title);
+    }
   };
 
   return (

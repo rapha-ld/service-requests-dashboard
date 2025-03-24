@@ -1,4 +1,3 @@
-
 import { SmallMultiple } from "@/components/SmallMultiple";
 import { transformData } from "@/components/charts/dataTransformers";
 import { useLocation } from "react-router-dom";
@@ -82,7 +81,7 @@ export const TotalChart = ({
   const handleExport = (title: string) => {
     if (onExportChart && typeof onExportChart === 'function') {
       onExportChart(title);
-    } else {
+    } else if (chartRef && chartRef.current) {
       exportChartAsSVG(chartRef, title);
     }
   };
@@ -99,7 +98,7 @@ export const TotalChart = ({
         chartType={effectiveChartType}
         className="w-full"
         chartRef={chartRef}
-        onExport={handleExport}
+        onExport={() => handleExport(title)}
         useViewDetails={useViewDetailsButton}
         showThreshold={shouldShowThreshold}
         threshold={threshold}
