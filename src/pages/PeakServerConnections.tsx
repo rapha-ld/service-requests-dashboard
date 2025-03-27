@@ -10,6 +10,7 @@ import { DateRange } from "@/types/mauTypes";
 import { useUrlParams } from "@/hooks/useUrlParams";
 import { getUnitLabel } from "@/utils/chartUtils";
 import { useLocation } from "react-router-dom";
+import { isCustomDateRangeShort } from "@/utils/chartPropertiesFactory";
 
 const PeakServerConnections = () => {
   const urlParams = useUrlParams();
@@ -23,6 +24,7 @@ const PeakServerConnections = () => {
   const [grouping, setGrouping] = useState<GroupingType>(urlParams.getGrouping());
   const [timeRange, setTimeRange] = useState<TimeRangeType>(urlParams.getTimeRange());
   const [customDateRange, setCustomDateRange] = useState<DateRange>(urlParams.getCustomDateRange());
+  const [hourlyData, setHourlyData] = useState(false);
   
   const chartRefs = useRef<{ [key: string]: any }>({});
   
@@ -40,6 +42,15 @@ const PeakServerConnections = () => {
       urlParams.setChartType('area');
     }
   }, [viewType]);
+  
+  // Effect to determine if hourly data should be used
+  useEffect(() => {
+    if (timeRange === '3-day' || isCustomDateRangeShort(timeRange, customDateRange)) {
+      setHourlyData(true);
+    } else {
+      setHourlyData(false);
+    }
+  }, [timeRange, customDateRange]);
   
   // Handle time range change
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
@@ -91,12 +102,13 @@ const PeakServerConnections = () => {
     urlParams.setSelectedMonth(newMonth);
   };
   
-  // Fetch data using custom hook
+  // Fetch data using custom hook, now with hourlyData parameter
   const { data: serviceData } = useServiceData(
     selectedMonth, 
     grouping, 
     timeRange,
-    timeRange === 'custom' ? customDateRange : undefined
+    timeRange === 'custom' ? customDateRange : undefined,
+    hourlyData
   );
 
   if (!serviceData) return (
@@ -115,7 +127,7 @@ const PeakServerConnections = () => {
   const maxValue = calculateMaxValue(sortedGroups, viewType);
   
   // Get data for all environments chart
-  const allEnvironmentsData = getAllEnvironmentsData(grouping, serviceData, timeRange, sortedGroups);
+  const allEnvironmentsData = getAllEnvironmentsData(grouping, serviceData, timeRange, sortedGroups, hourlyData);
 
   // Get the appropriate unit label based on the current route
   const unitLabel = getUnitLabel(location.pathname.substring(1)); // Remove leading slash
@@ -158,6 +170,8 @@ const PeakServerConnections = () => {
           disableViewTypeToggle={false} // Always allow toggle
           timeRange={timeRange}
           unitLabel={unitLabel || "connections"}
+          isHourlyData={hourlyData}
+          customDateRange={customDateRange}
         />
       </div>
     </div>
