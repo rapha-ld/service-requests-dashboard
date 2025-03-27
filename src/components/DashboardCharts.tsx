@@ -1,114 +1,54 @@
 
-import { useEffect, useState } from "react";
-import { ViewToggleSection } from "@/components/charts/ViewToggleSection";
 import { TotalChartSection } from "@/components/charts/TotalChartSection";
-import { ChartsGridSection } from "@/components/charts/ChartsGridSection";
-import { ViewType, ChartType, TimeRangeType } from "@/types/serviceData";
-import { DateRange } from "@/types/mauTypes";
-import { getEffectiveChartProperties } from "@/utils/chartPropertiesFactory";
+import { ViewType, ChartType } from "@/types/serviceData";
 
-interface DashboardChartsProps {
+interface TotalChartSectionProps {
   allEnvironmentsData: Array<{ day: string, value: number }>;
-  sortedGroups: Array<any>;
   viewType: ViewType;
   chartType: ChartType;
-  maxValue: number;
-  grouping: string;
-  chartRefs: React.MutableRefObject<{ [key: string]: any }>;
+  chartRef: React.MutableRefObject<any>;
   onExportChart: (title: string) => void;
-  useViewDetailsButton?: boolean;
-  showOnlyTotal?: boolean;
+  useViewDetailsButton: boolean;
   unitLabel: string;
   showThreshold?: boolean;
   threshold?: number;
   timeRange?: string;
-  onViewTypeChange?: (viewType: ViewType) => void;
-  disableViewTypeToggle?: boolean;
-  customDateRange?: DateRange;
-  isHourlyData?: boolean;
-  individualMaxValues?: boolean;
+  grouping?: string; // Add grouping prop
 }
 
-export const DashboardCharts = ({
+export const TotalChartSection = ({
   allEnvironmentsData,
-  sortedGroups,
   viewType,
   chartType,
-  maxValue,
-  grouping,
-  chartRefs,
+  chartRef,
   onExportChart,
-  useViewDetailsButton = true,
-  showOnlyTotal = false,
+  useViewDetailsButton,
   unitLabel,
   showThreshold = false,
   threshold,
   timeRange = 'month-to-date',
-  onViewTypeChange,
-  disableViewTypeToggle = false,
-  customDateRange,
-  isHourlyData = false,
-  individualMaxValues = false
-}: DashboardChartsProps) => {
-  const [expandedCharts, setExpandedCharts] = useState<string[]>([]);
-  
-  // Get effective chart properties based on time range and other factors
-  const { effectiveViewType, effectiveChartType, displayUnitLabel } = 
-    getEffectiveChartProperties(viewType, chartType, timeRange, unitLabel, isHourlyData);
-  
-  // Always show the total chart
+  grouping = 'environment' // Default value
+}: TotalChartSectionProps) => {
+  if (!allEnvironmentsData) {
+    return null;
+  }
+
   return (
-    <div className="space-y-6">
-      {onViewTypeChange && !disableViewTypeToggle && (
-        <ViewToggleSection 
-          viewType={viewType} 
-          onViewTypeChange={onViewTypeChange}
-          disableViewTypeToggle={disableViewTypeToggle}
-          timeRange={timeRange}
-          isHourlyData={isHourlyData}
-          customDateRange={customDateRange}
-        />
-      )}
-      
-      <TotalChartSection
-        allEnvironmentsData={allEnvironmentsData}
-        viewType={effectiveViewType}
-        chartType={effectiveChartType}
-        chartRef={chartRefs.current['total']}
+    <div className="mb-6">
+      <TotalChart
+        title="Total"
+        data={allEnvironmentsData}
+        viewType={viewType}
+        chartType={chartType}
+        chartRef={chartRef}
         onExportChart={onExportChart}
         useViewDetailsButton={useViewDetailsButton}
-        unitLabel={displayUnitLabel}
+        unitLabel={unitLabel}
         showThreshold={showThreshold}
         threshold={threshold}
         timeRange={timeRange}
+        grouping={grouping} // Pass grouping prop
       />
-      
-      {!showOnlyTotal && (
-        <ChartsGridSection
-          sortedGroups={sortedGroups}
-          viewType={effectiveViewType}
-          chartType={effectiveChartType}
-          maxValue={maxValue}
-          chartRefs={chartRefs}
-          onExportChart={onExportChart}
-          expandedCharts={expandedCharts}
-          onToggleExpand={(id) => {
-            setExpandedCharts(prev => 
-              prev.includes(id) 
-                ? prev.filter(i => i !== id) 
-                : [...prev, id]
-            );
-          }}
-          formatValue={(value) => `${value.toLocaleString()} ${displayUnitLabel}`}
-          onViewDetails={() => {}}
-          useViewDetailsButton={useViewDetailsButton}
-          unitLabel={displayUnitLabel}
-          showThreshold={showThreshold}
-          threshold={threshold}
-          timeRange={timeRange}
-          individualMaxValues={individualMaxValues}
-        />
-      )}
     </div>
   );
 };

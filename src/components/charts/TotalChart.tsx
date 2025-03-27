@@ -17,6 +17,7 @@ interface TotalChartProps {
   showTitle?: boolean;
   chartHeight?: number;
   timeRange?: string;
+  grouping?: string; // Add grouping prop
 }
 
 export const TotalChart = ({
@@ -32,7 +33,8 @@ export const TotalChart = ({
   threshold,
   showTitle = true,
   chartHeight = 192, // Default height
-  timeRange = 'month-to-date'
+  timeRange = 'month-to-date',
+  grouping = 'environment' // Default value
 }: TotalChartProps) => {
   const location = useLocation();
   
@@ -76,6 +78,9 @@ export const TotalChart = ({
   const shouldShowThreshold = showThreshold && effectiveViewType === 'cumulative';
   const effectiveMaxValue = shouldShowThreshold && threshold && threshold > maxValue ? threshold : maxValue;
 
+  // Double the chart height when grouping is 'all'
+  const effectiveChartHeight = grouping === 'all' ? chartHeight * 2 : chartHeight;
+
   return (
     <div className="mb-6">
       <SmallMultiple
@@ -92,7 +97,7 @@ export const TotalChart = ({
         useViewDetails={useViewDetailsButton}
         showThreshold={shouldShowThreshold}
         threshold={threshold}
-        chartHeight={chartHeight}
+        chartHeight={effectiveChartHeight}
         timeRange={timeRange}
       />
     </div>
