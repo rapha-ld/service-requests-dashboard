@@ -76,22 +76,28 @@ export const getAllEnvironmentsData = (
     return [];
   }
   
-  return currentData[firstKey].map((dataPoint, index: number) => {
+  // Create a consistent template array based on the first dataset's structure
+  const templateData = currentData[firstKey].map((dataPoint, index: number) => {
     // For rolling-30-day, custom timeframe, or hourly data, use the exact same day format from the data
     const day = timeRange === 'rolling-30-day' || timeRange === 'custom' || hourlyData
       ? dataPoint.day  // Use the exact day as in the original data
       : timeRange === 'last-12-months' 
         ? currentData[firstKey][index].day
         : (index + 1).toString();
-      
-    // Safely sum all values at this index across all entries in current
-    const value = Object.values(currentData).reduce((sum, data) => {
-      if (Array.isArray(data) && data[index] && typeof data[index].value === 'number') {
-        return sum + data[index].value;
-      }
-      return sum;
-    }, 0);
     
-    return { day, value };
+    return { day, value: 0 };
   });
+  
+  // Sum up values across all dimensions for each day point
+  Object.values(currentData).forEach(data => {
+    if (Array.isArray(data)) {
+      data.forEach((point, index) => {
+        if (index < templateData.length && typeof point.value === 'number') {
+          templateData[index].value += point.value;
+        }
+      });
+    }
+  });
+  
+  return templateData;
 };

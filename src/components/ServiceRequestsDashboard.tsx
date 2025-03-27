@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { DashboardSummary } from "@/components/DashboardSummary";
@@ -154,6 +155,7 @@ export const ServiceRequestsDashboard = () => {
   
   const maxValue = calculateMaxValue(sortedGroups, viewType);
   
+  // Always get combined data across all dimensions, regardless of current grouping
   const allEnvironmentsData = getAllEnvironmentsData(grouping, serviceData, timeRange, sortedGroups, hourlyData);
 
   const useIndividualMaxValues = viewType === 'cumulative';
@@ -199,7 +201,7 @@ export const ServiceRequestsDashboard = () => {
           threshold={SERVICE_CONNECTIONS_THRESHOLD}
           customDateRange={customDateRange}
           isHourlyData={hourlyData}
-          showThreshold={grouping === 'all'}
+          showThreshold={true} // Always show threshold in total chart
           individualMaxValues={useIndividualMaxValues}
         />
       </div>

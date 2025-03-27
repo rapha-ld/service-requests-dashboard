@@ -45,7 +45,7 @@ export const DashboardCharts = ({
   threshold,
   customDateRange,
   isHourlyData = false,
-  showThreshold = false,
+  showThreshold = true, // Default to true so threshold always shows in Total chart
   individualMaxValues = false,
 }: DashboardChartsProps) => {
   const formatValue = (value: number) => {

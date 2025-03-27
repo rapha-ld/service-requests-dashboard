@@ -29,7 +29,7 @@ export const TotalChart = ({
   onExportChart,
   useViewDetailsButton,
   unitLabel,
-  showThreshold = true, // Changed default to true to always show threshold
+  showThreshold = true, // Default to true to always show threshold
   threshold,
   showTitle = true,
   chartHeight = 192,
@@ -76,7 +76,6 @@ export const TotalChart = ({
   // Double the chart height when grouping is 'all'
   const effectiveChartHeight = grouping === 'all' ? chartHeight * 2 : chartHeight;
 
-  // Always show threshold in total chart, regardless of whether it's a dimension view or all dimensions
   // Only show threshold in cumulative view where it makes sense
   const shouldShowThreshold = threshold !== undefined && effectiveViewType === 'cumulative';
 
