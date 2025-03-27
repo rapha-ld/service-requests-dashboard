@@ -1,21 +1,17 @@
 
 import { useEffect, useState } from "react";
-import { TotalChart } from "@/components/charts/TotalChart";
-import { ChartGrid } from "@/components/charts/ChartGrid";
-import { ViewTypeToggle } from "@/components/dashboard/ViewTypeToggle";
-import { SmallMultiple } from "@/components/SmallMultiple";
-import { transformData } from "@/components/charts/dataTransformers";
-import { Button } from "@/components/ui/button";
-import { MousePointer } from "lucide-react";
-import { useLocation } from "react-router-dom";
-import { useTheme } from "@/hooks/useTheme";
+import { ViewToggleSection } from "@/components/charts/ViewToggleSection";
+import { TotalChartSection } from "@/components/charts/TotalChartSection";
+import { ChartsGridSection } from "@/components/charts/ChartsGridSection";
+import { ViewType, ChartType, TimeRangeType } from "@/types/serviceData";
 import { DateRange } from "@/types/mauTypes";
+import { getEffectiveChartProperties } from "@/utils/chartPropertiesFactory";
 
 interface DashboardChartsProps {
   allEnvironmentsData: Array<{ day: string, value: number }>;
   sortedGroups: Array<any>;
-  viewType: 'net-new' | 'cumulative' | 'rolling-30d';
-  chartType: 'area' | 'bar' | 'line';
+  viewType: ViewType;
+  chartType: ChartType;
   maxValue: number;
   grouping: 'all' | 'environment' | 'relayId' | 'userAgent';
   chartRefs: React.MutableRefObject<{ [key: string]: any }>;
@@ -25,7 +21,7 @@ interface DashboardChartsProps {
   unitLabel?: string;
   showThreshold?: boolean;
   threshold?: number;
-  onViewTypeChange?: (value: 'net-new' | 'cumulative' | 'rolling-30d') => void;
+  onViewTypeChange?: (value: ViewType) => void;
   disableViewTypeToggle?: boolean;
   timeRange?: string;
   customDateRange?: DateRange;
@@ -52,21 +48,8 @@ export const DashboardCharts = ({
   customDateRange,
   isHourlyData = false
 }: DashboardChartsProps) => {
-  const { theme } = useTheme();
-  const location = useLocation();
   const [expandedCharts, setExpandedCharts] = useState<string[]>([]);
   
-  // Define which routes are diagnostic pages
-  const isDiagnosticPage = [
-    "/client-connections",
-    "/server-mau",
-    "/peak-server-connections",
-    "/service-requests"
-  ].includes(location.pathname);
-
-  // Define which routes need consistent scaling for 3D/7D views
-  const isClientMAUPage = location.pathname.includes("/client-mau");
-
   // Reset expanded charts when view changes
   useEffect(() => {
     setExpandedCharts([]);
@@ -95,94 +78,30 @@ export const DashboardCharts = ({
     window.open(viewDetailsUrl, '_blank');
   };
 
-  // Calculate if custom date range is 3 days or less
-  const isCustomDateRangeShort = () => {
-    if (timeRange === 'custom' && customDateRange) {
-      const { from, to } = customDateRange;
-      if (from && to) {
-        // Calculate the difference in days
-        const diffTime = Math.abs(to.getTime() - from.getTime());
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        return diffDays <= 3;
-      }
-    }
-    return false;
-  };
-
-  // Render view type toggle based on conditions
-  const renderViewTypeToggle = () => {
-    // Don't show toggle if disabled or no change handler provided
-    if (disableViewTypeToggle || !onViewTypeChange) {
-      return null;
-    }
-    
-    // Don't show toggle when using 12M view
-    if (timeRange === 'last-12-months') {
-      return null;
-    }
-
-    return (
-      <ViewTypeToggle
-        viewType={viewType}
-        onViewTypeChange={onViewTypeChange}
-        visible={true}
-        timeRange={timeRange}
-        isCustomDateRangeShort={isCustomDateRangeShort()}
-      />
-    );
-  };
-
-  // Determine if we should use individualMaxValues based on the page and timeRange
-  const useIndividualMaxValues = () => {
-    // For 3-day and 7-day views, we want to use shared max values for consistency
-    if (['3-day', '7-day'].includes(timeRange)) {
-      return false;
-    }
-    
-    // For client MAU page, we always want to share the scale
-    if (isClientMAUPage) {
-      return false;
-    }
-    
-    // For incremental view, use true shared max based on actual data
-    if (viewType === 'net-new') {
-      return false;
-    }
-    
-    // Default behavior
-    return false;
-  };
-
-  // Determine the effective view type based on timeRange
-  const effectiveViewType = timeRange === 'last-12-months' ? 'net-new' : viewType;
-  
-  // Determine chart type based on effective view type
-  let effectiveChartType = chartType;
-  if (effectiveViewType === 'net-new') {
-    effectiveChartType = 'bar';
-  } else if (effectiveViewType === 'rolling-30d') {
-    effectiveChartType = 'line';
-  }
-
-  // Use special unit label for hourly data
-  const displayUnitLabel = isHourlyData ? `hourly ${unitLabel}` : unitLabel;
+  // Get effective chart properties
+  const { effectiveViewType, effectiveChartType, displayUnitLabel } = getEffectiveChartProperties(
+    viewType,
+    chartType,
+    timeRange,
+    unitLabel,
+    isHourlyData
+  );
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        {renderViewTypeToggle()}
-        {isHourlyData && (
-          <div className="text-sm text-muted-foreground">
-            Showing hourly data
-          </div>
-        )}
-      </div>
+      <ViewToggleSection
+        viewType={viewType}
+        onViewTypeChange={onViewTypeChange}
+        disableViewTypeToggle={disableViewTypeToggle || false}
+        timeRange={timeRange}
+        isHourlyData={isHourlyData}
+        customDateRange={customDateRange}
+      />
       
       {/* Total Chart Section */}
       {grouping === 'all' && allEnvironmentsData && (
-        <TotalChart
-          title="Total"
-          data={allEnvironmentsData}
+        <TotalChartSection
+          allEnvironmentsData={allEnvironmentsData}
           viewType={effectiveViewType}
           chartType={effectiveChartType}
           chartRef={chartRefs.current.total}
@@ -197,7 +116,7 @@ export const DashboardCharts = ({
       
       {/* Individual Charts Grid */}
       {!showOnlyTotal && sortedGroups && (
-        <ChartGrid
+        <ChartsGridSection
           sortedGroups={sortedGroups}
           viewType={effectiveViewType}
           chartType={effectiveChartType}
@@ -210,7 +129,6 @@ export const DashboardCharts = ({
           onViewDetails={handleViewDetails}
           useViewDetailsButton={useViewDetailsButton}
           unitLabel={displayUnitLabel}
-          individualMaxValues={useIndividualMaxValues()}
           showThreshold={showThreshold}
           threshold={threshold}
           timeRange={timeRange}
