@@ -38,13 +38,26 @@ export const ServiceRequestsDashboard = () => {
     }
   }, [viewType]);
 
-  // Effect to update viewType when timeRange changes to 3-day
+  // Check if custom date range is 3 days or less
+  const isCustomDateRangeShort = () => {
+    if (timeRange === 'custom' && customDateRange) {
+      const { from, to } = customDateRange;
+      if (from && to) {
+        const diffTime = Math.abs(to.getTime() - from.getTime());
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays <= 3;
+      }
+    }
+    return false;
+  };
+
+  // Effect to update viewType when timeRange changes to 3-day or short custom range
   useEffect(() => {
-    if (timeRange === '3-day' && viewType === 'rolling-30d') {
+    if ((timeRange === '3-day' || isCustomDateRangeShort()) && viewType === 'rolling-30d') {
       setViewType('net-new');
       urlParams.setViewType('net-new');
     }
-  }, [timeRange]);
+  }, [timeRange, customDateRange]);
   
   // Handle time range change
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
@@ -72,15 +85,30 @@ export const ServiceRequestsDashboard = () => {
   const handleCustomDateRangeChange = (dateRange: DateRange) => {
     setCustomDateRange(dateRange);
     urlParams.setCustomDateRange(dateRange);
+    
+    // Check if the new custom date range is short (≤ 3 days)
+    const { from, to } = dateRange;
+    if (from && to) {
+      const diffTime = Math.abs(to.getTime() - from.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      // If it's a short range and viewType is rolling-30d, switch to net-new
+      if (diffDays <= 3 && viewType === 'rolling-30d') {
+        setViewType('net-new');
+        urlParams.setViewType('net-new');
+        setChartType('bar');
+        urlParams.setChartType('bar');
+      }
+    }
   };
   
   // Handle view type change
   const handleViewTypeChange = (newViewType: ViewType) => {
     // Only allow changing if not in 12M view
     if (timeRange !== 'last-12-months') {
-      // Check if timeRange is 3-day and attempting to set rolling-30d
-      if (timeRange === '3-day' && newViewType === 'rolling-30d') {
-        return; // Prevent setting to rolling-30d when in 3-day view
+      // Check if timeRange is 3-day or short custom range and attempting to set rolling-30d
+      if ((timeRange === '3-day' || isCustomDateRangeShort()) && newViewType === 'rolling-30d') {
+        return; // Prevent setting to rolling-30d when in 3-day view or short custom range
       }
       
       setViewType(newViewType);
@@ -177,6 +205,7 @@ export const ServiceRequestsDashboard = () => {
           disableViewTypeToggle={timeRange === 'last-12-months'} // Disable toggle for 12M view
           timeRange={timeRange}
           threshold={0}
+          customDateRange={customDateRange}
         />
       </div>
     </div>

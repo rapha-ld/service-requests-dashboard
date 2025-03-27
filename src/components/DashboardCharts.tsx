@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { MousePointer } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { useTheme } from "@/hooks/useTheme";
+import { DateRange } from "@/types/mauTypes";
 
 interface DashboardChartsProps {
   allEnvironmentsData: Array<{ day: string, value: number }>;
@@ -27,6 +28,7 @@ interface DashboardChartsProps {
   onViewTypeChange?: (value: 'net-new' | 'cumulative' | 'rolling-30d') => void;
   disableViewTypeToggle?: boolean;
   timeRange?: string;
+  customDateRange?: DateRange;
 }
 
 export const DashboardCharts = ({
@@ -45,7 +47,8 @@ export const DashboardCharts = ({
   threshold,
   onViewTypeChange,
   disableViewTypeToggle = false,
-  timeRange = 'month-to-date'
+  timeRange = 'month-to-date',
+  customDateRange
 }: DashboardChartsProps) => {
   const { theme } = useTheme();
   const location = useLocation();
@@ -90,6 +93,20 @@ export const DashboardCharts = ({
     window.open(viewDetailsUrl, '_blank');
   };
 
+  // Calculate if custom date range is 3 days or less
+  const isCustomDateRangeShort = () => {
+    if (timeRange === 'custom' && customDateRange) {
+      const { from, to } = customDateRange;
+      if (from && to) {
+        // Calculate the difference in days
+        const diffTime = Math.abs(to.getTime() - from.getTime());
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays <= 3;
+      }
+    }
+    return false;
+  };
+
   // Render view type toggle based on conditions
   const renderViewTypeToggle = () => {
     // Don't show toggle if disabled or no change handler provided
@@ -108,6 +125,7 @@ export const DashboardCharts = ({
         onViewTypeChange={onViewTypeChange}
         visible={true}
         timeRange={timeRange}
+        isCustomDateRangeShort={isCustomDateRangeShort()}
       />
     );
   };

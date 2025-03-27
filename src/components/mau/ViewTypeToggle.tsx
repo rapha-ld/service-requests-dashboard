@@ -6,13 +6,19 @@ interface ViewTypeToggleProps {
   viewType: 'net-new' | 'cumulative' | 'rolling-30d';
   onViewTypeChange: (value: 'net-new' | 'cumulative' | 'rolling-30d') => void;
   timeRange?: string;
+  isCustomDateRangeShort?: boolean;
 }
 
 export const ViewTypeToggle = ({
   viewType,
   onViewTypeChange,
-  timeRange
+  timeRange,
+  isCustomDateRangeShort = false
 }: ViewTypeToggleProps) => {
+  // Determine if we should show the Rolling 30D option
+  // Hide it for 3-day view or short custom date ranges (≤ 3 days)
+  const shouldHideRolling30D = timeRange === '3-day' || isCustomDateRangeShort;
+
   const options = [
     { 
       value: 'cumulative', 
@@ -25,12 +31,12 @@ export const ViewTypeToggle = ({
       label: 'Incremental',
       icon: <BarChart className="h-4 w-4 mr-1" />,
       tooltip: "Unique counting resets monthly",
-      noRoundedRight: timeRange !== '3-day'
+      noRoundedRight: !shouldHideRolling30D
     }
   ];
 
-  // Only show Rolling 30D option if timeRange is not 3-day
-  if (timeRange !== '3-day') {
+  // Only show Rolling 30D option if not in a short timeframe view
+  if (!shouldHideRolling30D) {
     options.push({ 
       value: 'rolling-30d', 
       label: 'Rolling 30D',
