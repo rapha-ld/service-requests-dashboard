@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { DashboardSummary } from "@/components/DashboardSummary";
@@ -193,7 +192,7 @@ export const ServiceRequestsDashboard = () => {
           onMonthChange={handleMonthChange}
           timeRange={timeRange}
           onTimeRangeChange={handleTimeRangeChange}
-          showViewTypeToggle={false} // Remove toggle from header
+          showViewTypeToggle={false}
           customDateRange={customDateRange}
           onCustomDateRangeChange={handleCustomDateRangeChange}
         />
@@ -213,9 +212,9 @@ export const ServiceRequestsDashboard = () => {
           showOnlyTotal={grouping === 'all'}
           unitLabel="connections"
           onViewTypeChange={handleViewTypeChange}
-          disableViewTypeToggle={timeRange === 'last-12-months'} // Disable toggle for 12M view
+          disableViewTypeToggle={timeRange === 'last-12-months'}
           timeRange={timeRange}
-          threshold={0}
+          threshold={SERVICE_CONNECTIONS_THRESHOLD}
           customDateRange={customDateRange}
           isHourlyData={hourlyData}
         />
