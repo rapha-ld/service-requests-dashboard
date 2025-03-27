@@ -13,8 +13,6 @@ export function generateExperimentData(
     return generateLast12MonthsData();
   } else if (timeRange === '3-day') {
     return generate3DayData();
-  } else if (timeRange === '7-day') {
-    return generate7DayData();
   } else if (timeRange === 'rolling-30-day') {
     return generateRolling30DayData();
   } else {

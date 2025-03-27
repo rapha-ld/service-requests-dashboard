@@ -4,7 +4,7 @@ import { generateExperimentData } from "@/utils/experiments";
 import { DateRange } from "@/types/mauTypes";
 import { TimeRangeType } from "@/types/serviceData";
 
-export { TimeRangeType };
+export type { TimeRangeType };
 
 export const useExperimentData = (
   timeRange: TimeRangeType,
