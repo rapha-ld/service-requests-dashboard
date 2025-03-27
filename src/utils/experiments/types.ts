@@ -1,5 +1,5 @@
 
-import { TimeRange } from "@/hooks/useExperimentData";
+import { TimeRangeType } from "@/hooks/useExperimentData";
 import { DateRange } from "@/types/mauTypes";
 import { ViewType } from "@/types/serviceData";
 

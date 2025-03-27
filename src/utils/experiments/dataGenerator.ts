@@ -1,5 +1,6 @@
+
 import { format, subDays, isAfter, getDate, subMonths } from "date-fns";
-import { TimeRangeType } from "@/types/serviceData";
+import { TimeRangeType } from "@/hooks/useExperimentData";
 import { DateRange } from "@/types/mauTypes";
 import { ExperimentData } from "./types";
 
@@ -13,6 +14,8 @@ export function generateExperimentData(
     return generateLast12MonthsData();
   } else if (timeRange === '3-day') {
     return generate3DayData();
+  } else if (timeRange === '7-day') {
+    return generate7DayData();
   } else if (timeRange === 'rolling-30-day') {
     return generateRolling30DayData();
   } else {
@@ -133,6 +136,67 @@ function generate3DayData(): ExperimentData {
       experimentA: 230,
       experimentB: 165,
       experimentC: 290
+    }
+  };
+}
+
+// Generate 7-day data
+function generate7DayData(): ExperimentData {
+  const today = new Date();
+  
+  const generateData = () => {
+    // Calculate how many days we are into the current month
+    const currentDay = today.getDate();
+    const daysIntoMonth = currentDay - 1; // Days before today this month
+    
+    return Array.from({ length: 7 }, (_, i) => {
+      const date = subDays(today, 6 - i);
+      const isFutureDate = isAfter(date, today);
+      
+      return {
+        day: format(date, 'MMM d'),
+        value: isFutureDate ? null : Math.floor(Math.random() * 100)
+      };
+    });
+  };
+  
+  const experimentA = generateData();
+  const experimentB = generateData();
+  const experimentC = generateData();
+  
+  const calculateTotal = (data: Array<{ day: string; value: number | null }>) => {
+    return data.reduce((sum, item) => sum + (item.value || 0), 0);
+  };
+  
+  return {
+    current: {
+      experimentA,
+      experimentB,
+      experimentC
+    },
+    previous: {
+      experimentA: Array.from({ length: 7 }, () => ({
+        day: "day",
+        value: Math.floor(Math.random() * 100)
+      })),
+      experimentB: Array.from({ length: 7 }, () => ({
+        day: "day",
+        value: Math.floor(Math.random() * 100)
+      })),
+      experimentC: Array.from({ length: 7 }, () => ({
+        day: "day",
+        value: Math.floor(Math.random() * 100)
+      }))
+    },
+    currentTotals: {
+      experimentA: calculateTotal(experimentA),
+      experimentB: calculateTotal(experimentB),
+      experimentC: calculateTotal(experimentC)
+    },
+    previousTotals: {
+      experimentA: 460,
+      experimentB: 330,
+      experimentC: 580
     }
   };
 }

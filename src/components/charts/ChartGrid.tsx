@@ -4,7 +4,6 @@ import { ChartSearch } from "@/components/charts/ChartSearch";
 import { LayoutToggle } from "@/components/charts/LayoutToggle";
 import { useState } from "react";
 import { transformData } from "@/components/charts/dataTransformers";
-import { useLocation } from "react-router-dom";
 
 interface ChartGroup {
   id: string;
@@ -51,17 +50,12 @@ export const ChartGrid = ({
 }: ChartGridProps) => {
   const [layoutMode, setLayoutMode] = useState<'compact' | 'expanded'>('compact');
   const [filteredGroups, setFilteredGroups] = useState(sortedGroups);
-  const location = useLocation();
   
   // Force net-new view for 12M timeRange
   const effectiveViewType = timeRange === 'last-12-months' ? 'net-new' : viewType;
   
   // Force bar chart for net-new view
   const effectiveChartType = effectiveViewType === 'net-new' ? 'bar' : chartType;
-
-  // Only show threshold on overview page
-  const isOverviewPage = location.pathname === "/overview";
-  const shouldShowThreshold = showThreshold && isOverviewPage;
 
   // Handle search filtering
   const handleSearch = (term: string) => {
@@ -107,7 +101,7 @@ export const ChartGrid = ({
     : Math.max(sharedMaxValue, maxValue || 0, threshold || 0);
   
   // Force shared max values for specific views to ensure consistent scaling
-  const shouldUseSharedValues = ['3-day', 'last-12-months'].includes(timeRange) || !individualMaxValues || effectiveViewType === 'net-new';
+  const shouldUseSharedValues = ['3-day', '7-day', 'last-12-months'].includes(timeRange) || !individualMaxValues || effectiveViewType === 'net-new';
 
   return (
     <>
@@ -137,7 +131,7 @@ export const ChartGrid = ({
             chartRef={chartRefs.current[group.title]}
             onExport={onExportChart}
             useViewDetails={useViewDetailsButton}
-            showThreshold={shouldShowThreshold && effectiveViewType === 'cumulative'}
+            showThreshold={showThreshold && effectiveViewType === 'cumulative'}
             threshold={threshold}
             timeRange={timeRange}
           />

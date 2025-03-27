@@ -38,7 +38,6 @@ function AppContent() {
   ].includes(location.pathname);
 
   const isDiagnosticsPath = [
-    "/diagnostics",  // Add diagnostics to diagnostics paths
     "/client-connections", 
     "/server-mau", 
     "/peak-server-connections", 
