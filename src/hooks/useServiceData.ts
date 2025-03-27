@@ -71,8 +71,7 @@ export const useServiceData = (
       queryFn: () => {
         const data = fetchDiagnosticData(diagnosticType, timeRange || 'month-to-date', customDateRange);
         return {
-          data,
-          isLoading: false
+          data
         };
       }
     });
