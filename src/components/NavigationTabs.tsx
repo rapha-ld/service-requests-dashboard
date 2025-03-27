@@ -10,13 +10,13 @@ const USAGE_TABS = [
   { id: "experiments", label: "Experiments", path: "/experiments" },
   { id: "data-export", label: "Data Export", path: "/data-export" },
   { id: "service-connections", label: "Service Connections", path: "/service-connections" },
+  { id: "service-requests", label: "Service Requests", path: "/service-requests" },
 ];
 
 const DIAGNOSTICS_TABS = [
   { id: "client-connections", label: "Client Connections", path: "/client-connections" },
   { id: "server-mau", label: "Server MAU", path: "/server-mau" },
   { id: "peak-server-connections", label: "Peak Server SDK Connections", path: "/peak-server-connections" },
-  { id: "service-requests", label: "Service Requests", path: "/service-requests" },
 ];
 
 export function NavigationTabs() {
@@ -33,9 +33,7 @@ export function NavigationTabs() {
   
   const tabsToDisplay = isUsagePath ? USAGE_TABS : isDiagnosticsPath ? DIAGNOSTICS_TABS : [];
 
-  // Create URL params string to preserve current parameters when switching tabs
   const getTabUrl = (path: string) => {
-    // Clone the current search params
     const newParams = new URLSearchParams(searchParams.toString());
     return `${path}?${newParams.toString()}`;
   };

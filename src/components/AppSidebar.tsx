@@ -29,18 +29,18 @@ export function AppSidebar() {
       location.pathname === "/client-mau" || 
       location.pathname === "/experiments" || 
       location.pathname === "/data-export" || 
-      location.pathname === "/service-connections" // Removed service-requests from usage paths
+      location.pathname === "/service-connections" ||
+      location.pathname === "/service-requests" // Added service-requests to usage paths
     )) {
       return true;
     }
 
-    // Check if we're on a Diagnostics route - add service-requests
+    // Check if we're on a Diagnostics route
     if (route === "/diagnostics" && (
       location.pathname === "/diagnostics" || 
       location.pathname === "/client-connections" || 
       location.pathname === "/server-mau" || 
-      location.pathname === "/peak-server-connections" ||
-      location.pathname === "/service-requests"
+      location.pathname === "/peak-server-connections"
     )) {
       return true;
     }

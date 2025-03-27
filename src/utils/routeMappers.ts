@@ -14,6 +14,8 @@ export const getTitleRoute = (title: string): string => {
     return '/data-export';
   } else if (normalizedTitle.includes('service') && normalizedTitle.includes('connection')) {
     return '/service-connections';
+  } else if (normalizedTitle.includes('service') && normalizedTitle.includes('request')) {
+    return '/service-requests';
   } 
   // Diagnostics routes
   else if (normalizedTitle.includes('client') && normalizedTitle.includes('connection')) {
@@ -22,8 +24,6 @@ export const getTitleRoute = (title: string): string => {
     return '/server-mau';
   } else if (normalizedTitle.includes('peak') && normalizedTitle.includes('server')) {
     return '/peak-server-connections';
-  } else if (normalizedTitle.includes('service') && normalizedTitle.includes('request')) {
-    return '/service-requests';
   }
   
   // Default route

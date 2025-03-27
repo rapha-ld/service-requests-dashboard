@@ -33,14 +33,14 @@ function AppContent() {
     "/client-mau", 
     "/experiments", 
     "/data-export",
-    "/service-connections"  // Removed service-requests from usage paths
+    "/service-connections",
+    "/service-requests"
   ].includes(location.pathname);
 
   const isDiagnosticsPath = [
     "/client-connections", 
     "/server-mau", 
-    "/peak-server-connections",
-    "/service-requests"      // Added service-requests to diagnostics paths
+    "/peak-server-connections"
   ].includes(location.pathname);
 
   // Function to preserve URL parameters when redirecting
