@@ -47,8 +47,8 @@ export const SummaryCard = ({
 
   return (
     <div className={cn(
-      plainStyle ? "" : "bg-card p-4 rounded-lg shadow-sm",
-      plainStyle ? "" : "dark:bg-secondary dark:border dark:border-border",
+      !plainStyle && "bg-card p-4 rounded-lg shadow-sm",
+      !plainStyle && "dark:bg-secondary dark:border dark:border-border",
       plainStyle && "bg-transparent border-none p-0 shadow-none",
       heightClass,
       className,
