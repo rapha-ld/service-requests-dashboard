@@ -5,6 +5,7 @@ import {
   generateLast12MonthsData, 
   generateRolling30DayData, 
   generate3DayData,
+  generate7DayData,
   combineDataSets, 
   processCombinedData 
 } from "./timeRangeDataGenerators";
@@ -43,6 +44,15 @@ export const handleAllDimensionsData = (timeRange: TimeRangeType, customDateRang
     const userAgent3Day = generate3DayData(userAgentData);
     
     const combined = combineDataSets([environment3Day, relayId3Day, userAgent3Day]);
+    return processCombinedData(combined);
+  }
+  
+  if (timeRange === '7-day') {
+    const environment7Day = generate7DayData(environmentData);
+    const relayId7Day = generate7DayData(relayIdData);
+    const userAgent7Day = generate7DayData(userAgentData);
+    
+    const combined = combineDataSets([environment7Day, relayId7Day, userAgent7Day]);
     return processCombinedData(combined);
   }
   
@@ -101,6 +111,20 @@ export const handleSpecificDimensionData = (grouping: GroupingType, timeRange: T
       previous,
       currentTotals: Object.fromEntries(
         Object.entries(data3Day).map(([key, data]) => [key, getTotalValue(data as any)])
+      ),
+      previousTotals: Object.fromEntries(
+        Object.entries(previous).map(([key, data]) => [key, getTotalValue(data)])
+      )
+    };
+  }
+  
+  if (timeRange === '7-day') {
+    const data7Day = generate7DayData(current);
+    return {
+      current: data7Day,
+      previous,
+      currentTotals: Object.fromEntries(
+        Object.entries(data7Day).map(([key, data]) => [key, getTotalValue(data as any)])
       ),
       previousTotals: Object.fromEntries(
         Object.entries(previous).map(([key, data]) => [key, getTotalValue(data)])

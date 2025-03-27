@@ -42,6 +42,18 @@ export const TimeRangeControls = ({
       </Button>
       
       <Button
+        variant={timeRange === '7-day' ? 'default' : 'outline'}
+        onClick={() => onTimeRangeChange('7-day')}
+        className={`rounded-none border-l-0 h-8 ${
+          timeRange === '7-day' 
+            ? 'dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
+            : 'bg-white dark:bg-black dark:border-[#6C6E7A]'
+        }`}
+      >
+        7D
+      </Button>
+      
+      <Button
         variant={timeRange === 'rolling-30-day' ? 'default' : 'outline'}
         onClick={() => onTimeRangeChange('rolling-30-day')}
         className={`rounded-none border-l-0 h-8 ${

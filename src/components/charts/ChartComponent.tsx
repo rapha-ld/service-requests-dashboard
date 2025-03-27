@@ -37,8 +37,7 @@ export const ChartComponent = ({
     "/client-connections",
     "/server-mau",
     "/peak-server-connections",
-    "/service-requests",
-    "/diagnostics"
+    "/service-requests"
   ].includes(location.pathname);
   
   // Define which routes are plan usage pages
@@ -49,10 +48,6 @@ export const ChartComponent = ({
     "/data-export",
     "/service-connections"
   ].includes(location.pathname);
-  
-  // Only show threshold on overview page
-  const isOverviewPage = location.pathname === "/overview";
-  const shouldShowThreshold = showThreshold && isOverviewPage && threshold !== undefined && viewType === 'cumulative';
   
   const average = calculateAverage(data);
   
@@ -72,7 +67,7 @@ export const ChartComponent = ({
       : transformData(data, viewType, true, isDiagnosticPage);
   
   // Only apply threshold to the max value if in cumulative view
-  const effectiveMaxValue = shouldShowThreshold && threshold && threshold > maxValue && viewType === 'cumulative'
+  const effectiveMaxValue = showThreshold && threshold && threshold > maxValue && viewType === 'cumulative'
     ? threshold 
     : maxValue;
   
@@ -217,7 +212,7 @@ export const ChartComponent = ({
             }}
           />
         )}
-        {shouldShowThreshold && (
+        {showThreshold && threshold && viewType === 'cumulative' && (
           <ReferenceLine 
             y={threshold}
             stroke="#DB2251"
