@@ -10,8 +10,3 @@ export interface ServiceData {
   currentTotals: Record<string, number>;
   previousTotals: Record<string, number>;
 }
-
-export interface DiagnosticData {
-  data: Array<{ day: string; value: number }>;
-  threshold?: number;
-}

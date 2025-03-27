@@ -3,11 +3,11 @@ import { useState, useRef, useEffect } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
-import { useServiceData, GroupingType, TimeRangeType, ViewType, ChartType } from "@/hooks/useServiceData";
+import { useServiceData } from "@/hooks/useServiceData";
+import { GroupingType, TimeRangeType, ViewType, ChartType } from "@/types/serviceData";
 import { processServiceData, calculateMaxValue, getAllEnvironmentsData } from "@/utils/serviceDataUtils";
 import { DateRange } from "@/types/mauTypes";
 import { useUrlParams } from "@/hooks/useUrlParams";
-import { DiagnosticData, ServiceData } from "@/types/serviceData";
 
 export const ServiceRequestsDashboard = () => {
   const urlParams = useUrlParams();
@@ -42,14 +42,6 @@ export const ServiceRequestsDashboard = () => {
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
     setTimeRange(newTimeRange);
     urlParams.setTimeRange(newTimeRange);
-    
-    // For 3-day view, default to net-new view for hourly bars
-    if (newTimeRange === '3-day') {
-      setViewType('net-new');
-      urlParams.setViewType('net-new');
-      setChartType('bar');
-      urlParams.setChartType('bar');
-    }
     
     // Force net-new view when 12M is selected
     if (newTimeRange === 'last-12-months') {
@@ -107,50 +99,23 @@ export const ServiceRequestsDashboard = () => {
   };
   
   // Fetch data using custom hook
-  const { data: serviceDataResponse } = useServiceData(
-    "service-requests", 
-    viewType, 
+  const { data: serviceData } = useServiceData(
+    selectedMonth, 
+    grouping, 
     timeRange,
     timeRange === 'custom' ? customDateRange : undefined
   );
 
-  if (!serviceDataResponse) return null;
-  
-  // Check if the response is diagnostic data (has 'data' property) or service data (has 'current' property)
-  const isDiagnosticData = 'data' in serviceDataResponse;
-  
-  // Extract data based on response type
-  let serviceData;
-  let threshold;
-  
-  if (isDiagnosticData) {
-    // It's diagnostic data
-    const diagnosticData = serviceDataResponse as DiagnosticData;
-    serviceData = diagnosticData.data;
-    threshold = diagnosticData.threshold;
-  } else {
-    // It's regular service data
-    serviceData = serviceDataResponse as ServiceData;
-    threshold = undefined;
-  }
-  
-  // Create a simple data structure for processing if we have direct array of data
-  const formattedData = Array.isArray(serviceData) ? {
-    current: { total: serviceData },
-    previous: { total: [] },
-    currentTotals: { total: 0 },
-    previousTotals: { total: 0 }
-  } : serviceData;
+  if (!serviceData) return null;
   
   // Process data for display
-  const { sortedGroups } = processServiceData(formattedData, sortDirection);
+  const { sortedGroups } = processServiceData(serviceData, sortDirection);
   
-  // Calculate maxValue
+  // Calculate maxValue - updated to accept the new ViewType
   const maxValue = calculateMaxValue(sortedGroups, viewType);
   
   // Get data for all environments chart
-  const allEnvironmentsData = Array.isArray(serviceData) ? serviceData : 
-    getAllEnvironmentsData(grouping, formattedData, timeRange, sortedGroups);
+  const allEnvironmentsData = getAllEnvironmentsData(grouping, serviceData, timeRange, sortedGroups);
 
   return (
     <div className="min-h-screen bg-background p-6">
@@ -190,8 +155,6 @@ export const ServiceRequestsDashboard = () => {
           onViewTypeChange={handleViewTypeChange}
           disableViewTypeToggle={timeRange === 'last-12-months'} // Disable toggle for 12M view
           timeRange={timeRange}
-          showThreshold={viewType === 'cumulative'}
-          threshold={threshold}
         />
       </div>
     </div>

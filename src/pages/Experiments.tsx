@@ -1,8 +1,9 @@
+
 import { useState, useRef, useEffect } from "react";
 import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
 import { ExperimentHeader } from "@/components/experiments/ExperimentHeader";
-import { useExperimentData } from "@/hooks/useExperimentData";
+import { useExperimentData, TimeRangeType } from "@/hooks/useExperimentData";
 import { 
   processExperimentData, 
   calculateMaxValue, 
@@ -10,7 +11,7 @@ import {
   ExperimentGroup 
 } from "@/utils/experiments";
 import { DateRange } from "@/types/mauTypes";
-import { ViewType, TimeRangeType } from "@/types/serviceData";
+import { ViewType } from "@/types/serviceData";
 import { useUrlParams } from "@/hooks/useUrlParams";
 
 // Experiment events threshold from Overview page
@@ -41,10 +42,12 @@ const Experiments = () => {
     }
   }, [viewType]);
   
+  // Handle time range change with special behavior for 12M
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
     setTimeRange(newTimeRange);
     urlParams.setTimeRange(newTimeRange);
     
+    // Force net-new view when 12M is selected
     if (newTimeRange === 'last-12-months') {
       setViewType('net-new');
       urlParams.setViewType('net-new');
@@ -58,6 +61,7 @@ const Experiments = () => {
     urlParams.setCustomDateRange(dateRange);
   };
   
+  // Handle view type change - but only if not in 12M view
   const handleViewTypeChange = (newViewType: ViewType) => {
     if (timeRange !== 'last-12-months') {
       setViewType(newViewType);
@@ -117,7 +121,7 @@ const Experiments = () => {
           onTimeRangeChange={handleTimeRangeChange}
           customDateRange={customDateRange}
           onCustomDateRangeChange={handleCustomDateRangeChange}
-          showViewTypeToggle={false}
+          showViewTypeToggle={false} // Hide in header, we'll show in chart section
         />
         
         <DashboardCharts
@@ -134,7 +138,7 @@ const Experiments = () => {
           showThreshold={true}
           threshold={EXPERIMENT_EVENTS_THRESHOLD}
           onViewTypeChange={handleViewTypeChange}
-          disableViewTypeToggle={timeRange === 'last-12-months'}
+          disableViewTypeToggle={timeRange === 'last-12-months'} // Disable toggle for 12M view
           timeRange={timeRange}
         />
       </div>

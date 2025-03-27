@@ -1,12 +1,12 @@
 
 import { Button } from "@/components/ui/button";
-import { TimeRange } from "@/hooks/useExperimentData";
+import { TimeRangeType } from "@/hooks/useExperimentData";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { CalendarIcon } from "lucide-react";
 
 interface TimeRangeToggleProps {
-  timeRange: TimeRange;
-  onTimeRangeChange: (value: TimeRange) => void;
+  timeRange: TimeRangeType;
+  onTimeRangeChange: (value: TimeRangeType) => void;
 }
 
 export const TimeRangeToggle = ({

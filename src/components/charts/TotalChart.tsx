@@ -36,17 +36,12 @@ export const TotalChart = ({
 }: TotalChartProps) => {
   const location = useLocation();
   
-  // Define which routes should show threshold lines
-  // Only show threshold on overview page
-  const shouldShowThreshold = location.pathname === "/overview" && showThreshold;
-  
   // Define which routes are diagnostic pages
   const isDiagnosticPage = [
     "/client-connections",
     "/server-mau",
     "/peak-server-connections",
-    "/service-requests",
-    "/diagnostics"
+    "/service-requests"
   ].includes(location.pathname);
 
   // Force net-new view for 12M timeRange
@@ -60,30 +55,26 @@ export const TotalChart = ({
     effectiveChartType = 'line';
   }
 
-  // Safety check for data
-  const safeData = Array.isArray(data) ? data : [];
-
-  // For cumulative view, ALWAYS accumulate values, even for 3-day views
+  // For cumulative view, ALWAYS accumulate values, even for 3-day and 7-day views
   // This ensures we show the cumulative value from the beginning of the month
   const shouldAccumulate = effectiveViewType === 'cumulative';
   
   // We want to handle resets only for real monthly resets,
-  // which aren't relevant for 3-day views
-  const shouldHandleResets = !['3-day'].includes(timeRange || '');
+  // which aren't relevant for 3-day or 7-day views
+  const shouldHandleResets = !['3-day', '7-day'].includes(timeRange || '');
   
   // Transform data based on view type and accumulation settings
   const transformedData = shouldAccumulate 
-    ? transformData(safeData, effectiveViewType, shouldHandleResets, isDiagnosticPage) 
-    : safeData;
+    ? transformData(data, effectiveViewType, shouldHandleResets, isDiagnosticPage) 
+    : data;
   
   // Calculate max value based on transformed data
-  const maxValue = Array.isArray(transformedData) ? 
-    Math.max(...transformedData.map(d => (d.value !== null ? d.value : 0)), 0) : 0;
+  const maxValue = Math.max(...transformedData.map(d => (d.value !== null ? d.value : 0)));
 
   // If threshold is provided and showing threshold is enabled, ensure maxValue is at least the threshold
   // Only apply this for cumulative view
-  const shouldApplyThreshold = shouldShowThreshold && effectiveViewType === 'cumulative';
-  const effectiveMaxValue = shouldApplyThreshold && threshold && threshold > maxValue ? threshold : maxValue;
+  const shouldShowThreshold = showThreshold && effectiveViewType === 'cumulative';
+  const effectiveMaxValue = shouldShowThreshold && threshold && threshold > maxValue ? threshold : maxValue;
 
   return (
     <div className="mb-6">
@@ -99,7 +90,7 @@ export const TotalChart = ({
         chartRef={chartRef}
         onExport={onExportChart}
         useViewDetails={useViewDetailsButton}
-        showThreshold={shouldApplyThreshold}
+        showThreshold={shouldShowThreshold}
         threshold={threshold}
         chartHeight={chartHeight}
         timeRange={timeRange}

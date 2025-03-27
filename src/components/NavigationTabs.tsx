@@ -14,7 +14,7 @@ const USAGE_TABS = [
 ];
 
 const DIAGNOSTICS_TABS = [
-  { id: "diagnostics", label: "Overview", path: "/diagnostics" },
+  { id: "diagnostics-overview", label: "Overview", path: "/diagnostics" },
   { id: "client-connections", label: "Client Connections", path: "/client-connections" },
   { id: "server-mau", label: "Server MAU", path: "/server-mau" },
   { id: "peak-server-connections", label: "Peak Server SDK Connections", path: "/peak-server-connections" },
@@ -29,9 +29,11 @@ export function NavigationTabs() {
   const currentPath = location.pathname;
   
   const isUsagePath = USAGE_TABS.some(tab => tab.path === currentPath);
-  const isDiagnosticsPath = DIAGNOSTICS_TABS.some(tab => tab.path === currentPath);
+  const isDiagnosticsPath = DIAGNOSTICS_TABS.some(tab => tab.path === currentPath || (currentPath === "/diagnostics" && tab.path === "/diagnostics"));
   
-  const activeTab = [...USAGE_TABS, ...DIAGNOSTICS_TABS].find(tab => tab.path === currentPath)?.id || "";
+  const activeTab = [...USAGE_TABS, ...DIAGNOSTICS_TABS].find(tab => 
+    tab.path === currentPath || (currentPath === "/diagnostics" && tab.path === "/diagnostics")
+  )?.id || "";
   
   const tabsToDisplay = isUsagePath ? USAGE_TABS : isDiagnosticsPath ? DIAGNOSTICS_TABS : [];
 
