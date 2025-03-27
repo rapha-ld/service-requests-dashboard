@@ -1,45 +1,55 @@
 
 import { useState, useRef, useEffect } from "react";
-import { MAUHeader } from "@/components/mau/MAUHeader";
-import { MAUDashboardControls } from "@/components/mau/MAUDashboardControls";
-import { LoadingState } from "@/components/mau/LoadingState";
+import { DashboardHeader } from "@/components/DashboardHeader";
 import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
 import { useServiceData } from "@/hooks/useServiceData";
-import { TimeRangeType } from "@/types/serviceData";
+import { GroupingType, TimeRangeType, ViewType, ChartType } from "@/types/serviceData";
+import { processServiceData, calculateMaxValue, getAllEnvironmentsData } from "@/utils/serviceDataUtils";
 import { DateRange } from "@/types/mauTypes";
 import { useUrlParams } from "@/hooks/useUrlParams";
 
 export const ServiceRequestsDashboard = () => {
   const urlParams = useUrlParams();
   
-  // State management with values from URL parameters
+  // State hooks with values from URL parameters
   const [selectedMonth, setSelectedMonth] = useState(urlParams.getSelectedMonth());
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>(urlParams.getSortDirection());
-  const [viewType, setViewType] = useState<'net-new' | 'cumulative'>(
-    urlParams.getViewType() === 'rolling-30d' ? 'cumulative' : urlParams.getViewType() as 'net-new' | 'cumulative'
-  );
-  const [chartType, setChartType] = useState<'area' | 'line' | 'bar'>(urlParams.getChartType());
+  const [viewType, setViewType] = useState<ViewType>(urlParams.getViewType());
+  const [chartType, setChartType] = useState<ChartType>(urlParams.getChartType());
+  const [grouping, setGrouping] = useState<GroupingType>(urlParams.getGrouping());
   const [timeRange, setTimeRange] = useState<TimeRangeType>(urlParams.getTimeRange());
-  const [selectedProject, setSelectedProject] = useState<string>(urlParams.getSelectedProject());
   const [customDateRange, setCustomDateRange] = useState<DateRange>(urlParams.getCustomDateRange());
   
   const chartRefs = useRef<{ [key: string]: any }>({});
-
-  // Set threshold for Service Connections - same as in Overview tab
-  const serviceConnectionsThreshold = 300000;
-
+  
   // Effect to update chart type based on view type
   useEffect(() => {
-    // For net-new view, use bar charts; for cumulative, use area charts
-    setChartType(viewType === 'net-new' ? 'bar' : 'area');
-    urlParams.setChartType(viewType === 'net-new' ? 'bar' : 'area');
+    // For net-new view, use bar charts; for cumulative, use area charts; for rolling-30d, use line charts
+    if (viewType === 'net-new') {
+      setChartType('bar');
+      urlParams.setChartType('bar');
+    } else if (viewType === 'rolling-30d') {
+      setChartType('line');
+      urlParams.setChartType('line');
+    } else {
+      setChartType('area');
+      urlParams.setChartType('area');
+    }
   }, [viewType]);
   
-  // Handle time range change - allow all view types for all time ranges
+  // Handle time range change
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
     setTimeRange(newTimeRange);
     urlParams.setTimeRange(newTimeRange);
+    
+    // Force net-new view when 12M is selected
+    if (newTimeRange === 'last-12-months') {
+      setViewType('net-new');
+      urlParams.setViewType('net-new');
+      setChartType('bar');
+      urlParams.setChartType('bar');
+    }
   };
   
   // Handle custom date range change
@@ -48,20 +58,30 @@ export const ServiceRequestsDashboard = () => {
     urlParams.setCustomDateRange(dateRange);
   };
   
-  // Handle view type change - allow changing for all time ranges
-  const handleViewTypeChange = (newViewType: 'net-new' | 'cumulative') => {
-    setViewType(newViewType);
-    urlParams.setViewType(newViewType);
-    
-    // Update chart type based on view type
-    setChartType(newViewType === 'net-new' ? 'bar' : 'area');
-    urlParams.setChartType(newViewType === 'net-new' ? 'bar' : 'area');
+  // Handle view type change
+  const handleViewTypeChange = (newViewType: ViewType) => {
+    // Only allow changing if not in 12M view
+    if (timeRange !== 'last-12-months') {
+      setViewType(newViewType);
+      urlParams.setViewType(newViewType);
+      // Update chart type based on view type
+      if (newViewType === 'net-new') {
+        setChartType('bar');
+        urlParams.setChartType('bar');
+      } else if (newViewType === 'rolling-30d') {
+        setChartType('line');
+        urlParams.setChartType('line');
+      } else {
+        setChartType('area');
+        urlParams.setChartType('area');
+      }
+    }
   };
   
-  // Handle chart type change
-  const handleChartTypeChange = (newChartType: 'area' | 'bar' | 'line') => {
-    setChartType(newChartType);
-    urlParams.setChartType(newChartType);
+  // Handle grouping change
+  const handleGroupingChange = (newGrouping: GroupingType) => {
+    setGrouping(newGrouping);
+    urlParams.setGrouping(newGrouping);
   };
   
   // Handle sort direction change
@@ -78,95 +98,63 @@ export const ServiceRequestsDashboard = () => {
     urlParams.setSelectedMonth(newMonth);
   };
   
-  // Error handling wrapper for state setters
-  const safeSetSelectedProject = (project: string) => {
-    try {
-      setSelectedProject(project || "all");
-      urlParams.setSelectedProject(project || "all");
-    } catch (error) {
-      console.error("Error setting project:", error);
-      setSelectedProject("all");
-      urlParams.setSelectedProject("all");
-    }
-  };
-
-  // Fetch service data with the useServiceData hook
-  const { data: serviceData, isLoading } = useServiceData(
-    'service-requests',
-    'incremental',
+  // Fetch data using custom hook
+  const { data: serviceData } = useServiceData(
+    selectedMonth, 
+    grouping, 
     timeRange,
     timeRange === 'custom' ? customDateRange : undefined
   );
 
-  // Handle loading state
-  if (isLoading) {
-    return (
-      <LoadingState 
-        selectedProject={selectedProject} 
-        setSelectedProject={safeSetSelectedProject} 
-      />
-    );
-  }
-
-  // Safety check for data structure
-  const safeData = serviceData?.data || [];
+  if (!serviceData) return null;
   
-  // Create simple group structure for DashboardCharts component
-  const group = {
-    id: 'service-connections',
-    title: 'Service Connections',
-    value: safeData.reduce((sum: number, item: any) => sum + (item.value || 0), 0),
-    data: safeData,
-    percentChange: 0
-  };
+  // Process data for display
+  const { sortedGroups } = processServiceData(serviceData, sortDirection);
   
-  const sortedGroups = [group];
+  // Calculate maxValue - updated to accept the new ViewType
+  const maxValue = calculateMaxValue(sortedGroups, viewType);
   
-  // Maximum value for chart scaling
-  const maxValue = Math.max(...safeData.map((item: any) => item.value || 0), 0);
+  // Get data for all environments chart
+  const allEnvironmentsData = getAllEnvironmentsData(grouping, serviceData, timeRange, sortedGroups);
 
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
-        <MAUHeader title="Service Connections" />
+        <h1 className="text-2xl font-semibold text-foreground mb-6 text-left pl-0">Service Connections</h1>
         
-        <MAUDashboardControls
+        <DashboardHeader
+          grouping={grouping}
           viewType={viewType}
-          chartType={chartType}
           selectedMonth={selectedMonth}
           sortDirection={sortDirection}
-          timeRange={timeRange}
-          selectedProject={selectedProject}
-          setSelectedProject={safeSetSelectedProject}
+          onGroupingChange={handleGroupingChange}
           onViewTypeChange={handleViewTypeChange}
-          onChartTypeChange={handleChartTypeChange}
           onSortDirectionChange={handleSortDirectionChange}
           onMonthChange={handleMonthChange}
+          timeRange={timeRange}
           onTimeRangeChange={handleTimeRangeChange}
-          hideModeToggle={true}
+          showViewTypeToggle={false} // Remove toggle from header
           customDateRange={customDateRange}
           onCustomDateRangeChange={handleCustomDateRangeChange}
         />
         
-        <DashboardSummary groups={sortedGroups} />
+        {grouping !== 'all' && <DashboardSummary groups={sortedGroups} />}
         
         <DashboardCharts
-          allEnvironmentsData={safeData}
+          allEnvironmentsData={allEnvironmentsData}
           sortedGroups={sortedGroups}
           viewType={viewType}
           chartType={chartType}
           maxValue={maxValue}
-          grouping="all"
+          grouping={grouping}
           chartRefs={chartRefs}
           onExportChart={() => {}}
           useViewDetailsButton={false}
+          showOnlyTotal={grouping === 'all'}
           unitLabel="connections"
-          showThreshold={true}
-          threshold={serviceConnectionsThreshold}
           onViewTypeChange={handleViewTypeChange}
-          disableViewTypeToggle={false}
+          disableViewTypeToggle={timeRange === 'last-12-months'} // Disable toggle for 12M view
           timeRange={timeRange}
-          showOnlyTotal={true}
         />
       </div>
     </div>
