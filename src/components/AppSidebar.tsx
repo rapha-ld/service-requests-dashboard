@@ -47,23 +47,46 @@ export function AppSidebar() {
     return location.pathname === route;
   };
 
-  return <Sidebar variant="floating" style={{
-    boxShadow: 'none'
-  }} className="!rounded-none border-r border-border !shadow-none bg-white">
-      <SidebarContent className="py-0 bg-white">
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-sm font-semibold tracking-wide text-muted-foreground">Plans and Usage</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {sidebarItems.map(item => <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton isActive={isActive(item.route)} onClick={() => navigate(item.route)} tooltip={item.title} className={`font-medium transition-colors ${isActive(item.route) ? "bg-primary/10 text-primary border-l-2 border-primary" : "text-foreground"}`}>
-                    <item.icon className={`size-5 ${isActive(item.route) ? "text-primary" : "text-muted-foreground"}`} />
-                    <span>{item.title}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>)}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>;
+  return <Sidebar 
+    variant="floating" 
+    className="!rounded-none border-r border-border bg-background dark:bg-background/80 !shadow-none"
+  >
+    <SidebarContent className="py-0 bg-background dark:bg-background/80">
+      <SidebarGroup>
+        <SidebarGroupLabel className="text-sm font-semibold tracking-wide text-muted-foreground dark:text-muted-foreground/80">
+          Plans and Usage
+        </SidebarGroupLabel>
+        <SidebarGroupContent>
+          <SidebarMenu>
+            {sidebarItems.map(item => (
+              <SidebarMenuItem key={item.title}>
+                <SidebarMenuButton 
+                  isActive={isActive(item.route)} 
+                  onClick={() => navigate(item.route)} 
+                  tooltip={item.title} 
+                  className={`
+                    font-medium transition-colors 
+                    ${isActive(item.route) 
+                      ? "bg-primary/10 text-primary border-l-2 border-primary" 
+                      : "text-foreground hover:bg-accent/50"
+                    }
+                  `}
+                >
+                  <item.icon 
+                    className={`size-5 
+                      ${isActive(item.route) 
+                        ? "text-primary" 
+                        : "text-muted-foreground dark:text-muted-foreground/70"
+                      }
+                    `} 
+                  />
+                  <span>{item.title}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroupContent>
+      </SidebarGroup>
+    </SidebarContent>
+  </Sidebar>;
 }
