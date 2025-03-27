@@ -4,6 +4,7 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveCo
 import { CustomTooltip } from '../charts/CustomTooltip';
 import { formatYAxisTick } from '../charts/formatters';
 import { transformData } from '../charts/dataTransformers';
+import { useLocation } from "react-router-dom";
 
 interface CardMiniChartProps {
   chartData: Array<{ day: string; value: number | null }>;
@@ -19,6 +20,10 @@ export const CardMiniChart: React.FC<CardMiniChartProps> = ({
   limit 
 }) => {
   const transformedChartData = chartData ? transformData(chartData, 'cumulative') : [];
+  const location = useLocation();
+  
+  // Only show limit line on overview page
+  const showLimit = location.pathname === "/overview" && limit !== undefined;
 
   return (
     <>
@@ -60,7 +65,7 @@ export const CardMiniChart: React.FC<CardMiniChartProps> = ({
               strokeWidth={2}
               connectNulls={true}
             />
-            {limit && (
+            {showLimit && (
               <ReferenceLine 
                 y={limit}
                 stroke="#DB2251"
