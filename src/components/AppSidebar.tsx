@@ -29,8 +29,7 @@ export function AppSidebar() {
       location.pathname === "/client-mau" || 
       location.pathname === "/experiments" || 
       location.pathname === "/data-export" || 
-      location.pathname === "/service-connections" ||
-      location.pathname === "/service-requests" // Added service-requests to usage paths
+      location.pathname === "/service-connections"
     )) {
       return true;
     }

@@ -1,3 +1,4 @@
+
 import { useLocation, useSearchParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,7 +11,6 @@ const USAGE_TABS = [
   { id: "experiments", label: "Experiments", path: "/experiments" },
   { id: "data-export", label: "Data Export", path: "/data-export" },
   { id: "service-connections", label: "Service Connections", path: "/service-connections" },
-  { id: "service-requests", label: "Service Requests", path: "/service-requests" },
 ];
 
 const DIAGNOSTICS_TABS = [
