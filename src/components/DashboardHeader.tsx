@@ -73,6 +73,7 @@ export const DashboardHeader = ({
         viewType={viewType}
         onViewTypeChange={onViewTypeChange}
         visible={showToggle}
+        timeRange={timeRange}
       />
       
       <div className="flex-grow" />

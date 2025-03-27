@@ -50,6 +50,14 @@ export const ServiceRequestsDashboard = () => {
       setChartType('bar');
       urlParams.setChartType('bar');
     }
+    
+    // If switching to 3-day and current viewType is rolling-30d, switch to net-new
+    if (newTimeRange === '3-day' && viewType === 'rolling-30d') {
+      setViewType('net-new');
+      urlParams.setViewType('net-new');
+      setChartType('bar');
+      urlParams.setChartType('bar');
+    }
   };
   
   // Handle custom date range change
@@ -155,6 +163,7 @@ export const ServiceRequestsDashboard = () => {
           onViewTypeChange={handleViewTypeChange}
           disableViewTypeToggle={timeRange === 'last-12-months'} // Disable toggle for 12M view
           timeRange={timeRange}
+          threshold={0}
         />
       </div>
     </div>
