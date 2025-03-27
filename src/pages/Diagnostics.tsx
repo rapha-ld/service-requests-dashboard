@@ -8,6 +8,22 @@ import { useUrlParams } from "@/hooks/useUrlParams";
 import { DateRange } from "@/types/mauTypes";
 import { TimeRangeType } from "@/types/serviceData";
 
+// Helper function to extract total data safely
+const extractTotalData = (serviceData: any): Array<{ day: string; value: number }> => {
+  if (!serviceData) return [];
+  
+  // Handle different data structures that might be returned by useServiceData
+  if (Array.isArray(serviceData.data)) {
+    return serviceData.data;
+  }
+  
+  if (serviceData.current && serviceData.current.total && Array.isArray(serviceData.current.total)) {
+    return serviceData.current.total;
+  }
+  
+  return [];
+};
+
 export default function Diagnostics() {
   // Local state for custom date range
   const [localDateRange, setLocalDateRange] = useState<DateRange>({
@@ -146,6 +162,12 @@ export default function Diagnostics() {
     );
   }
 
+  // Extract data from the service data responses
+  const clientConnectionsChartData = extractTotalData(clientConnectionsData);
+  const serverMAUChartData = extractTotalData(serverMAUData);
+  const peakServerConnectionsChartData = extractTotalData(peakServerConnectionsData);
+  const serviceRequestsChartData = extractTotalData(serviceRequestsData);
+
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
@@ -171,7 +193,7 @@ export default function Diagnostics() {
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
           <TotalChart
             title="Client Connections"
-            data={clientConnectionsData.data || []}
+            data={clientConnectionsChartData}
             viewType={viewType}
             chartType={chartType}
             chartRef={clientConnectionsChartRef}
@@ -183,7 +205,7 @@ export default function Diagnostics() {
           
           <TotalChart
             title="Server MAU"
-            data={serverMAUData.data || []}
+            data={serverMAUChartData}
             viewType={viewType}
             chartType={chartType}
             chartRef={serverMAUChartRef}
@@ -195,7 +217,7 @@ export default function Diagnostics() {
           
           <TotalChart
             title="Peak Server SDK Connections"
-            data={peakServerConnectionsData.data || []}
+            data={peakServerConnectionsChartData}
             viewType={viewType}
             chartType={chartType}
             chartRef={peakServerConnectionsChartRef}
@@ -207,7 +229,7 @@ export default function Diagnostics() {
           
           <TotalChart
             title="Service Requests"
-            data={serviceRequestsData.data || []}
+            data={serviceRequestsChartData}
             viewType={viewType}
             chartType={chartType}
             chartRef={serviceRequestsChartRef}

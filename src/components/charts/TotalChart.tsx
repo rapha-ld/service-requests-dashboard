@@ -60,6 +60,9 @@ export const TotalChart = ({
     effectiveChartType = 'line';
   }
 
+  // Safety check for data
+  const safeData = Array.isArray(data) ? data : [];
+
   // For cumulative view, ALWAYS accumulate values, even for 3-day views
   // This ensures we show the cumulative value from the beginning of the month
   const shouldAccumulate = effectiveViewType === 'cumulative';
@@ -70,11 +73,12 @@ export const TotalChart = ({
   
   // Transform data based on view type and accumulation settings
   const transformedData = shouldAccumulate 
-    ? transformData(data, effectiveViewType, shouldHandleResets, isDiagnosticPage) 
-    : data;
+    ? transformData(safeData, effectiveViewType, shouldHandleResets, isDiagnosticPage) 
+    : safeData;
   
   // Calculate max value based on transformed data
-  const maxValue = Math.max(...transformedData.map(d => (d.value !== null ? d.value : 0)));
+  const maxValue = Array.isArray(transformedData) ? 
+    Math.max(...transformedData.map(d => (d.value !== null ? d.value : 0)), 0) : 0;
 
   // If threshold is provided and showing threshold is enabled, ensure maxValue is at least the threshold
   // Only apply this for cumulative view

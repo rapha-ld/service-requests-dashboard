@@ -2,7 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { generateExperimentData } from "@/utils/experiments";
 import { DateRange } from "@/types/mauTypes";
-import { TimeRangeType } from "@/types/serviceData";
+import type { TimeRangeType } from "@/types/serviceData";
 
 export const useExperimentData = (
   timeRange: TimeRangeType,
@@ -17,5 +17,7 @@ export const useExperimentData = (
   });
 };
 
+// Import type explicitly to avoid re-export issues
+import type { TimeRangeType as TimeRange } from "@/types/serviceData";
 // Re-export types for convenience
-export { TimeRangeType };
+export type { TimeRange };
