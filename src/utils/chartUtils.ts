@@ -16,7 +16,11 @@ export const getUnitLabel = (route: string): string => {
   switch (route) {
     case 'client-mau':
       return 'users';
+    case 'server-mau':
+      return 'users';
     case 'service-requests':
+      return 'connections';
+    case 'peak-server-connections':
       return 'connections';
     default:
       return 'connections';

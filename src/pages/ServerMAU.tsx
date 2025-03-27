@@ -8,9 +8,12 @@ import { GroupingType, TimeRangeType, ViewType } from "@/types/serviceData";
 import { processServiceData, calculateMaxValue, getAllEnvironmentsData } from "@/utils/serviceDataUtils";
 import { DateRange } from "@/types/mauTypes";
 import { useUrlParams } from "@/hooks/useUrlParams";
+import { getUnitLabel } from "@/utils/chartUtils";
+import { useLocation } from "react-router-dom";
 
 const ServerMAU = () => {
   const urlParams = useUrlParams();
+  const location = useLocation();
   
   // State hooks with values from URL parameters
   const [selectedMonth, setSelectedMonth] = useState(urlParams.getSelectedMonth());
@@ -114,6 +117,9 @@ const ServerMAU = () => {
   // Get data for all environments chart
   const allEnvironmentsData = getAllEnvironmentsData(grouping, serviceData, timeRange, sortedGroups);
 
+  // Get the appropriate unit label based on the current route
+  const unitLabel = getUnitLabel(location.pathname.substring(1)); // Remove leading slash
+
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
@@ -151,6 +157,7 @@ const ServerMAU = () => {
           onViewTypeChange={handleViewTypeChange}
           disableViewTypeToggle={false} // Always allow toggle
           timeRange={timeRange}
+          unitLabel={unitLabel || "users"}
         />
       </div>
     </div>

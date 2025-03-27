@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { ViewToggleSection } from "@/components/charts/ViewToggleSection";
 import { TotalChartSection } from "@/components/charts/TotalChartSection";
@@ -61,7 +62,11 @@ export const DashboardCharts = ({
       {onViewTypeChange && !disableViewTypeToggle && (
         <ViewToggleSection 
           viewType={viewType} 
-          onViewTypeChange={onViewTypeChange} 
+          onViewTypeChange={onViewTypeChange}
+          disableViewTypeToggle={disableViewTypeToggle}
+          timeRange={timeRange}
+          isHourlyData={isHourlyData}
+          customDateRange={customDateRange}
         />
       )}
       
