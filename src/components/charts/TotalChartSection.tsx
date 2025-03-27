@@ -13,6 +13,7 @@ interface TotalChartSectionProps {
   showThreshold?: boolean;
   threshold?: number;
   timeRange?: string;
+  grouping?: string; // Add grouping prop
 }
 
 export const TotalChartSection = ({
@@ -25,7 +26,8 @@ export const TotalChartSection = ({
   unitLabel,
   showThreshold = false,
   threshold,
-  timeRange = 'month-to-date'
+  timeRange = 'month-to-date',
+  grouping = 'environment' // Default value
 }: TotalChartSectionProps) => {
   if (!allEnvironmentsData) {
     return null;
@@ -45,6 +47,7 @@ export const TotalChartSection = ({
         showThreshold={showThreshold}
         threshold={threshold}
         timeRange={timeRange}
+        grouping={grouping} // Pass grouping prop
       />
     </div>
   );

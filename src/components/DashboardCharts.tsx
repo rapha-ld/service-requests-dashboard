@@ -1,54 +1,97 @@
 
+import { ChartsGridSection } from "@/components/charts/ChartsGridSection";
 import { TotalChartSection } from "@/components/charts/TotalChartSection";
 import { ViewType, ChartType } from "@/types/serviceData";
+import { DateRange } from "@/types/mauTypes";
 
-interface TotalChartSectionProps {
+interface DashboardChartsProps {
   allEnvironmentsData: Array<{ day: string, value: number }>;
+  sortedGroups: Array<any>;
   viewType: ViewType;
   chartType: ChartType;
-  chartRef: React.MutableRefObject<any>;
+  maxValue: number;
+  grouping: string;
+  chartRefs: React.MutableRefObject<{ [key: string]: any }>;
   onExportChart: (title: string) => void;
   useViewDetailsButton: boolean;
+  showOnlyTotal?: boolean;
   unitLabel: string;
-  showThreshold?: boolean;
-  threshold?: number;
+  onViewTypeChange?: (viewType: ViewType) => void;
+  disableViewTypeToggle?: boolean;
   timeRange?: string;
-  grouping?: string; // Add grouping prop
+  threshold?: number;
+  customDateRange?: DateRange;
+  isHourlyData?: boolean;
+  showThreshold?: boolean;
+  individualMaxValues?: boolean;
 }
 
-export const TotalChartSection = ({
+export const DashboardCharts = ({
   allEnvironmentsData,
+  sortedGroups,
   viewType,
   chartType,
-  chartRef,
+  maxValue,
+  grouping,
+  chartRefs,
   onExportChart,
   useViewDetailsButton,
+  showOnlyTotal = false,
   unitLabel,
-  showThreshold = false,
-  threshold,
+  onViewTypeChange,
+  disableViewTypeToggle = false,
   timeRange = 'month-to-date',
-  grouping = 'environment' // Default value
-}: TotalChartSectionProps) => {
-  if (!allEnvironmentsData) {
-    return null;
-  }
+  threshold,
+  customDateRange,
+  isHourlyData = false,
+  showThreshold = false,
+  individualMaxValues = false,
+}: DashboardChartsProps) => {
+  const formatValue = (value: number) => {
+    return value.toLocaleString();
+  };
+
+  const onViewDetails = (dimensionValue: string) => {
+    // This is a placeholder function for future implementation
+    console.log(`View details for ${dimensionValue}`);
+  };
 
   return (
-    <div className="mb-6">
-      <TotalChart
-        title="Total"
-        data={allEnvironmentsData}
+    <div className="flex flex-col gap-6">
+      <TotalChartSection
+        allEnvironmentsData={allEnvironmentsData}
         viewType={viewType}
         chartType={chartType}
-        chartRef={chartRef}
+        chartRef={chartRefs.current['total']}
         onExportChart={onExportChart}
         useViewDetailsButton={useViewDetailsButton}
         unitLabel={unitLabel}
         showThreshold={showThreshold}
         threshold={threshold}
         timeRange={timeRange}
-        grouping={grouping} // Pass grouping prop
+        grouping={grouping}
       />
+
+      {!showOnlyTotal && (
+        <ChartsGridSection
+          sortedGroups={sortedGroups}
+          viewType={viewType}
+          chartType={chartType}
+          maxValue={maxValue}
+          chartRefs={chartRefs}
+          onExportChart={onExportChart}
+          expandedCharts={[]}
+          onToggleExpand={() => {}}
+          formatValue={formatValue}
+          onViewDetails={onViewDetails}
+          useViewDetailsButton={useViewDetailsButton}
+          unitLabel={unitLabel}
+          showThreshold={showThreshold}
+          threshold={threshold}
+          timeRange={timeRange}
+          individualMaxValues={individualMaxValues}
+        />
+      )}
     </div>
   );
 };
