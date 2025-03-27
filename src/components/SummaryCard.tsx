@@ -20,6 +20,7 @@ interface SummaryCardProps {
   chartData?: Array<{ day: string; value: number | null }>;
   detailsLink?: string;
   heightClass?: string;
+  plainStyle?: boolean;
 }
 
 export const SummaryCard = ({ 
@@ -34,7 +35,8 @@ export const SummaryCard = ({
   action,
   chartData,
   detailsLink,
-  heightClass
+  heightClass,
+  plainStyle = false
 }: SummaryCardProps) => {
   const isMaxedOut = percentUsed !== undefined && percentUsed >= 95;
   const isDataExportEvents = title === "Data Export Events";
@@ -47,6 +49,7 @@ export const SummaryCard = ({
     <div className={cn(
       "bg-card p-4 rounded-lg shadow-sm animate-slide-up transition-all duration-200 text-left",
       "dark:bg-secondary dark:border dark:border-border",
+      plainStyle && "bg-transparent p-0 shadow-none dark:bg-transparent dark:border-none",
       heightClass,
       className
     )}>
@@ -97,3 +100,4 @@ export const SummaryCard = ({
     </div>
   );
 };
+
