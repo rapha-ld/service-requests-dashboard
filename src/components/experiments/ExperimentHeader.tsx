@@ -4,17 +4,17 @@ import { TimeRangeControls } from "@/components/dashboard/TimeRangeControls";
 import { MonthSelector } from "@/components/dashboard/MonthSelector";
 import { SortButton } from "@/components/dashboard/SortButton";
 import { ViewTypeToggle } from "@/components/dashboard/ViewTypeToggle";
-import { ViewType } from "@/types/serviceData";
+import { ViewType, TimeRangeType } from "@/types/serviceData";
 
 interface ExperimentHeaderProps {
   viewType: ViewType;
   selectedMonth: number;
   sortDirection: 'desc' | 'asc';
-  timeRange: 'month-to-date' | 'last-12-months' | 'rolling-30-day' | '3-day' | '7-day' | 'custom';
+  timeRange: TimeRangeType;
   onViewTypeChange: (value: ViewType) => void;
   onSortDirectionChange: () => void;
   onMonthChange: (value: string) => void;
-  onTimeRangeChange: (value: 'month-to-date' | 'last-12-months' | 'rolling-30-day' | '3-day' | '7-day' | 'custom') => void;
+  onTimeRangeChange: (value: TimeRangeType) => void;
   customDateRange?: DateRange;
   onCustomDateRangeChange?: (dateRange: DateRange) => void;
   showViewTypeToggle?: boolean;
