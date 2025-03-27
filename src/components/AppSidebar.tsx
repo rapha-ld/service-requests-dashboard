@@ -1,3 +1,4 @@
+
 import { CreditCard, Activity, Stethoscope } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getTitleRoute } from "@/utils/routeMappers";
@@ -41,7 +42,7 @@ export function AppSidebar() {
         location.pathname === "/client-mau" || 
         location.pathname === "/experiments" || 
         location.pathname === "/data-export" ||
-        location.pathname === "/service-connections")) {
+        location.pathname === "/service-requests")) {
       return true;
     }
     
