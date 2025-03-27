@@ -1,6 +1,8 @@
+
 import { SmallMultiple } from "@/components/SmallMultiple";
 import { transformData } from "@/components/charts/dataTransformers";
 import { useLocation } from "react-router-dom";
+import { TotalChart } from "@/components/charts/TotalChart";
 
 interface TotalChartProps {
   title: string;
@@ -32,7 +34,9 @@ export const DashboardCharts = ({
   unitLabel,
   onViewTypeChange,
   disableViewTypeToggle,
-  timeRange
+  timeRange,
+  showThreshold = false,
+  threshold
 }) => {
   return (
     <>
@@ -48,6 +52,8 @@ export const DashboardCharts = ({
           unitLabel={unitLabel}
           chartHeight={320}
           timeRange={timeRange}
+          showThreshold={showThreshold}
+          threshold={threshold}
         />
       ) : (
         sortedGroups.map((group) => (
@@ -63,6 +69,8 @@ export const DashboardCharts = ({
             unitLabel={unitLabel}
             chartHeight={192}
             timeRange={timeRange}
+            showThreshold={showThreshold}
+            threshold={threshold}
           />
         ))
       )}

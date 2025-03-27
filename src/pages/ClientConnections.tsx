@@ -178,8 +178,9 @@ const ClientConnections = () => {
           useViewDetailsButton={false}
           unitLabel="connections"
           showThreshold={false}
+          threshold={undefined}
           onViewTypeChange={handleViewTypeChange}
-          disableViewTypeToggle={false} // Always allow toggle
+          disableViewTypeToggle={false}
           timeRange={timeRange}
         />
       </div>
