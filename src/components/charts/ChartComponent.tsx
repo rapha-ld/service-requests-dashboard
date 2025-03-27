@@ -1,4 +1,3 @@
-
 import { useRef } from 'react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, Label } from 'recharts';
 import { CustomTooltip } from './CustomTooltip';
@@ -32,7 +31,6 @@ export const ChartComponent = ({
 }: ChartComponentProps) => {
   const location = useLocation();
   
-  // Define which routes are diagnostic pages
   const isDiagnosticPage = [
     "/client-connections",
     "/server-mau",
@@ -40,7 +38,6 @@ export const ChartComponent = ({
     "/service-requests"
   ].includes(location.pathname);
   
-  // Define which routes are plan usage pages
   const isPlanUsagePage = [
     "/overview",
     "/client-mau",
@@ -51,25 +48,20 @@ export const ChartComponent = ({
   
   const average = calculateAverage(data);
   
-  // Always get the reset points from the transformed data for both view types
-  const transformedDataWithResets = transformData(data, 'cumulative', true, false); // Don't skip resets for annotations
+  const transformedDataWithResets = transformData(data, 'cumulative', true, false);
   
-  // Get reset points from the transformed data
   const resetPoints = transformedDataWithResets
     .filter((item: any) => item.isResetPoint)
     .map((item: any) => item.day);
   
-  // Use the appropriate data based on view type
   const transformedData = viewType === 'cumulative' 
     ? transformedDataWithResets 
     : viewType === 'rolling-30d'
       ? transformData(data, 'rolling-30d', false, false)
       : transformData(data, viewType, true, isDiagnosticPage);
   
-  // Always use the data's max value for the y-axis scale, not the threshold
   const effectiveMaxValue = maxValue;
   
-  // Determine which chart component to use based on chartType
   let ChartComp: typeof AreaChart | typeof BarChart | typeof LineChart;
   let DataComp: typeof Area | typeof Bar | typeof Line;
   
@@ -87,9 +79,8 @@ export const ChartComponent = ({
   const calculateXAxisInterval = () => {
     const dataLength = transformedData.length;
     
-    // For 3-day hourly view, show fewer ticks
     if (timeRange === '3-day' && dataLength > 24) {
-      return Math.floor(dataLength / 6); // Show ~6 ticks for hourly data
+      return Math.floor(dataLength / 6);
     }
     
     if (dataLength <= 7) return 0;
@@ -100,34 +91,28 @@ export const ChartComponent = ({
 
   const xAxisInterval = calculateXAxisInterval();
 
-  // Format the ticks specifically for 3-day view with hourly data
   const formatXAxisTick = (tick: string) => {
     if (timeRange === '3-day' && tick.includes(':')) {
-      // For hourly data, just show the hour
-      return tick.split(', ')[1]; // Return just the hour part (e.g., "12:00")
+      return tick.split(', ')[1];
     }
     return tick;
   };
   
-  // Show monthly reset lines in both cumulative and net-new views, but not in rolling-30d
   const shouldShowResetLines = viewType !== 'rolling-30d';
 
-  // For month-to-date view, ensure the last tick is today's date
   const getXAxisTicks = () => {
     if (!transformedData.length) return [];
     
-    // Set up the initial ticks using current data
     const firstTick = transformedData[0].day;
     const intervalTicks = transformedData
       .slice(1, -1)
       .filter((_, i) => (i + 1) % (xAxisInterval + 1) === 0)
       .map(d => d.day);
     
-    // For month-to-date view, always use today's date as the last tick
     let lastTick;
     if (timeRange === 'month-to-date') {
       const today = new Date();
-      lastTick = format(today, 'MMM d'); // Format it in the same style as other ticks
+      lastTick = format(today, 'MMM d');
     } else {
       lastTick = transformedData[transformedData.length - 1].day;
     }
@@ -182,6 +167,7 @@ export const ChartComponent = ({
             dataKey="value"
             fill="#30459B"
             radius={[1.5, 1.5, 0, 0]}
+            className="dark:hover:fill-[#30459B]/20"
           />
         )}
         {chartType === 'line' && (
