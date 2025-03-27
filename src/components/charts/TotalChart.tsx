@@ -17,7 +17,7 @@ interface TotalChartProps {
   showTitle?: boolean;
   chartHeight?: number;
   timeRange?: string;
-  grouping?: string; // Add grouping prop
+  grouping?: string;
 }
 
 export const TotalChart = ({
@@ -29,12 +29,12 @@ export const TotalChart = ({
   onExportChart,
   useViewDetailsButton,
   unitLabel,
-  showThreshold = false,
+  showThreshold = true, // Changed default to true to always show threshold
   threshold,
   showTitle = true,
-  chartHeight = 192, // Default height
+  chartHeight = 192,
   timeRange = 'month-to-date',
-  grouping = 'environment' // Default value
+  grouping = 'environment'
 }: TotalChartProps) => {
   const location = useLocation();
   
@@ -76,6 +76,9 @@ export const TotalChart = ({
   // Double the chart height when grouping is 'all'
   const effectiveChartHeight = grouping === 'all' ? chartHeight * 2 : chartHeight;
 
+  // Always show threshold in total chart, regardless of whether it's a dimension view or all dimensions
+  const shouldShowThreshold = threshold !== undefined;
+
   return (
     <div className="mb-6">
       <SmallMultiple
@@ -90,7 +93,7 @@ export const TotalChart = ({
         chartRef={chartRef}
         onExport={onExportChart}
         useViewDetails={useViewDetailsButton}
-        showThreshold={showThreshold}
+        showThreshold={shouldShowThreshold}
         threshold={threshold}
         chartHeight={effectiveChartHeight}
         timeRange={timeRange}
