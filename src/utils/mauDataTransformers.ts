@@ -1,3 +1,4 @@
+
 import { calculatePercentChange, getTotalValue } from "./dataTransformers";
 import { ChartGroup, EnvironmentData, EnvironmentsMap, MAUDataResult } from "@/types/mauTypes";
 import { generateMockMonthlyData } from "./mockDataGenerator";

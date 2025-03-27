@@ -1,5 +1,5 @@
 
-import { addDays, format } from 'date-fns';
+import { addDays, format, subMonths, setDate } from 'date-fns';
 
 // Utility to get a random number between min and max
 const getRandomNumber = (min: number, max: number) => {
@@ -13,6 +13,23 @@ const generateDailyData = (days: number) => {
     return {
       day: format(date, 'yyyy-MM-dd'),
       value: getRandomNumber(5, 250)
+    };
+  });
+};
+
+// Generate monthly data based on a base value and reference date
+export const generateMockMonthlyData = (baseValue: number, referenceDate: Date = new Date()) => {
+  // Generate 30 days of data for the month
+  return Array.from({ length: 30 }, (_, i) => {
+    const date = addDays(setDate(referenceDate, 1), i);
+    // Create some variability day to day
+    const dailyVariation = getRandomNumber(-baseValue * 0.1, baseValue * 0.1);
+    // Ensure we don't go below 0
+    const value = Math.max(0, Math.round(baseValue / 30 + dailyVariation));
+    
+    return {
+      day: format(date, 'MMM d'),
+      value: value
     };
   });
 };
