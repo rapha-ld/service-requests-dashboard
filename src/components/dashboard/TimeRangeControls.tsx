@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { DateRangePicker } from "@/components/mau/DateRangePicker";
 import { DateRange } from "@/types/mauTypes";
@@ -46,7 +45,7 @@ export const TimeRangeControls = ({
       
       <Button
         variant={timeRange === 'rolling-30-day' ? 'default' : 'outline'}
-        onClick={() => !isRolling30DDisabled && onTimeRangeChange('rolling-30-day')}
+        onClick={() => onTimeRangeChange('rolling-30-day')}
         disabled={isRolling30DDisabled}
         className={`rounded-none border-l-0 h-8 ${
           timeRange === 'rolling-30-day' 
