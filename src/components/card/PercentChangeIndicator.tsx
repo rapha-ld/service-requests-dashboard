@@ -26,7 +26,7 @@ export const PercentChangeIndicator: React.FC<PercentChangeIndicatorProps> = ({ 
           </div>
         </TooltipTrigger>
         <TooltipContent>
-          <p>Change from previous period</p>
+          <p>Change relative to same date last month</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
