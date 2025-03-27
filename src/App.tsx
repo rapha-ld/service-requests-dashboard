@@ -40,8 +40,8 @@ function AppContent() {
   const isDiagnosticsPath = [
     "/client-connections", 
     "/server-mau", 
-    "/peak-server-connections", 
-    "/service-requests"
+    "/peak-server-connections"
+    // Removed "/service-requests" from diagnostics paths
   ].includes(location.pathname);
 
   // Function to preserve URL parameters when redirecting
@@ -64,7 +64,7 @@ function AppContent() {
             <div className={`p-6 ${showTabs && (isUsagePath || isDiagnosticsPath) ? 'pt-20' : ''}`}>
               <Routes>
                 <Route path="/" element={<Navigate to={getRedirectPath("/overview")} replace />} />
-                <Route path="/service-requests" element={<Index />} />
+                {/* Removed the service-requests route */}
                 <Route path="/service-connections" element={<ServiceRequestsDashboard />} />
                 <Route path="/overview" element={<Overview />} />
                 <Route path="/client-mau" element={<ClientMAU />} />

@@ -27,6 +27,9 @@ export const TimeRangeControls = ({
     }
   };
 
+  // Determine if Rolling 30D should be disabled
+  const isRolling30DDisabled = timeRange === '3-day';
+
   return (
     <div className="flex flex-wrap gap-0">
       <Button
@@ -43,12 +46,13 @@ export const TimeRangeControls = ({
       
       <Button
         variant={timeRange === 'rolling-30-day' ? 'default' : 'outline'}
-        onClick={() => onTimeRangeChange('rolling-30-day')}
+        onClick={() => !isRolling30DDisabled && onTimeRangeChange('rolling-30-day')}
+        disabled={isRolling30DDisabled}
         className={`rounded-none border-l-0 h-8 ${
           timeRange === 'rolling-30-day' 
             ? 'dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
             : 'bg-white dark:bg-black dark:border-[#6C6E7A]'
-        }`}
+        } ${isRolling30DDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
       >
         30D
       </Button>
