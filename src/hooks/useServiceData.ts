@@ -1,7 +1,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { handleAllDimensionsData, handleSpecificDimensionData } from "@/utils/dimensionDataHandlers";
-import { GroupingType, TimeRangeType, ViewType, ChartType } from "@/types/serviceData";
+import { GroupingType, TimeRangeType, ViewType, ChartType, ServiceData, DiagnosticData } from "@/types/serviceData";
 import { DateRange } from "@/types/mauTypes";
 
 export type { GroupingType, TimeRangeType, ViewType, ChartType };
@@ -127,7 +127,7 @@ export const useServiceData = (
         return {
           data,
           threshold: getThreshold(diagnosticType)
-        };
+        } as DiagnosticData;
       }
     });
   } else {
@@ -142,10 +142,10 @@ export const useServiceData = (
       queryKey: ['service-data', currentDate.toISOString(), grouping, timeRange, customDateRange],
       queryFn: () => {
         if (grouping === 'all') {
-          return handleAllDimensionsData(timeRange || 'month-to-date', customDateRange);
+          return handleAllDimensionsData(timeRange || 'month-to-date', customDateRange) as ServiceData;
         }
         
-        return handleSpecificDimensionData(grouping, timeRange || 'month-to-date', customDateRange);
+        return handleSpecificDimensionData(grouping, timeRange || 'month-to-date', customDateRange) as ServiceData;
       }
     });
   }

@@ -7,6 +7,7 @@ import { useServiceData, GroupingType, TimeRangeType, ViewType, ChartType } from
 import { processServiceData, calculateMaxValue, getAllEnvironmentsData } from "@/utils/serviceDataUtils";
 import { DateRange } from "@/types/mauTypes";
 import { useUrlParams } from "@/hooks/useUrlParams";
+import { DiagnosticData, ServiceData } from "@/types/serviceData";
 
 export const ServiceRequestsDashboard = () => {
   const urlParams = useUrlParams();
@@ -115,9 +116,23 @@ export const ServiceRequestsDashboard = () => {
 
   if (!serviceDataResponse) return null;
   
-  // Extract the data and threshold from the response
-  const serviceData = serviceDataResponse.data;
-  const threshold = serviceDataResponse.threshold;
+  // Check if the response is diagnostic data (has 'data' property) or service data (has 'current' property)
+  const isDiagnosticData = 'data' in serviceDataResponse;
+  
+  // Extract data based on response type
+  let serviceData;
+  let threshold;
+  
+  if (isDiagnosticData) {
+    // It's diagnostic data
+    const diagnosticData = serviceDataResponse as DiagnosticData;
+    serviceData = diagnosticData.data;
+    threshold = diagnosticData.threshold;
+  } else {
+    // It's regular service data
+    serviceData = serviceDataResponse as ServiceData;
+    threshold = undefined;
+  }
   
   // Create a simple data structure for processing if we have direct array of data
   const formattedData = Array.isArray(serviceData) ? {
