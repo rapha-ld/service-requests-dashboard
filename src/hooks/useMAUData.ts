@@ -20,8 +20,7 @@ import {
   capEnvironmentsData
 } from "@/utils/mauDataAdjuster";
 import {
-  generate3DayData,
-  generate7DayData
+  generate3DayData
 } from "@/utils/timeRangeDataGenerators";
 
 // Client MAU value and limits from Overview page
@@ -65,8 +64,6 @@ export const useMAUData = (
           processedCurrentData = formatRolling30DayData(currentData, safeProject);
         } else if (timeRange === '3-day') {
           processedCurrentData = generate3DayData(currentData);
-        } else if (timeRange === '7-day') {
-          processedCurrentData = generate7DayData(currentData);
         } else if (timeRange === 'custom' && customDateRange?.from && customDateRange?.to) {
           processedCurrentData = formatCustomDateRangeData(currentData, customDateRange.from, customDateRange.to);
         } else if (timeRange === 'month-to-date') {

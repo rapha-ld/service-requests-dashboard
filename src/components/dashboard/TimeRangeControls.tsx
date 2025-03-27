@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { DateRangePicker } from "@/components/mau/DateRangePicker";
 import { DateRange } from "@/types/mauTypes";
-import { TimeRangeType } from "@/types/mauTypes";
+import { TimeRangeType } from "@/types/serviceData";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface TimeRangeControlsProps {
@@ -27,6 +27,9 @@ export const TimeRangeControls = ({
     }
   };
 
+  // Check if the current date range is 3 days or less
+  const is3DayOrLess = timeRange === '3-day';
+
   return (
     <div className="flex flex-wrap gap-0">
       <Button
@@ -41,29 +44,20 @@ export const TimeRangeControls = ({
         3D
       </Button>
       
-      <Button
-        variant={timeRange === '7-day' ? 'default' : 'outline'}
-        onClick={() => onTimeRangeChange('7-day')}
-        className={`rounded-none border-l-0 h-8 ${
-          timeRange === '7-day' 
-            ? 'dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
-            : 'bg-white dark:bg-black dark:border-[#6C6E7A]'
-        }`}
-      >
-        7D
-      </Button>
-      
-      <Button
-        variant={timeRange === 'rolling-30-day' ? 'default' : 'outline'}
-        onClick={() => onTimeRangeChange('rolling-30-day')}
-        className={`rounded-none border-l-0 h-8 ${
-          timeRange === 'rolling-30-day' 
-            ? 'dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
-            : 'bg-white dark:bg-black dark:border-[#6C6E7A]'
-        }`}
-      >
-        30D
-      </Button>
+      {/* Only show rolling-30-day button if we're not in 3-day mode */}
+      {!is3DayOrLess && (
+        <Button
+          variant={timeRange === 'rolling-30-day' ? 'default' : 'outline'}
+          onClick={() => onTimeRangeChange('rolling-30-day')}
+          className={`rounded-none border-l-0 h-8 ${
+            timeRange === 'rolling-30-day' 
+              ? 'dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
+              : 'bg-white dark:bg-black dark:border-[#6C6E7A]'
+          }`}
+        >
+          30D
+        </Button>
+      )}
       
       <TooltipProvider>
         <Tooltip>

@@ -2,8 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { generateExperimentData } from "@/utils/experiments";
 import { DateRange } from "@/types/mauTypes";
-
-export type TimeRangeType = 'month-to-date' | 'last-12-months' | 'rolling-30-day' | '3-day' | '7-day' | 'custom';
+import type { TimeRangeType } from "@/types/serviceData";
 
 export const useExperimentData = (
   timeRange: TimeRangeType,
@@ -17,3 +16,8 @@ export const useExperimentData = (
     }
   });
 };
+
+// Import type explicitly to avoid re-export issues
+import type { TimeRangeType as TimeRange } from "@/types/serviceData";
+// Re-export types for convenience
+export type { TimeRange };

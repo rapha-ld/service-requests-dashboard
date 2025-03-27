@@ -1,6 +1,6 @@
 import { format, subMonths, subDays, isAfter, parse, getDate, getMonth, subHours } from "date-fns";
 import { getTotalValue } from "@/components/charts/dataTransformers";
-import { TimeRangeType } from "@/hooks/useExperimentData";
+import { TimeRangeType } from "@/types/serviceData";
 import { DateRange } from "@/types/mauTypes";
 
 // Base data generator to create consistent historical data
