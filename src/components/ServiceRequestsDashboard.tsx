@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { DashboardSummary } from "@/components/DashboardSummary";
@@ -7,9 +8,6 @@ import { GroupingType, TimeRangeType, ViewType, ChartType } from "@/types/servic
 import { processServiceData, calculateMaxValue, getAllEnvironmentsData } from "@/utils/serviceDataUtils";
 import { DateRange } from "@/types/mauTypes";
 import { useUrlParams } from "@/hooks/useUrlParams";
-
-// Add the constant definition here
-const SERVICE_CONNECTIONS_THRESHOLD = 15000;
 
 export const ServiceRequestsDashboard = () => {
   const urlParams = useUrlParams();
@@ -195,7 +193,7 @@ export const ServiceRequestsDashboard = () => {
           onMonthChange={handleMonthChange}
           timeRange={timeRange}
           onTimeRangeChange={handleTimeRangeChange}
-          showViewTypeToggle={false}
+          showViewTypeToggle={false} // Remove toggle from header
           customDateRange={customDateRange}
           onCustomDateRangeChange={handleCustomDateRangeChange}
         />
@@ -215,9 +213,9 @@ export const ServiceRequestsDashboard = () => {
           showOnlyTotal={grouping === 'all'}
           unitLabel="connections"
           onViewTypeChange={handleViewTypeChange}
-          disableViewTypeToggle={timeRange === 'last-12-months'}
+          disableViewTypeToggle={timeRange === 'last-12-months'} // Disable toggle for 12M view
           timeRange={timeRange}
-          threshold={SERVICE_CONNECTIONS_THRESHOLD}
+          threshold={0}
           customDateRange={customDateRange}
           isHourlyData={hourlyData}
         />
