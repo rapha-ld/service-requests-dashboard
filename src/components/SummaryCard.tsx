@@ -1,3 +1,4 @@
+
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
@@ -46,11 +47,12 @@ export const SummaryCard = ({
 
   return (
     <div className={cn(
-      "bg-card p-4 rounded-lg shadow-sm animate-slide-up transition-all duration-200 text-left",
-      "dark:bg-secondary dark:border dark:border-border",
-      plainStyle && "bg-transparent border-none p-0 shadow-none dark:bg-transparent dark:border-none",
+      plainStyle ? "" : "bg-card p-4 rounded-lg shadow-sm",
+      plainStyle ? "" : "dark:bg-secondary dark:border dark:border-border",
+      plainStyle && "bg-transparent border-none p-0 shadow-none",
       heightClass,
-      className
+      className,
+      "animate-slide-up transition-all duration-200 text-left"
     )}>
       <div className="flex justify-between items-start">
         <h3 className="text-sm font-medium text-muted-foreground">
