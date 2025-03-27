@@ -13,9 +13,6 @@ export const TimeRangeToggle = ({
   timeRange,
   onTimeRangeChange
 }: TimeRangeToggleProps) => {
-  // Check if the current time range is 3 days
-  const is3DayActive = timeRange === '3-day';
-
   return (
     <>
       <Button
@@ -30,20 +27,17 @@ export const TimeRangeToggle = ({
         3D
       </Button>
       
-      {/* Only show rolling-30-day button if we're not in 3-day mode */}
-      {!is3DayActive && (
-        <Button
-          variant={timeRange === 'rolling-30-day' ? 'default' : 'outline'}
-          onClick={() => onTimeRangeChange('rolling-30-day')}
-          className={`rounded-none border-l-0 ${
-            timeRange === 'rolling-30-day' 
-              ? 'dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
-              : 'bg-white dark:bg-black dark:border-[#6C6E7A]'
-          }`}
-        >
-          30D
-        </Button>
-      )}
+      <Button
+        variant={timeRange === 'rolling-30-day' ? 'default' : 'outline'}
+        onClick={() => onTimeRangeChange('rolling-30-day')}
+        className={`rounded-none border-l-0 ${
+          timeRange === 'rolling-30-day' 
+            ? 'dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
+            : 'bg-white dark:bg-black dark:border-[#6C6E7A]'
+        }`}
+      >
+        30D
+      </Button>
       
       <TooltipProvider>
         <Tooltip>
@@ -73,7 +67,7 @@ export const TimeRangeToggle = ({
           timeRange === 'last-12-months' 
             ? 'dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
             : 'bg-white dark:bg-black dark:border-[#6C6E7A]'
-          }`}
+        }`}
       >
         12M
       </Button>

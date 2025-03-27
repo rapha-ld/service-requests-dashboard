@@ -1,6 +1,7 @@
 
+import { TimeRange } from "@/hooks/useExperimentData";
 import { DateRange } from "@/types/mauTypes";
-import { ViewType, TimeRangeType } from "@/types/serviceData";
+import { ViewType } from "@/types/serviceData";
 
 export interface ExperimentGroup {
   id: string;

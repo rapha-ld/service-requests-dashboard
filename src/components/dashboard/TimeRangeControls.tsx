@@ -27,8 +27,8 @@ export const TimeRangeControls = ({
     }
   };
 
-  // Check if the current time range is 3 days
-  const is3DayActive = timeRange === '3-day';
+  // Check if the current date range is 3 days or less
+  const is3DayOrLess = timeRange === '3-day';
 
   return (
     <div className="flex flex-wrap gap-0">
@@ -45,7 +45,7 @@ export const TimeRangeControls = ({
       </Button>
       
       {/* Only show rolling-30-day button if we're not in 3-day mode */}
-      {!is3DayActive && (
+      {!is3DayOrLess && (
         <Button
           variant={timeRange === 'rolling-30-day' ? 'default' : 'outline'}
           onClick={() => onTimeRangeChange('rolling-30-day')}
