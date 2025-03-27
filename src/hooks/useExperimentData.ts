@@ -18,4 +18,4 @@ export const useExperimentData = (
 };
 
 // Re-export types for convenience
-export { TimeRangeType };
+export type { TimeRangeType };

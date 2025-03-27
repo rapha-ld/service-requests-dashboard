@@ -5,7 +5,7 @@ import { useLocation } from "react-router-dom";
 
 interface TotalChartProps {
   title: string;
-  data: Array<{ day: string; value: number }>;
+  data: Array<{ day: string; value: number }> | undefined;
   viewType: 'net-new' | 'cumulative' | 'rolling-30d';
   chartType: 'area' | 'bar' | 'line';
   chartRef: any;
@@ -48,6 +48,17 @@ export const TotalChart = ({
     "/service-requests",
     "/diagnostics"
   ].includes(location.pathname);
+
+  // Safety check: ensure data is an array before processing
+  if (!data || !Array.isArray(data)) {
+    return (
+      <div className="mb-6">
+        <div className="p-4 border border-border rounded-md bg-muted/20 text-muted-foreground text-center">
+          No data available
+        </div>
+      </div>
+    );
+  }
 
   // Force net-new view for 12M timeRange
   const effectiveViewType = timeRange === 'last-12-months' ? 'net-new' : viewType;
