@@ -10,12 +10,10 @@ interface ChartTitleProps {
 }
 
 export const ChartTitle = ({ title, useViewDetails = true }: ChartTitleProps) => {
-  // Safely get the route for the title
   const detailsRoute = getTitleRoute(title);
   
   // Format the title to add tooltip to MAU
   const formattedTitle = () => {
-    if (!title) return '';
     if (!title.includes('MAU')) return title;
     
     const parts = title.split('MAU');
@@ -40,7 +38,7 @@ export const ChartTitle = ({ title, useViewDetails = true }: ChartTitleProps) =>
   return (
     <div className="flex justify-between items-center mb-4">
       <h3 className="text-sm font-medium text-foreground">{formattedTitle()}</h3>
-      {useViewDetails && title && detailsRoute !== '/experiment-details' && (
+      {useViewDetails && detailsRoute !== '/experiment-details' && (
         <Button
           variant="outline"
           size="sm"

@@ -51,10 +51,8 @@ export const ChartGrid = ({
   const [layoutMode, setLayoutMode] = useState<'compact' | 'expanded'>('compact');
   const [filteredGroups, setFilteredGroups] = useState(sortedGroups);
   
-  // Automatically switch to net-new view if rolling-30d is selected but timeRange is 3-day
-  const effectiveViewType = timeRange === '3-day' && viewType === 'rolling-30d' 
-    ? 'net-new' 
-    : (timeRange === 'last-12-months' ? 'net-new' : viewType);
+  // Force net-new view for 12M timeRange
+  const effectiveViewType = timeRange === 'last-12-months' ? 'net-new' : viewType;
   
   // Force bar chart for net-new view
   const effectiveChartType = effectiveViewType === 'net-new' ? 'bar' : chartType;

@@ -68,10 +68,9 @@ export const MAUDashboardControls = ({
       />
       
       <ViewTypeToggle 
-        viewType={viewType as any}
-        onViewTypeChange={onViewTypeChange as any}
+        viewType={viewType}
+        onViewTypeChange={onViewTypeChange}
         visible={showToggle}
-        timeRange={timeRange} // Pass timeRange to ViewTypeToggle
       />
       
       <div className="flex-grow" />

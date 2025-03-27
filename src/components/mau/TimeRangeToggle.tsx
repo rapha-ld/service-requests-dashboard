@@ -13,17 +13,11 @@ export const TimeRangeToggle = ({
   timeRange,
   onTimeRangeChange
 }: TimeRangeToggleProps) => {
-  // Function to handle changing the time range
-  const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
-    // If switching to 3-day from rolling-30-day, additional logic might be needed
-    onTimeRangeChange(newTimeRange);
-  };
-
   return (
     <>
       <Button
         variant={timeRange === '3-day' ? 'default' : 'outline'}
-        onClick={() => handleTimeRangeChange('3-day')}
+        onClick={() => onTimeRangeChange('3-day')}
         className={`rounded-l-md rounded-r-none ${
           timeRange === '3-day' 
             ? 'dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
@@ -35,7 +29,7 @@ export const TimeRangeToggle = ({
       
       <Button
         variant={timeRange === 'rolling-30-day' ? 'default' : 'outline'}
-        onClick={() => handleTimeRangeChange('rolling-30-day')}
+        onClick={() => onTimeRangeChange('rolling-30-day')}
         className={`rounded-none border-l-0 ${
           timeRange === 'rolling-30-day' 
             ? 'dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
@@ -50,7 +44,7 @@ export const TimeRangeToggle = ({
           <TooltipTrigger asChild>
             <Button
               variant={timeRange === 'month-to-date' ? 'default' : 'outline'}
-              onClick={() => handleTimeRangeChange('month-to-date')}
+              onClick={() => onTimeRangeChange('month-to-date')}
               className={`rounded-none border-l-0 ${
                 timeRange === 'month-to-date' 
                   ? 'dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
@@ -68,7 +62,7 @@ export const TimeRangeToggle = ({
       
       <Button
         variant={timeRange === 'last-12-months' ? 'default' : 'outline'}
-        onClick={() => handleTimeRangeChange('last-12-months')}
+        onClick={() => onTimeRangeChange('last-12-months')}
         className={`rounded-none border-l-0 ${
           timeRange === 'last-12-months' 
             ? 'dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
@@ -80,7 +74,7 @@ export const TimeRangeToggle = ({
       
       <Button
         variant={timeRange === 'custom' ? 'default' : 'outline'}
-        onClick={() => handleTimeRangeChange('custom')}
+        onClick={() => onTimeRangeChange('custom')}
         className={`rounded-r-md rounded-l-none border-l-0 ${
           timeRange === 'custom' 
             ? 'dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 

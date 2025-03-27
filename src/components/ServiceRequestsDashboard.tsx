@@ -38,21 +38,13 @@ export const ServiceRequestsDashboard = () => {
     }
   }, [viewType]);
   
-  // Effect to force view type change when timeRange is 3-day
-  useEffect(() => {
-    if (timeRange === '3-day' && viewType === 'rolling-30d') {
-      setViewType('net-new');
-      urlParams.setViewType('net-new');
-    }
-  }, [timeRange, viewType]);
-  
   // Handle time range change
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
     setTimeRange(newTimeRange);
     urlParams.setTimeRange(newTimeRange);
     
-    // Force net-new view when 12M is selected or when switching to 3-day while in rolling-30d
-    if (newTimeRange === 'last-12-months' || (newTimeRange === '3-day' && viewType === 'rolling-30d')) {
+    // Force net-new view when 12M is selected
+    if (newTimeRange === 'last-12-months') {
       setViewType('net-new');
       urlParams.setViewType('net-new');
       setChartType('bar');
@@ -68,8 +60,8 @@ export const ServiceRequestsDashboard = () => {
   
   // Handle view type change
   const handleViewTypeChange = (newViewType: ViewType) => {
-    // Only allow changing if not in 12M view and not selecting rolling-30d in 3-day view
-    if (timeRange !== 'last-12-months' && !(timeRange === '3-day' && newViewType === 'rolling-30d')) {
+    // Only allow changing if not in 12M view
+    if (timeRange !== 'last-12-months') {
       setViewType(newViewType);
       urlParams.setViewType(newViewType);
       // Update chart type based on view type
@@ -163,8 +155,6 @@ export const ServiceRequestsDashboard = () => {
           onViewTypeChange={handleViewTypeChange}
           disableViewTypeToggle={timeRange === 'last-12-months'} // Disable toggle for 12M view
           timeRange={timeRange}
-          showThreshold={false}
-          threshold={undefined}
         />
       </div>
     </div>

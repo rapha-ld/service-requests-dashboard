@@ -8,12 +8,9 @@ import { GroupingType, TimeRangeType, ViewType } from "@/types/serviceData";
 import { processServiceData, calculateMaxValue, getAllEnvironmentsData } from "@/utils/serviceDataUtils";
 import { DateRange } from "@/types/mauTypes";
 import { useUrlParams } from "@/hooks/useUrlParams";
-import { getUnitLabel } from "@/utils/chartUtils";
-import { useLocation } from "react-router-dom";
 
 const PeakServerConnections = () => {
   const urlParams = useUrlParams();
-  const location = useLocation();
   
   // State hooks with values from URL parameters
   const [selectedMonth, setSelectedMonth] = useState(urlParams.getSelectedMonth());
@@ -117,9 +114,6 @@ const PeakServerConnections = () => {
   // Get data for all environments chart
   const allEnvironmentsData = getAllEnvironmentsData(grouping, serviceData, timeRange, sortedGroups);
 
-  // Get unit label based on the current route
-  const unitLabel = getUnitLabel(location.pathname);
-
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
@@ -136,7 +130,7 @@ const PeakServerConnections = () => {
           onMonthChange={handleMonthChange}
           timeRange={timeRange}
           onTimeRangeChange={handleTimeRangeChange}
-          showViewTypeToggle={false}
+          showViewTypeToggle={false} // Remove toggle from header
           customDateRange={customDateRange}
           onCustomDateRangeChange={handleCustomDateRangeChange}
         />
@@ -154,12 +148,9 @@ const PeakServerConnections = () => {
           onExportChart={() => {}}
           useViewDetailsButton={false}
           showOnlyTotal={grouping === 'all'}
-          unitLabel={unitLabel}
           onViewTypeChange={handleViewTypeChange}
-          disableViewTypeToggle={false}
+          disableViewTypeToggle={false} // Always allow toggle
           timeRange={timeRange}
-          showThreshold={false}
-          threshold={undefined}
         />
       </div>
     </div>

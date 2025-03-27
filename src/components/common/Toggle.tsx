@@ -14,7 +14,6 @@ interface ToggleOption {
   icon?: ReactNode;
   tooltip?: string;
   noRoundedRight?: boolean;
-  disabled?: boolean; // Add disabled property to interface
 }
 
 interface ToggleProps {
@@ -45,7 +44,7 @@ export const Toggle = ({
               <Button
                 variant={value === option.value ? 'default' : 'outline'}
                 onClick={() => onChange(option.value)}
-                disabled={disabled || option.disabled} // Use option.disabled here
+                disabled={disabled}
                 className={`h-8
                   ${index === 0 ? 'rounded-r-none' : ''}
                   ${index === options.length - 1 ? 'rounded-l-none' : ''}
@@ -55,7 +54,6 @@ export const Toggle = ({
                   ${value === option.value 
                     ? 'dark:bg-[#0B144D] dark:hover:bg-[#0B144D] dark:text-white dark:border-[#7084FF] border-2 bg-[#F6F8FF] hover:bg-[#F6F8FF] border-[#425EFF] text-[#425EFF]' 
                     : ''}
-                  ${option.disabled ? 'opacity-50 cursor-not-allowed' : ''}
                 `}
               >
                 <div className="flex items-center">

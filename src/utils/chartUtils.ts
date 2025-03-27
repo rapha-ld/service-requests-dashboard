@@ -14,16 +14,9 @@ export const getTotalTitle = (grouping: string): string => {
 
 export const getUnitLabel = (route: string): string => {
   switch (route) {
-    case '/client-mau':
+    case 'client-mau':
       return 'users';
-    case '/server-mau':
-      return 'users';
-    case '/service-requests':
-    case '/service-connections':
-      return 'connections';
-    case '/client-connections':
-      return 'connections';
-    case '/peak-server-connections':
+    case 'service-requests':
       return 'connections';
     default:
       return 'connections';
