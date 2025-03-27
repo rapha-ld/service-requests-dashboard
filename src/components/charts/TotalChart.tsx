@@ -77,7 +77,8 @@ export const TotalChart = ({
   const effectiveChartHeight = grouping === 'all' ? chartHeight * 2 : chartHeight;
 
   // Always show threshold in total chart, regardless of whether it's a dimension view or all dimensions
-  const shouldShowThreshold = threshold !== undefined;
+  // Only show threshold in cumulative view where it makes sense
+  const shouldShowThreshold = threshold !== undefined && effectiveViewType === 'cumulative';
 
   return (
     <div className="mb-6">
