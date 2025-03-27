@@ -18,6 +18,7 @@ interface ChartsGridSectionProps {
   showThreshold?: boolean;
   threshold?: number;
   timeRange?: string;
+  individualMaxValues?: boolean;
 }
 
 export const ChartsGridSection = ({
@@ -36,6 +37,7 @@ export const ChartsGridSection = ({
   showThreshold = false,
   threshold,
   timeRange = 'month-to-date',
+  individualMaxValues = false,
 }: ChartsGridSectionProps) => {
   if (!sortedGroups) {
     return null;
@@ -55,7 +57,7 @@ export const ChartsGridSection = ({
       onViewDetails={onViewDetails}
       useViewDetailsButton={useViewDetailsButton}
       unitLabel={unitLabel}
-      individualMaxValues={false}
+      individualMaxValues={individualMaxValues}
       showThreshold={showThreshold}
       threshold={threshold}
       timeRange={timeRange}

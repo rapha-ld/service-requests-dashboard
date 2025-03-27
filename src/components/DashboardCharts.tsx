@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { ViewToggleSection } from "@/components/charts/ViewToggleSection";
 import { TotalChartSection } from "@/components/charts/TotalChartSection";
@@ -13,19 +12,20 @@ interface DashboardChartsProps {
   viewType: ViewType;
   chartType: ChartType;
   maxValue: number;
-  grouping: 'all' | 'environment' | 'relayId' | 'userAgent';
+  grouping: string;
   chartRefs: React.MutableRefObject<{ [key: string]: any }>;
   onExportChart: (title: string) => void;
-  showOnlyTotal?: boolean;
   useViewDetailsButton?: boolean;
-  unitLabel?: string;
+  showOnlyTotal?: boolean;
+  unitLabel: string;
   showThreshold?: boolean;
   threshold?: number;
-  onViewTypeChange?: (value: ViewType) => void;
-  disableViewTypeToggle?: boolean;
   timeRange?: string;
+  onViewTypeChange?: (viewType: ViewType) => void;
+  disableViewTypeToggle?: boolean;
   customDateRange?: DateRange;
   isHourlyData?: boolean;
+  individualMaxValues?: boolean;
 }
 
 export const DashboardCharts = ({
@@ -37,85 +37,48 @@ export const DashboardCharts = ({
   grouping,
   chartRefs,
   onExportChart,
-  showOnlyTotal = false,
   useViewDetailsButton = true,
-  unitLabel = "daily active users",
+  showOnlyTotal = false,
+  unitLabel,
   showThreshold = false,
   threshold,
+  timeRange = 'month-to-date',
   onViewTypeChange,
   disableViewTypeToggle = false,
-  timeRange = 'month-to-date',
   customDateRange,
-  isHourlyData = false
+  isHourlyData = false,
+  individualMaxValues = false
 }: DashboardChartsProps) => {
   const [expandedCharts, setExpandedCharts] = useState<string[]>([]);
   
-  // Reset expanded charts when view changes
-  useEffect(() => {
-    setExpandedCharts([]);
-  }, [viewType, chartType, grouping]);
-
-  // Handle chart expand/collapse
-  const toggleChartExpansion = (id: string) => {
-    setExpandedCharts(prev => 
-      prev.includes(id) 
-        ? prev.filter(chartId => chartId !== id) 
-        : [...prev, id]
-    );
-  };
-
-  // Format value for tooltips
-  const formatValue = (value: number) => {
-    return value.toLocaleString();
-  };
-
-  // Handle "View Details" button click
-  const handleViewDetails = (dimensionValue: string) => {
-    const baseUrl = location.pathname;
-    let viewDetailsUrl = `${baseUrl}/details?dimension=${grouping}&value=${dimensionValue}`;
-    
-    // Open the details page in a new tab
-    window.open(viewDetailsUrl, '_blank');
-  };
-
-  // Get effective chart properties
-  const { effectiveViewType, effectiveChartType, displayUnitLabel } = getEffectiveChartProperties(
-    viewType,
-    chartType,
-    timeRange,
-    unitLabel,
-    isHourlyData
-  );
-
+  // Get effective chart properties based on time range and other factors
+  const { effectiveViewType, effectiveChartType, displayUnitLabel } = 
+    getEffectiveChartProperties(viewType, chartType, timeRange, unitLabel, isHourlyData);
+  
+  // Always show the total chart
   return (
     <div className="space-y-6">
-      <ViewToggleSection
-        viewType={viewType}
-        onViewTypeChange={onViewTypeChange}
-        disableViewTypeToggle={disableViewTypeToggle || false}
-        timeRange={timeRange}
-        isHourlyData={isHourlyData}
-        customDateRange={customDateRange}
-      />
-      
-      {/* Total Chart Section */}
-      {grouping === 'all' && allEnvironmentsData && (
-        <TotalChartSection
-          allEnvironmentsData={allEnvironmentsData}
-          viewType={effectiveViewType}
-          chartType={effectiveChartType}
-          chartRef={chartRefs.current.total}
-          onExportChart={onExportChart}
-          useViewDetailsButton={useViewDetailsButton}
-          unitLabel={displayUnitLabel}
-          showThreshold={showThreshold}
-          threshold={threshold}
-          timeRange={timeRange}
+      {onViewTypeChange && !disableViewTypeToggle && (
+        <ViewToggleSection 
+          viewType={viewType} 
+          onViewTypeChange={onViewTypeChange} 
         />
       )}
       
-      {/* Individual Charts Grid */}
-      {!showOnlyTotal && sortedGroups && (
+      <TotalChartSection
+        allEnvironmentsData={allEnvironmentsData}
+        viewType={effectiveViewType}
+        chartType={effectiveChartType}
+        chartRef={chartRefs.current['total']}
+        onExportChart={onExportChart}
+        useViewDetailsButton={useViewDetailsButton}
+        unitLabel={displayUnitLabel}
+        showThreshold={showThreshold}
+        threshold={threshold}
+        timeRange={timeRange}
+      />
+      
+      {!showOnlyTotal && (
         <ChartsGridSection
           sortedGroups={sortedGroups}
           viewType={effectiveViewType}
@@ -124,14 +87,21 @@ export const DashboardCharts = ({
           chartRefs={chartRefs}
           onExportChart={onExportChart}
           expandedCharts={expandedCharts}
-          onToggleExpand={toggleChartExpansion}
-          formatValue={formatValue}
-          onViewDetails={handleViewDetails}
+          onToggleExpand={(id) => {
+            setExpandedCharts(prev => 
+              prev.includes(id) 
+                ? prev.filter(i => i !== id) 
+                : [...prev, id]
+            );
+          }}
+          formatValue={(value) => `${value.toLocaleString()} ${displayUnitLabel}`}
+          onViewDetails={() => {}}
           useViewDetailsButton={useViewDetailsButton}
           unitLabel={displayUnitLabel}
           showThreshold={showThreshold}
           threshold={threshold}
           timeRange={timeRange}
+          individualMaxValues={individualMaxValues}
         />
       )}
     </div>

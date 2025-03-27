@@ -69,7 +69,7 @@ export const ChartGrid = ({
     }
   };
 
-  // Calculate the shared maximum value for all charts
+  // Calculate the shared maximum value for all charts (only used when individualMaxValues is false)
   const calculateSharedMaxValue = () => {
     if (filteredGroups.length === 0) return maxValue;
     

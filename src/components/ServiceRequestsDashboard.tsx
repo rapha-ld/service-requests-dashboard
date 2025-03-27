@@ -156,6 +156,8 @@ export const ServiceRequestsDashboard = () => {
   
   const allEnvironmentsData = getAllEnvironmentsData(grouping, serviceData, timeRange, sortedGroups, hourlyData);
 
+  const useIndividualMaxValues = viewType === 'cumulative';
+
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
@@ -198,6 +200,7 @@ export const ServiceRequestsDashboard = () => {
           customDateRange={customDateRange}
           isHourlyData={hourlyData}
           showThreshold={grouping === 'all'}
+          individualMaxValues={useIndividualMaxValues}
         />
       </div>
     </div>
