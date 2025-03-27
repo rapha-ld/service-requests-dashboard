@@ -17,10 +17,11 @@ import ServerMAU from "./pages/ServerMAU";
 import PeakServerConnections from "./pages/PeakServerConnections";
 import Details from "./pages/Details";
 import Diagnostics from "./pages/Diagnostics";
-import ServiceConnections from "./pages/ServiceConnections";
+import { ServiceRequestsDashboard } from "./components/ServiceRequestsDashboard";
 
 const queryClient = new QueryClient();
 
+// Create a wrapper component to conditionally render the NavigationTabs
 function AppContent() {
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -32,15 +33,17 @@ function AppContent() {
     "/client-mau", 
     "/experiments", 
     "/data-export",
-    "/service-connections"
+    "/service-connections"  // Removed service-requests from usage paths
   ].includes(location.pathname);
 
   const isDiagnosticsPath = [
     "/client-connections", 
     "/server-mau", 
-    "/peak-server-connections"
+    "/peak-server-connections",
+    "/service-requests"      // Added service-requests to diagnostics paths
   ].includes(location.pathname);
 
+  // Function to preserve URL parameters when redirecting
   const getRedirectPath = (path: string) => {
     const params = searchParams.toString();
     return `${path}${params ? `?${params}` : ''}`;
@@ -60,7 +63,8 @@ function AppContent() {
             <div className={`p-6 ${showTabs && (isUsagePath || isDiagnosticsPath) ? 'pt-20' : ''}`}>
               <Routes>
                 <Route path="/" element={<Navigate to={getRedirectPath("/overview")} replace />} />
-                <Route path="/service-connections" element={<ServiceConnections />} />
+                <Route path="/service-requests" element={<ServiceRequestsDashboard />} />
+                <Route path="/service-connections" element={<ServiceRequestsDashboard />} />
                 <Route path="/overview" element={<Overview />} />
                 <Route path="/client-mau" element={<ClientMAU />} />
                 <Route path="/client-connections" element={<ClientConnections />} />

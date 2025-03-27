@@ -1,8 +1,8 @@
 
-import { Navigate } from "react-router-dom";
+import { ServiceRequestsDashboard } from "@/components/ServiceRequestsDashboard";
 
 const Dashboard = () => {
-  return <Navigate to="/overview" replace />;
+  return <ServiceRequestsDashboard />;
 };
 
 export default Dashboard;

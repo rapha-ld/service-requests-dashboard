@@ -22,6 +22,8 @@ export const getTitleRoute = (title: string): string => {
     return '/server-mau';
   } else if (normalizedTitle.includes('peak') && normalizedTitle.includes('server')) {
     return '/peak-server-connections';
+  } else if (normalizedTitle.includes('service') && normalizedTitle.includes('request')) {
+    return '/service-requests';
   }
   
   // Default route

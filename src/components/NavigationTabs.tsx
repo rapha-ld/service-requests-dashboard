@@ -1,4 +1,3 @@
-
 import { useLocation, useSearchParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -17,6 +16,7 @@ const DIAGNOSTICS_TABS = [
   { id: "client-connections", label: "Client Connections", path: "/client-connections" },
   { id: "server-mau", label: "Server MAU", path: "/server-mau" },
   { id: "peak-server-connections", label: "Peak Server SDK Connections", path: "/peak-server-connections" },
+  { id: "service-requests", label: "Service Requests", path: "/service-requests" },
 ];
 
 export function NavigationTabs() {
