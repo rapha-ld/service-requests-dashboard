@@ -1,6 +1,5 @@
-
 import { format, subDays, isAfter, getDate, subMonths } from "date-fns";
-import { TimeRangeType } from "@/hooks/useExperimentData";
+import { TimeRangeType } from "@/types/serviceData";
 import { DateRange } from "@/types/mauTypes";
 import { ExperimentData } from "./types";
 
