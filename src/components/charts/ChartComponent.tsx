@@ -92,20 +92,39 @@ export const ChartComponent = ({
       return Math.floor(dataLength / 6); // Show ~6 ticks for hourly data
     }
     
-    if (dataLength <= 7) return 0;
-    if (dataLength <= 14) return 1;
-    if (dataLength <= 30) return 2;
-    return Math.floor(dataLength / 10);
+    // Adjust for different data lengths
+    if (dataLength <= 7) return 0; // Show all ticks for very small datasets
+    if (dataLength <= 14) return 1; // Show every other tick for small datasets
+    if (dataLength <= 30) return 2; // Show every third tick for medium datasets
+    return Math.floor(dataLength / 10); // For large datasets, show about 10 ticks total
   };
 
   const xAxisInterval = calculateXAxisInterval();
 
   // Format the ticks specifically for 3-day view with hourly data
   const formatXAxisTick = (tick: string) => {
+    // For hourly data in 3-day view
     if (timeRange === '3-day' && tick.includes(':')) {
-      // For hourly data, just show the hour
-      return tick.split(', ')[1]; // Return just the hour part (e.g., "12:00")
+      // Return just the hour part (e.g., "12:00")
+      return tick.split(', ')[1]; 
     }
+    
+    // If tick already has the format "Mar 7", return as is
+    if (/^[A-Za-z]{3}\s\d{1,2}$/.test(tick)) {
+      return tick;
+    }
+    
+    // Try to parse the date if it's in ISO format
+    if (tick.includes('-')) {
+      try {
+        const date = new Date(tick);
+        return format(date, 'MMM d');
+      } catch (e) {
+        // If parsing fails, return original
+        return tick;
+      }
+    }
+    
     return tick;
   };
   

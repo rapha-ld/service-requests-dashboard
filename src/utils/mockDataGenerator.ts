@@ -11,7 +11,7 @@ const generateDailyData = (days: number) => {
   return Array.from({ length: days }, (_, i) => {
     const date = addDays(new Date(), -days + i + 1);
     return {
-      day: format(date, 'yyyy-MM-dd'),
+      day: format(date, 'MMM d'), // Updated format to "Mar 7" style
       value: getRandomNumber(5, 250)
     };
   });

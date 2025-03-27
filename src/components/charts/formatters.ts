@@ -1,5 +1,5 @@
 
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 
 // Format date for tooltip display
 export const formatTooltipDate = (day: string) => {
@@ -7,7 +7,18 @@ export const formatTooltipDate = (day: string) => {
   
   if (!isNaN(parseInt(day))) {
     const date = new Date(new Date().getFullYear(), 0, parseInt(day));
-    return format(date, 'MMM dd, yyyy');
+    return format(date, 'MMM d, yyyy');
+  }
+  
+  // Try to parse the date if it's in ISO format
+  if (day.includes('-')) {
+    try {
+      const date = new Date(day);
+      return format(date, 'MMM d, yyyy');
+    } catch (e) {
+      // If parsing fails, return original
+      return day;
+    }
   }
   
   return day;
