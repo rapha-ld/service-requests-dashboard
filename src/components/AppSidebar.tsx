@@ -34,7 +34,7 @@ export function AppSidebar() {
       return true;
     }
 
-    // Check if we're on a Diagnostics route - remove service-requests
+    // Check if we're on a Diagnostics route
     if (route === "/diagnostics" && (
       location.pathname === "/diagnostics" || 
       location.pathname === "/client-connections" || 
