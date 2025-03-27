@@ -8,14 +8,31 @@ interface DashboardSummaryProps {
     value: number;
     percentChange: number;
   }>;
+  totalConnections?: number;
+  totalPercentChange?: number;
 }
 
-export const DashboardSummary = ({ groups }: DashboardSummaryProps) => {
+export const DashboardSummary = ({ 
+  groups, 
+  totalConnections, 
+  totalPercentChange = 0 
+}: DashboardSummaryProps) => {
   return (
     <>
-      <h3 className="text-sm font-semibold text-muted-foreground mb-4 text-left">Top 6</h3>
+      <h3 className="text-sm font-semibold text-muted-foreground mb-4 text-left">Top 5</h3>
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
-        {groups.slice(0, 6).map(group => (
+        {/* Total card - always displayed first */}
+        <SummaryCard
+          key="total"
+          title="Total"
+          value={totalConnections || groups.reduce((sum, group) => sum + group.value, 0)}
+          unit=""
+          status="good"
+          percentChange={totalPercentChange}
+        />
+        
+        {/* Display top 5 groups */}
+        {groups.slice(0, 5).map(group => (
           <SummaryCard
             key={group.id}
             title={group.title}

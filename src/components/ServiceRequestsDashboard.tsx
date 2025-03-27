@@ -153,6 +153,11 @@ export const ServiceRequestsDashboard = () => {
   
   const { sortedGroups } = processServiceData(serviceData, sortDirection);
   
+  // Calculate total connections and percent change
+  const totalConnections = Object.values(serviceData.currentTotals).reduce((sum, val) => sum + (val || 0), 0);
+  const totalPreviousConnections = Object.values(serviceData.previousTotals).reduce((sum, val) => sum + (val || 0), 0);
+  const totalPercentChange = totalPreviousConnections ? ((totalConnections - totalPreviousConnections) / totalPreviousConnections) * 100 : 0;
+  
   const maxValue = calculateMaxValue(sortedGroups, viewType);
   
   // Always get combined data across all dimensions, regardless of current grouping
@@ -181,7 +186,13 @@ export const ServiceRequestsDashboard = () => {
           onCustomDateRangeChange={handleCustomDateRangeChange}
         />
         
-        {grouping !== 'all' && <DashboardSummary groups={sortedGroups} />}
+        {grouping !== 'all' && (
+          <DashboardSummary 
+            groups={sortedGroups} 
+            totalConnections={totalConnections}
+            totalPercentChange={totalPercentChange}
+          />
+        )}
         
         <DashboardCharts
           allEnvironmentsData={allEnvironmentsData}

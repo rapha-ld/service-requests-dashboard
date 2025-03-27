@@ -1,11 +1,11 @@
 
 import React from "react";
-import DataExport from "./DataExport";
+import { ServiceRequestsDashboard } from "@/components/ServiceRequestsDashboard";
 
-// ServiceConnections component that currently redirects to DataExport
+// ServiceConnections component now using the ServiceRequestsDashboard
 const ServiceConnections = () => {
   return (
-    <DataExport />
+    <ServiceRequestsDashboard />
   );
 };
 
