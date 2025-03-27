@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -34,15 +33,14 @@ function AppContent() {
     "/client-mau", 
     "/experiments", 
     "/data-export",
-    "/service-connections",  // Add service-connections to usage paths
-    "/service-requests"      // Add service-requests to usage paths
+    "/service-connections"  // Removed service-requests from usage paths
   ].includes(location.pathname);
 
   const isDiagnosticsPath = [
     "/client-connections", 
     "/server-mau", 
-    "/peak-server-connections"
-    // Removed service-requests from diagnostics paths
+    "/peak-server-connections",
+    "/service-requests"      // Added service-requests to diagnostics paths
   ].includes(location.pathname);
 
   // Function to preserve URL parameters when redirecting
