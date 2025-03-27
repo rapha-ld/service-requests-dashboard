@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -63,10 +62,6 @@ const Overview = () => {
         <h1 className="text-2xl font-semibold text-foreground mb-6 text-left">Overview</h1>
         
         <PlanUsageSection metricsData={metricsData} />
-        
-        <div className="mt-8">
-          <p className="text-muted-foreground">More detailed analytics and reports coming soon.</p>
-        </div>
       </div>
     </div>
   );
