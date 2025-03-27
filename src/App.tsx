@@ -34,14 +34,15 @@ function AppContent() {
     "/client-mau", 
     "/experiments", 
     "/data-export",
-    "/service-connections"  // Add service-connections to usage paths
+    "/service-connections",  // Add service-connections to usage paths
+    "/service-requests"      // Add service-requests to usage paths
   ].includes(location.pathname);
 
   const isDiagnosticsPath = [
     "/client-connections", 
     "/server-mau", 
-    "/peak-server-connections", 
-    "/service-requests"
+    "/peak-server-connections"
+    // Removed service-requests from diagnostics paths
   ].includes(location.pathname);
 
   // Function to preserve URL parameters when redirecting
@@ -64,7 +65,7 @@ function AppContent() {
             <div className={`p-6 ${showTabs && (isUsagePath || isDiagnosticsPath) ? 'pt-20' : ''}`}>
               <Routes>
                 <Route path="/" element={<Navigate to={getRedirectPath("/overview")} replace />} />
-                <Route path="/service-requests" element={<Index />} />
+                <Route path="/service-requests" element={<ServiceRequestsDashboard />} />
                 <Route path="/service-connections" element={<ServiceRequestsDashboard />} />
                 <Route path="/overview" element={<Overview />} />
                 <Route path="/client-mau" element={<ClientMAU />} />
