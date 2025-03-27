@@ -35,7 +35,8 @@ const fetchDiagnosticData = (type: string, timeRange: TimeRangeType, customDateR
           baseValue = 5000 + Math.floor(Math.random() * 1500);
           break;
         case 'service-requests':
-          baseValue = 15000 + Math.floor(Math.random() * 5000);
+        case 'service-connections':  // Added support for service-connections
+          baseValue = 5000 + Math.floor(Math.random() * 1500);
           break;
         default:
           baseValue = 1000 + Math.floor(Math.random() * 500);
