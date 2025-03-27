@@ -19,6 +19,9 @@ export const CardMiniChart: React.FC<CardMiniChartProps> = ({
   limit 
 }) => {
   const transformedChartData = chartData ? transformData(chartData, 'cumulative') : [];
+  
+  // Calculate max value based on the data itself
+  const maxValue = Math.max(...transformedChartData.map(d => (d.value !== null ? d.value : 0)), 1);
 
   return (
     <>
@@ -45,7 +48,7 @@ export const CardMiniChart: React.FC<CardMiniChartProps> = ({
               tick={{ fontSize: 10 }}
               tickLine={false}
               axisLine={false}
-              domain={[0, limit || 'auto']}
+              domain={[0, maxValue]}
               width={40}
               stroke="currentColor"
               className="text-muted-foreground"

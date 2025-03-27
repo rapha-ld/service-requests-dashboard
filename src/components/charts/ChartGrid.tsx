@@ -69,7 +69,7 @@ export const ChartGrid = ({
     }
   };
 
-  // Calculate the shared maximum value for all charts (only used when individualMaxValues is false)
+  // Calculate the shared maximum value for all charts based on actual data
   const calculateSharedMaxValue = () => {
     if (filteredGroups.length === 0) return maxValue;
     
@@ -85,7 +85,7 @@ export const ChartGrid = ({
       return Math.max(...cumulativeMaxValues, 0);
     }
     
-    // For net-new view, find the highest individual value across all charts to ensure shared scale
+    // For net-new and rolling-30d views, find the highest individual value across all charts
     return Math.max(...filteredGroups.flatMap(group => 
       group.data.map(d => d.value !== null ? d.value : 0)
     ), 0);
@@ -94,14 +94,12 @@ export const ChartGrid = ({
   // Get the shared max value for all small charts
   const sharedMaxValue = calculateSharedMaxValue();
   
-  // Use the higher of the calculated shared max or the provided maxValue
-  // For incremental (net-new) view, always use calculated max value from actual data to fit the scale
-  const effectiveMaxValue = effectiveViewType === 'net-new' 
-    ? sharedMaxValue
-    : Math.max(sharedMaxValue, maxValue || 0, threshold || 0);
+  // Always use the calculated shared max value from actual data to fit the scale
+  // Only consider threshold for display purposes, not for scale calculation
+  const effectiveMaxValue = Math.max(sharedMaxValue, 1); // Ensure we always have a positive scale
   
-  // Force shared max values for specific views to ensure consistent scaling
-  const shouldUseSharedValues = ['3-day', '7-day', 'last-12-months'].includes(timeRange) || !individualMaxValues || effectiveViewType === 'net-new';
+  // Always use shared max values to ensure consistent scaling across all charts
+  const shouldUseSharedValues = true;
 
   return (
     <>

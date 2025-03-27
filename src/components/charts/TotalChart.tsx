@@ -70,13 +70,8 @@ export const TotalChart = ({
     ? transformData(data, effectiveViewType, shouldHandleResets, isDiagnosticPage) 
     : data;
   
-  // Calculate max value based on transformed data
-  const maxValue = Math.max(...transformedData.map(d => (d.value !== null ? d.value : 0)));
-
-  // If threshold is provided and showing threshold is enabled, ensure maxValue is at least the threshold
-  // Only apply this for cumulative view
-  const shouldShowThreshold = showThreshold && effectiveViewType === 'cumulative';
-  const effectiveMaxValue = shouldShowThreshold && threshold && threshold > maxValue ? threshold : maxValue;
+  // Calculate max value based on transformed data only, not including threshold
+  const maxValue = Math.max(...transformedData.map(d => (d.value !== null ? d.value : 0)), 1);
 
   // Double the chart height when grouping is 'all'
   const effectiveChartHeight = grouping === 'all' ? chartHeight * 2 : chartHeight;
@@ -89,13 +84,13 @@ export const TotalChart = ({
         color="#2AB4FF"
         unit={unitLabel}
         viewType={effectiveViewType}
-        maxValue={effectiveMaxValue}
+        maxValue={maxValue}
         chartType={effectiveChartType}
         className="w-full"
         chartRef={chartRef}
         onExport={onExportChart}
         useViewDetails={useViewDetailsButton}
-        showThreshold={shouldShowThreshold}
+        showThreshold={showThreshold}
         threshold={threshold}
         chartHeight={effectiveChartHeight}
         timeRange={timeRange}

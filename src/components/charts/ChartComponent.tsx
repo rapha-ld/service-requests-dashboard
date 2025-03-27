@@ -66,10 +66,8 @@ export const ChartComponent = ({
       ? transformData(data, 'rolling-30d', false, false)
       : transformData(data, viewType, true, isDiagnosticPage);
   
-  // Only apply threshold to the max value if in cumulative view
-  const effectiveMaxValue = showThreshold && threshold && threshold > maxValue && viewType === 'cumulative'
-    ? threshold 
-    : maxValue;
+  // Always use the data's max value for the y-axis scale, not the threshold
+  const effectiveMaxValue = maxValue;
   
   // Determine which chart component to use based on chartType
   let ChartComp: typeof AreaChart | typeof BarChart | typeof LineChart;
