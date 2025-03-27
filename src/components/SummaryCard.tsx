@@ -1,4 +1,3 @@
-
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
@@ -49,7 +48,7 @@ export const SummaryCard = ({
     <div className={cn(
       "bg-card p-4 rounded-lg shadow-sm animate-slide-up transition-all duration-200 text-left",
       "dark:bg-secondary dark:border dark:border-border",
-      plainStyle && "bg-transparent border-none p-0 shadow-none dark:bg-transparent dark:border-none bg-background",
+      plainStyle && "bg-transparent border-none p-0 shadow-none dark:bg-transparent dark:border-none",
       heightClass,
       className
     )}>
