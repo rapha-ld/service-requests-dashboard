@@ -7,14 +7,18 @@ interface ViewTypeToggleProps {
   onViewTypeChange: (value: 'net-new' | 'cumulative' | 'rolling-30d') => void;
   timeRange?: string;
   isCustomDateRangeShort?: boolean;
+  visible?: boolean;
 }
 
 export const ViewTypeToggle = ({
   viewType,
   onViewTypeChange,
   timeRange,
-  isCustomDateRangeShort = false
+  isCustomDateRangeShort = false,
+  visible = true
 }: ViewTypeToggleProps) => {
+  if (!visible) return null;
+
   // Determine if we should show the Rolling 30D option
   // Hide it for 3-day view or short custom date ranges (≤ 3 days)
   const shouldHideRolling30D = timeRange === '3-day' || isCustomDateRangeShort;

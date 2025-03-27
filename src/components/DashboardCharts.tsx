@@ -1,6 +1,7 @@
 
 import { ChartsGridSection } from "@/components/charts/ChartsGridSection";
 import { TotalChartSection } from "@/components/charts/TotalChartSection";
+import { ViewToggleSection } from "@/components/charts/ViewToggleSection";
 import { ViewType, ChartType } from "@/types/serviceData";
 import { DateRange } from "@/types/mauTypes";
 
@@ -58,6 +59,17 @@ export const DashboardCharts = ({
 
   return (
     <div className="flex flex-col gap-6">
+      {onViewTypeChange && (
+        <ViewToggleSection
+          viewType={viewType}
+          onViewTypeChange={onViewTypeChange}
+          disableViewTypeToggle={disableViewTypeToggle}
+          timeRange={timeRange || 'month-to-date'}
+          isHourlyData={isHourlyData}
+          customDateRange={customDateRange}
+        />
+      )}
+      
       <TotalChartSection
         allEnvironmentsData={allEnvironmentsData}
         viewType={viewType}

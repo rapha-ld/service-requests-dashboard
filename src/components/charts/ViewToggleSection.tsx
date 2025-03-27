@@ -1,11 +1,11 @@
 
-import { ViewTypeToggle } from "@/components/dashboard/ViewTypeToggle";
+import { ViewTypeToggle } from "@/components/mau/ViewTypeToggle";
 import { ViewType, TimeRangeType } from "@/types/serviceData";
 import { DateRange } from "@/types/mauTypes";
 
 interface ViewToggleSectionProps {
   viewType: ViewType;
-  onViewTypeChange?: (value: ViewType) => void;
+  onViewTypeChange?: (viewType: ViewType) => void;
   disableViewTypeToggle: boolean;
   timeRange: string;
   isHourlyData?: boolean;
@@ -45,7 +45,7 @@ export const ViewToggleSection = ({
   };
 
   return (
-    <div className="flex justify-between items-center">
+    <div className="flex justify-between items-center mb-4">
       <ViewTypeToggle
         viewType={viewType}
         onViewTypeChange={onViewTypeChange}
