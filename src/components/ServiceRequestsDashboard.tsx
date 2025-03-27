@@ -8,6 +8,9 @@ import { processServiceData, calculateMaxValue, getAllEnvironmentsData } from "@
 import { DateRange } from "@/types/mauTypes";
 import { useUrlParams } from "@/hooks/useUrlParams";
 
+// Add the constant definition here
+const SERVICE_CONNECTIONS_THRESHOLD = 15000;
+
 export const ServiceRequestsDashboard = () => {
   const urlParams = useUrlParams();
   
