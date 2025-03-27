@@ -15,8 +15,8 @@ interface DashboardHeaderProps {
   onViewTypeChange: (value: 'net-new' | 'cumulative' | 'rolling-30d') => void;
   onSortDirectionChange: () => void;
   onMonthChange: (value: string) => void;
-  timeRange: 'month-to-date' | 'last-12-months' | 'rolling-30-day' | '3-day' | '7-day' | 'custom';
-  onTimeRangeChange: (value: 'month-to-date' | 'last-12-months' | 'rolling-30-day' | '3-day' | '7-day' | 'custom') => void;
+  timeRange: 'month-to-date' | 'last-12-months' | 'rolling-30-day' | '3-day' | 'custom';
+  onTimeRangeChange: (value: 'month-to-date' | 'last-12-months' | 'rolling-30-day' | '3-day' | 'custom') => void;
   showGrouping?: boolean;
   showViewTypeToggle?: boolean;
   customDateRange?: DateRange;

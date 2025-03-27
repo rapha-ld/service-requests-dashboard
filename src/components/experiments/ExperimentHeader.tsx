@@ -10,11 +10,11 @@ interface ExperimentHeaderProps {
   viewType: ViewType;
   selectedMonth: number;
   sortDirection: 'desc' | 'asc';
-  timeRange: 'month-to-date' | 'last-12-months' | 'rolling-30-day' | '3-day' | '7-day' | 'custom';
+  timeRange: 'month-to-date' | 'last-12-months' | 'rolling-30-day' | '3-day' | 'custom';
   onViewTypeChange: (value: ViewType) => void;
   onSortDirectionChange: () => void;
   onMonthChange: (value: string) => void;
-  onTimeRangeChange: (value: 'month-to-date' | 'last-12-months' | 'rolling-30-day' | '3-day' | '7-day' | 'custom') => void;
+  onTimeRangeChange: (value: 'month-to-date' | 'last-12-months' | 'rolling-30-day' | '3-day' | 'custom') => void;
   customDateRange?: DateRange;
   onCustomDateRangeChange?: (dateRange: DateRange) => void;
   showViewTypeToggle?: boolean;

@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
 import { ExperimentHeader } from "@/components/experiments/ExperimentHeader";
-import { useExperimentData, TimeRangeType } from "@/hooks/useExperimentData";
+import { useExperimentData } from "@/hooks/useExperimentData";
 import { 
   processExperimentData, 
   calculateMaxValue, 
@@ -11,7 +11,7 @@ import {
   ExperimentGroup 
 } from "@/utils/experiments";
 import { DateRange } from "@/types/mauTypes";
-import { ViewType } from "@/types/serviceData";
+import { ViewType, TimeRangeType } from "@/types/serviceData";
 import { useUrlParams } from "@/hooks/useUrlParams";
 
 // Experiment events threshold from Overview page
