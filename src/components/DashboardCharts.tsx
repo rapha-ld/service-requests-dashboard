@@ -58,13 +58,13 @@ export const DashboardCharts = ({
       ) : (
         sortedGroups.map((group) => (
           <TotalChart
-            key={group.key}
-            title={group.key}
+            key={group.key || group.id || group.title} // Add a composite key to ensure uniqueness
+            title={group.key || group.title}
             data={group.data}
             viewType={viewType}
             chartType={chartType}
-            chartRef={chartRefs[group.key]}
-            onExportChart={() => onExportChart(group.key)}
+            chartRef={chartRefs[group.key || group.title]}
+            onExportChart={() => onExportChart(group.key || group.title)}
             useViewDetailsButton={useViewDetailsButton}
             unitLabel={unitLabel}
             chartHeight={192}

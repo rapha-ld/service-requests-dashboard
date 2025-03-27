@@ -2,7 +2,12 @@
 /**
  * Maps component titles to their corresponding routes
  */
-export const getTitleRoute = (title: string): string => {
+export const getTitleRoute = (title: string | undefined): string => {
+  // Handle undefined title
+  if (!title) {
+    return '/overview';
+  }
+  
   const normalizedTitle = title.toLowerCase();
   
   // Usage routes
