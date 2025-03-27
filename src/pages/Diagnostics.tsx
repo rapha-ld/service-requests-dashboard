@@ -117,23 +117,6 @@ export default function Diagnostics() {
     localDateRange
   );
 
-  // Extract the totalData from the service data response
-  const extractTotalData = (serviceData: any) => {
-    if (!serviceData) return [];
-    
-    // Handle diagnostic mode data format
-    if (serviceData.data && Array.isArray(serviceData.data)) {
-      return serviceData.data;
-    }
-    
-    // Handle regular service data format
-    if (serviceData.current && serviceData.current.total && Array.isArray(serviceData.current.total)) {
-      return serviceData.current.total;
-    }
-    
-    return [];
-  };
-
   // Chart refs for export functionality
   const clientConnectionsChartRef = useRef(null);
   const serverMAUChartRef = useRef(null);
@@ -188,7 +171,7 @@ export default function Diagnostics() {
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
           <TotalChart
             title="Client Connections"
-            data={extractTotalData(clientConnectionsData)}
+            data={clientConnectionsData.data || []}
             viewType={viewType}
             chartType={chartType}
             chartRef={clientConnectionsChartRef}
@@ -200,7 +183,7 @@ export default function Diagnostics() {
           
           <TotalChart
             title="Server MAU"
-            data={extractTotalData(serverMAUData)}
+            data={serverMAUData.data || []}
             viewType={viewType}
             chartType={chartType}
             chartRef={serverMAUChartRef}
@@ -212,7 +195,7 @@ export default function Diagnostics() {
           
           <TotalChart
             title="Peak Server SDK Connections"
-            data={extractTotalData(peakServerConnectionsData)}
+            data={peakServerConnectionsData.data || []}
             viewType={viewType}
             chartType={chartType}
             chartRef={peakServerConnectionsChartRef}
@@ -224,7 +207,7 @@ export default function Diagnostics() {
           
           <TotalChart
             title="Service Requests"
-            data={extractTotalData(serviceRequestsData)}
+            data={serviceRequestsData.data || []}
             viewType={viewType}
             chartType={chartType}
             chartRef={serviceRequestsChartRef}
