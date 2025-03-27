@@ -1,5 +1,5 @@
 
-import { ChartGrid } from "@/components/charts/ChartGrid";
+import { PaginatedChartGrid } from "@/components/charts/PaginatedChartGrid";
 import { ViewType, ChartType } from "@/types/serviceData";
 
 interface ChartsGridSectionProps {
@@ -44,7 +44,7 @@ export const ChartsGridSection = ({
   }
 
   return (
-    <ChartGrid
+    <PaginatedChartGrid
       sortedGroups={sortedGroups}
       viewType={viewType}
       chartType={chartType}
@@ -61,6 +61,7 @@ export const ChartsGridSection = ({
       showThreshold={showThreshold}
       threshold={threshold}
       timeRange={timeRange}
+      itemsPerPage={60}
     />
   );
 };
