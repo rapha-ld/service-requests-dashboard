@@ -24,7 +24,7 @@ export const DashboardSummary = ({
   return (
     <>
       {!showOnlyTotal && (
-        <h3 className="text-sm font-semibold text-muted-foreground mb-4 text-left">Top 5</h3>
+        <h3 className="text-sm font-semibold text-muted-foreground mb-4 text-left">Total and Top 5</h3>
       )}
       <div className={`grid grid-cols-1 ${!showOnlyTotal ? 'md:grid-cols-3 lg:grid-cols-6' : ''} gap-4 mb-6`}>
         {/* Total card - always displayed first */}
