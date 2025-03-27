@@ -2,14 +2,14 @@
 import React, { useState, useRef, useEffect } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { TotalChart } from "@/components/charts/TotalChart";
-import { ChartGrid } from "@/components/charts/ChartGrid";
 import { exportChartAsPNG } from "@/components/charts/exportChart";
 import { useServiceData } from "@/hooks/useServiceData";
 import { useUrlParams } from "@/hooks/useUrlParams";
 import { DateRange } from "@/types/mauTypes";
 
 export default function Diagnostics() {
-  const [customDateRange, setCustomDateRange] = useState<DateRange>({
+  // Local state for custom date range
+  const [localDateRange, setLocalDateRange] = useState<DateRange>({
     from: new Date(new Date().setDate(new Date().getDate() - 30)),
     to: new Date()
   });
@@ -40,18 +40,18 @@ export default function Diagnostics() {
   const sortDirection = getSortDirection();
   const chartType = getChartType();
 
-  // Set initial customDateRange from URL if available
+  // Set initial localDateRange from URL if available
   useEffect(() => {
     const urlDateRange = getCustomDateRange();
-    setCustomDateRange(urlDateRange);
+    setLocalDateRange(urlDateRange);
   }, []);
 
-  // Update URL when customDateRange changes
+  // Update URL when localDateRange changes
   useEffect(() => {
     if (timeRange === 'custom') {
-      setCustomDateRange(customDateRange);
+      setCustomDateRange(localDateRange);
     }
-  }, [customDateRange, timeRange]);
+  }, [localDateRange, timeRange]);
 
   // Handle view type change
   const handleViewTypeChange = (value: typeof viewType) => {
@@ -80,33 +80,41 @@ export default function Diagnostics() {
 
   // Handle custom date range change
   const handleCustomDateRangeChange = (dateRange: DateRange) => {
-    setCustomDateRange(dateRange);
+    setLocalDateRange(dateRange);
     setCustomDateRange(dateRange);
   };
 
   // Client Connections data
-  const {
-    totalData: clientConnectionsData,
-    isLoading: isClientConnectionsLoading
-  } = useServiceData('client-connections', viewType, timeRange, customDateRange);
+  const { data: clientConnectionsData, isLoading: isClientConnectionsLoading } = useServiceData(
+    'client-connections',
+    viewType,
+    timeRange,
+    localDateRange
+  );
 
   // Server MAU data
-  const {
-    totalData: serverMAUData,
-    isLoading: isServerMAULoading
-  } = useServiceData('server-mau', viewType, timeRange, customDateRange);
+  const { data: serverMAUData, isLoading: isServerMAULoading } = useServiceData(
+    'server-mau',
+    viewType,
+    timeRange,
+    localDateRange
+  );
 
   // Peak Server Connections data
-  const {
-    totalData: peakServerConnectionsData,
-    isLoading: isPeakServerConnectionsLoading
-  } = useServiceData('peak-server-connections', viewType, timeRange, customDateRange);
+  const { data: peakServerConnectionsData, isLoading: isPeakServerConnectionsLoading } = useServiceData(
+    'peak-server-connections',
+    viewType,
+    timeRange,
+    localDateRange
+  );
 
   // Service Requests data
-  const {
-    totalData: serviceRequestsData,
-    isLoading: isServiceRequestsLoading
-  } = useServiceData('service-requests', viewType, timeRange, customDateRange);
+  const { data: serviceRequestsData, isLoading: isServiceRequestsLoading } = useServiceData(
+    'service-requests',
+    viewType,
+    timeRange,
+    localDateRange
+  );
 
   // Chart refs for export functionality
   const clientConnectionsChartRef = useRef(null);
@@ -155,14 +163,14 @@ export default function Diagnostics() {
           onTimeRangeChange={handleTimeRangeChange}
           showGrouping={false}
           showViewTypeToggle={true}
-          customDateRange={customDateRange}
+          customDateRange={localDateRange}
           onCustomDateRangeChange={handleCustomDateRangeChange}
         />
         
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
           <TotalChart
             title="Client Connections"
-            data={clientConnectionsData}
+            data={clientConnectionsData?.data || []}
             viewType={viewType}
             chartType={chartType}
             chartRef={clientConnectionsChartRef}
@@ -174,7 +182,7 @@ export default function Diagnostics() {
           
           <TotalChart
             title="Server MAU"
-            data={serverMAUData}
+            data={serverMAUData?.data || []}
             viewType={viewType}
             chartType={chartType}
             chartRef={serverMAUChartRef}
@@ -186,7 +194,7 @@ export default function Diagnostics() {
           
           <TotalChart
             title="Peak Server SDK Connections"
-            data={peakServerConnectionsData}
+            data={peakServerConnectionsData?.data || []}
             viewType={viewType}
             chartType={chartType}
             chartRef={peakServerConnectionsChartRef}
@@ -198,7 +206,7 @@ export default function Diagnostics() {
           
           <TotalChart
             title="Service Requests"
-            data={serviceRequestsData}
+            data={serviceRequestsData?.data || []}
             viewType={viewType}
             chartType={chartType}
             chartRef={serviceRequestsChartRef}
