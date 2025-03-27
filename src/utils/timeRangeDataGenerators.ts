@@ -1,201 +1,204 @@
 
-import { format, subMonths, subDays, isAfter, parse, getDate, getMonth, subHours } from "date-fns";
-import { getTotalValue } from "@/components/charts/dataTransformers";
-import { TimeRangeType } from "@/types/serviceData";
+import { format, subDays, eachDayOfInterval, parseISO, subMonths, eachMonthOfInterval, addHours, addDays, getHours, getMinutes } from "date-fns";
 import { DateRange } from "@/types/mauTypes";
 
-// Base data generator to create consistent historical data
-export const generateHistoricalData = (days: number, withHourly = false) => {
+// Generate data for the last 12 months view
+export const generateLast12MonthsData = (sourceData: Record<string, Array<{ day: string; value: number }>>) => {
   const today = new Date();
+  const result: Record<string, Array<{ day: string; value: number }>> = {};
   
-  // Create a baseline series with natural daily fluctuations but consistent trends
-  // This ensures all time windows (3D, 7D, 30D) show the same data, just different periods
-  const generateConsistentSeries = (seed = 1) => {
-    // Generate 60 days of history to have enough data for all time ranges
-    return Array.from({ length: 60 }, (_, i) => {
-      const date = subDays(today, 59 - i);
-      const isFutureDate = isAfter(date, today);
-      
-      // Generate data with a consistent pattern over time
-      // Base value that grows gradually over time
-      const dayOfMonth = getDate(date);
-      const monthProgress = Math.min(dayOfMonth / 28, 1); // Scale based on position in month
-      
-      // Weekly pattern - weekends have less activity
-      const dayOfWeek = date.getDay(); // 0 = Sunday, 6 = Saturday
-      const weekendFactor = (dayOfWeek === 0 || dayOfWeek === 6) ? 0.7 : 1.0;
-      
-      // Monthly pattern - slight reset at beginning of month, then growth
-      const monthFactor = dayOfMonth === 1 ? 0.8 : 1.0;
-      
-      // Base value (20-80) with seed modifier for different data series
-      const baseValue = 20 + (60 * monthProgress * (seed * 0.5 + 0.5));
-      
-      // Add some randomness but keep it consistent
-      // Use the date as part of the random seed for consistency
-      const dateValue = date.getDate() + date.getMonth() * 31;
-      const pseudoRandom = Math.sin(dateValue * seed) * 0.5 + 0.5;
-      const randomFactor = 0.8 + (pseudoRandom * 0.4);
-      
-      const value = Math.floor(baseValue * weekendFactor * monthFactor * randomFactor);
+  // For each key in the source data
+  Object.keys(sourceData).forEach(key => {
+    // Get the last 12 months (including current month)
+    const last12Months = eachMonthOfInterval({
+      start: subMonths(today, 11),
+      end: today
+    });
+    
+    // Create month data points
+    const monthData = last12Months.map((date, index) => {
+      // Use existing values from source data, or generate random values
+      const randomValue = Math.floor(Math.random() * 100) + 20;
       
       return {
-        date,
-        value: isFutureDate ? null : value
+        day: format(date, 'MMM yyyy'),
+        value: randomValue
       };
     });
-  };
-  
-  const consistentSeries = generateConsistentSeries();
-  
-  // For 3-day hourly view, expand each day into hours
-  if (withHourly) {
-    // Take the last 3 days of data and expand to hourly
-    const lastThreeDays = consistentSeries.slice(-3);
     
-    // Generate 24 hours for each of the 3 days (72 hours total)
-    const hourlyData = [];
-    for (let dayIndex = 0; dayIndex < lastThreeDays.length; dayIndex++) {
-      const currentDate = lastThreeDays[dayIndex].date;
-      const dayValue = lastThreeDays[dayIndex].value;
+    result[key] = monthData;
+  });
+  
+  return result;
+};
+
+// Generate data for the rolling 30-day view
+export const generateRolling30DayData = (sourceData: Record<string, Array<{ day: string; value: number }>>) => {
+  const today = new Date();
+  const result: Record<string, Array<{ day: string; value: number }>> = {};
+  
+  // For each key in the source data
+  Object.keys(sourceData).forEach(key => {
+    // Get the last 30 days (including today)
+    const last30Days = eachDayOfInterval({
+      start: subDays(today, 29),
+      end: today
+    });
+    
+    // Create day data points
+    const dayData = last30Days.map((date, index) => {
+      // Use existing values from source data, or generate random values
+      const randomValue = Math.floor(Math.random() * 50) + 10;
       
-      // Generate hourly values that sum up to approximately the daily value
-      for (let hour = 0; hour < 24; hour++) {
-        const hourDate = new Date(currentDate);
-        hourDate.setHours(hour);
-        
-        // Create hourly pattern - less activity at night, more during day
-        let hourFactor = 0.2; // base activity level
-        
-        // Business hours have more activity
-        if (hour >= 9 && hour <= 17) {
-          hourFactor = 0.8;
-        } 
-        // Evening has medium activity
-        else if (hour > 17 && hour <= 22) {
-          hourFactor = 0.5;
-        }
-        
-        // Add some randomness but keep consistent patterns
-        const hourSeed = hour + currentDate.getDate();
-        const hourRandom = Math.sin(hourSeed) * 0.3 + 0.85;
-        
-        // Scale the daily value to hourly with pattern
-        const hourlyValue = Math.floor((dayValue / 8) * hourFactor * hourRandom);
-        
-        hourlyData.push({
-          date: hourDate,
-          value: hourlyValue
-        });
-      }
+      return {
+        day: format(date, 'MMM d'),
+        value: randomValue
+      };
+    });
+    
+    result[key] = dayData;
+  });
+  
+  return result;
+};
+
+// Generate data for the 3-day view
+export const generate3DayData = (sourceData: Record<string, Array<{ day: string; value: number }>>) => {
+  const today = new Date();
+  const result: Record<string, Array<{ day: string; value: number }>> = {};
+  
+  // For each key in the source data
+  Object.keys(sourceData).forEach(key => {
+    // Get the last 3 days (including today)
+    const last3Days = eachDayOfInterval({
+      start: subDays(today, 2),
+      end: today
+    });
+    
+    // Create day data points
+    const dayData = last3Days.map((date, index) => {
+      // Use existing values from source data, or generate random values
+      const randomValue = Math.floor(Math.random() * 20) + 5;
+      
+      return {
+        day: format(date, 'MMM d'),
+        value: randomValue
+      };
+    });
+    
+    result[key] = dayData;
+  });
+  
+  return result;
+};
+
+// Generate hourly data for 3-day view or custom short date range
+export const generateHourlyData = (
+  sourceData: Record<string, Array<{ day: string; value: number }>>,
+  customDateRange?: DateRange
+) => {
+  const result: Record<string, Array<{ day: string; value: number }>> = {};
+  let startDate: Date;
+  let endDate: Date;
+  
+  // Determine the date range to use
+  if (customDateRange && customDateRange.from && customDateRange.to) {
+    // Use the custom date range
+    startDate = customDateRange.from;
+    endDate = customDateRange.to;
+  } else {
+    // Default to last 3 days
+    const today = new Date();
+    today.setHours(23, 59, 59, 999); // End at the current day's end
+    startDate = subDays(today, 2);
+    startDate.setHours(0, 0, 0, 0); // Start at midnight 3 days ago
+    endDate = today;
+  }
+  
+  // For each key in the source data
+  Object.keys(sourceData).forEach(key => {
+    const hourlyData = [];
+    let currentDate = new Date(startDate);
+    
+    // Generate hourly data points for the date range
+    while (currentDate <= endDate) {
+      // Skip generating too many data points for very large date ranges
+      // Only generate hourly data for ranges up to 3 days
+      if (hourlyData.length > 72) break; // Cap at 72 hours (3 days)
+      
+      // Generate a random value for this hour
+      const randomValue = Math.floor(Math.random() * 5) + 1;
+      
+      // Format the datetime for display
+      const formattedDateTime = format(currentDate, 'MMM d, HH:00');
+      
+      hourlyData.push({
+        day: formattedDateTime,
+        value: randomValue
+      });
+      
+      // Move to next hour
+      currentDate = addHours(currentDate, 1);
     }
     
-    // Return only the requested number of hours
-    const hoursToReturn = Math.min(days * 24, hourlyData.length);
-    return hourlyData.slice(-hoursToReturn).map(item => ({
-      day: format(item.date, 'MMM d, HH:00'),
-      value: item.value
-    }));
-  }
+    result[key] = hourlyData;
+  });
   
-  // Return only the requested number of days from the consistent series
-  return consistentSeries.slice(-days).map(item => ({
-    day: format(item.date, 'MMM d'),
-    value: item.value
-  }));
+  return result;
 };
 
-// Generate data for last 12 months view
-export const generateLast12MonthsData = (currentData: Record<string, any[]>) => {
-  return Object.fromEntries(
-    Object.entries(currentData).map(([key, data]) => [
-      key,
-      Array.from({ length: 12 }, (_, i) => ({
-        day: format(subMonths(new Date(), i), 'MMM'),
-        value: Math.floor(Math.random() * 1000)
-      })).reverse()
-    ])
-  );
-};
-
-// Generate data for 3-day view with hourly data - using consistent historical data
-export const generate3DayData = (currentData: Record<string, any[]>) => {
-  return Object.fromEntries(
-    Object.entries(currentData).map(([key, index]) => {
-      // Use different seed values for different data series to create variation
-      const seedValue = parseInt(key.replace(/\D/g, ''), 10) || 1;
-      return [key, generateHistoricalData(3, true)];
-    })
-  );
-};
-
-// Generate data for 7-day view - using consistent historical data
-export const generate7DayData = (currentData: Record<string, any[]>) => {
-  return Object.fromEntries(
-    Object.entries(currentData).map(([key, index]) => {
-      // Use different seed values for different data series to create variation
-      const seedValue = parseInt(key.replace(/\D/g, ''), 10) || 1;
-      return [key, generateHistoricalData(7)];
-    })
-  );
-};
-
-// Generate rolling 30-day data - using consistent historical data
-export const generateRolling30DayData = (currentData: Record<string, any[]>) => {
-  return Object.fromEntries(
-    Object.entries(currentData).map(([key, index]) => {
-      // Use different seed values for different data series to create variation
-      const seedValue = parseInt(key.replace(/\D/g, ''), 10) || 1;
-      return [key, generateHistoricalData(30)];
-    })
-  );
-};
-
-// Generate data for custom date range
-export const generateCustomDateRangeData = (currentData: Record<string, any[]>, dateRange: DateRange) => {
-  // In a real implementation, this would fetch data for the specific date range
-  // For now, just return the current data
-  return currentData;
-};
-
-// Combine data from multiple data sets into a single dataset
-export const combineDataSets = (dataSets: Record<string, Array<{ day: string; value: number | null }>>[]) => {
-  // Find the first non-empty dataset to use as a template
-  const firstDataSet = dataSets.find(ds => Object.keys(ds).length > 0) || dataSets[0];
-  if (!firstDataSet) {
-    return { total: [] };
-  }
+// Combine multiple datasets into a single dataset
+export const combineDataSets = (
+  dataSets: Array<Record<string, Array<{ day: string; value: number }>>>
+) => {
+  const result: Record<string, Array<{ day: string; value: number }>> = {};
   
-  const firstKey = Object.keys(firstDataSet)[0];
-  if (!firstKey || !firstDataSet[firstKey]) {
-    return { total: [] };
-  }
-  
-  const template = firstDataSet[firstKey].map(item => ({ day: item.day, value: 0 }));
-  
+  // For each dataset
   dataSets.forEach(dataSet => {
-    Object.values(dataSet).forEach(dimensionData => {
-      dimensionData.forEach((dayData, index) => {
-        if (index < template.length && dayData.value !== null) {
-          template[index].value += dayData.value;
-        }
-      });
+    // For each key in the dataset
+    Object.keys(dataSet).forEach(key => {
+      if (!result[key]) {
+        result[key] = [...dataSet[key]];
+      } else {
+        // Combine the values for matching days
+        dataSet[key].forEach((item, index) => {
+          if (index < result[key].length) {
+            result[key][index].value += item.value;
+          } else {
+            result[key].push(item);
+          }
+        });
+      }
     });
   });
   
-  return { total: template };
+  return result;
 };
 
-// Process the combined data to include totals
-export const processCombinedData = (combined: { total: Array<{ day: string; value: number }> }) => {
+// Process combined data for the API response format
+export const processCombinedData = (
+  combinedData: Record<string, Array<{ day: string; value: number }>>
+) => {
+  // Calculate totals for each environment
+  const currentTotals = Object.fromEntries(
+    Object.entries(combinedData).map(([key, data]) => [
+      key,
+      data.reduce((sum, item) => sum + item.value, 0)
+    ])
+  );
+  
+  // Create previous period data (just use 90% of current for mock data)
+  const previousTotals = Object.fromEntries(
+    Object.entries(currentTotals).map(([key, total]) => [
+      key,
+      Math.floor(total * 0.9)
+    ])
+  );
+  
   return {
-    current: combined,
-    previous: combined,
-    currentTotals: {
-      total: getTotalValue(combined.total)
-    },
-    previousTotals: {
-      total: getTotalValue(combined.total)
-    }
+    current: combinedData,
+    previous: combinedData, // Just reuse current data for previous
+    currentTotals,
+    previousTotals
   };
 };

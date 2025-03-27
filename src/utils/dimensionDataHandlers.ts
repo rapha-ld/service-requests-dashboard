@@ -1,10 +1,10 @@
-
 import { getMockData } from "./mockDataGenerator";
 import { getTotalValue } from "./dataTransformers";
 import { 
   generateLast12MonthsData, 
   generateRolling30DayData, 
   generate3DayData,
+  generateHourlyData,
   combineDataSets, 
   processCombinedData 
 } from "./timeRangeDataGenerators";
@@ -12,7 +12,7 @@ import { TimeRangeType, GroupingType } from "@/types/serviceData";
 import { DateRange } from "@/types/mauTypes";
 
 // Handle 'all' dimensions data
-export const handleAllDimensionsData = (timeRange: TimeRangeType, customDateRange?: DateRange) => {
+export const handleAllDimensionsData = (timeRange: TimeRangeType, customDateRange?: DateRange, hourlyData?: boolean) => {
   const environmentData = getMockData('environment');
   const relayIdData = getMockData('relayId');
   const userAgentData = getMockData('userAgent');
@@ -38,17 +38,36 @@ export const handleAllDimensionsData = (timeRange: TimeRangeType, customDateRang
   }
   
   if (timeRange === '3-day') {
-    const environment3Day = generate3DayData(environmentData);
-    const relayId3Day = generate3DayData(relayIdData);
-    const userAgent3Day = generate3DayData(userAgentData);
-    
-    const combined = combineDataSets([environment3Day, relayId3Day, userAgent3Day]);
-    return processCombinedData(combined);
+    // Use hourly data for 3-day view
+    if (hourlyData) {
+      const environmentHourly = generateHourlyData(environmentData);
+      const relayIdHourly = generateHourlyData(relayIdData);
+      const userAgentHourly = generateHourlyData(userAgentData);
+      
+      const combined = combineDataSets([environmentHourly, relayIdHourly, userAgentHourly]);
+      return processCombinedData(combined);
+    } else {
+      const environment3Day = generate3DayData(environmentData);
+      const relayId3Day = generate3DayData(relayIdData);
+      const userAgent3Day = generate3DayData(userAgentData);
+      
+      const combined = combineDataSets([environment3Day, relayId3Day, userAgent3Day]);
+      return processCombinedData(combined);
+    }
   }
   
   if (timeRange === 'custom' && customDateRange) {
-    // For custom date range, use the month-to-date data for now
-    // In a real app, you would fetch data for the specific date range
+    // For custom date range with 3 days or less, use hourly data if requested
+    if (hourlyData) {
+      const environmentHourly = generateHourlyData(environmentData, customDateRange);
+      const relayIdHourly = generateHourlyData(relayIdData, customDateRange);
+      const userAgentHourly = generateHourlyData(userAgentData, customDateRange);
+      
+      const combined = combineDataSets([environmentHourly, relayIdHourly, userAgentHourly]);
+      return processCombinedData(combined);
+    }
+    
+    // Otherwise, use daily data for custom date ranges
     const combined = combineDataSets([environmentData, relayIdData, userAgentData]);
     return processCombinedData(combined);
   }
@@ -59,7 +78,12 @@ export const handleAllDimensionsData = (timeRange: TimeRangeType, customDateRang
 };
 
 // Handle specific dimension data
-export const handleSpecificDimensionData = (grouping: GroupingType, timeRange: TimeRangeType, customDateRange?: DateRange) => {
+export const handleSpecificDimensionData = (
+  grouping: GroupingType, 
+  timeRange: TimeRangeType, 
+  customDateRange?: DateRange,
+  hourlyData?: boolean
+) => {
   // Convert the grouping string to the correct type for getMockData
   const current = getMockData(grouping as 'environment' | 'relayId' | 'userAgent');
   const previous = getMockData(grouping as 'environment' | 'relayId' | 'userAgent');
@@ -95,22 +119,51 @@ export const handleSpecificDimensionData = (grouping: GroupingType, timeRange: T
   }
   
   if (timeRange === '3-day') {
-    const data3Day = generate3DayData(current);
-    return {
-      current: data3Day,
-      previous,
-      currentTotals: Object.fromEntries(
-        Object.entries(data3Day).map(([key, data]) => [key, getTotalValue(data as any)])
-      ),
-      previousTotals: Object.fromEntries(
-        Object.entries(previous).map(([key, data]) => [key, getTotalValue(data)])
-      )
-    };
+    // Use hourly data for 3-day view if requested
+    if (hourlyData) {
+      const hourlyData = generateHourlyData(current);
+      return {
+        current: hourlyData,
+        previous,
+        currentTotals: Object.fromEntries(
+          Object.entries(hourlyData).map(([key, data]) => [key, getTotalValue(data as any)])
+        ),
+        previousTotals: Object.fromEntries(
+          Object.entries(previous).map(([key, data]) => [key, getTotalValue(data)])
+        )
+      };
+    } else {
+      const data3Day = generate3DayData(current);
+      return {
+        current: data3Day,
+        previous,
+        currentTotals: Object.fromEntries(
+          Object.entries(data3Day).map(([key, data]) => [key, getTotalValue(data as any)])
+        ),
+        previousTotals: Object.fromEntries(
+          Object.entries(previous).map(([key, data]) => [key, getTotalValue(data)])
+        )
+      };
+    }
   }
   
   if (timeRange === 'custom' && customDateRange) {
-    // For custom date range, use the month-to-date data for now
-    // In a real app, you would fetch data for the specific date range
+    // For custom date range with 3 days or less, use hourly data if requested
+    if (hourlyData) {
+      const hourlyData = generateHourlyData(current, customDateRange);
+      return {
+        current: hourlyData,
+        previous,
+        currentTotals: Object.fromEntries(
+          Object.entries(hourlyData).map(([key, data]) => [key, getTotalValue(data as any)])
+        ),
+        previousTotals: Object.fromEntries(
+          Object.entries(previous).map(([key, data]) => [key, getTotalValue(data)])
+        )
+      };
+    }
+    
+    // Otherwise use daily data for the custom date range
     return {
       current,
       previous,

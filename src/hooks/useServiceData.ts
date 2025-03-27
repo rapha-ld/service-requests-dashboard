@@ -10,19 +10,20 @@ export const useServiceData = (
   selectedMonth: number,
   grouping: GroupingType,
   timeRange: TimeRangeType,
-  customDateRange?: DateRange
+  customDateRange?: DateRange,
+  hourlyData?: boolean
 ) => {
   const currentDate = new Date(new Date().getFullYear(), selectedMonth);
   const previousDate = new Date(new Date().getFullYear(), selectedMonth - 1);
 
   return useQuery({
-    queryKey: ['service-data', currentDate.toISOString(), grouping, timeRange, customDateRange],
+    queryKey: ['service-data', currentDate.toISOString(), grouping, timeRange, customDateRange, hourlyData],
     queryFn: () => {
       if (grouping === 'all') {
-        return handleAllDimensionsData(timeRange, customDateRange);
+        return handleAllDimensionsData(timeRange, customDateRange, hourlyData);
       }
       
-      return handleSpecificDimensionData(grouping, timeRange, customDateRange);
+      return handleSpecificDimensionData(grouping, timeRange, customDateRange, hourlyData);
     }
   });
 };

@@ -20,6 +20,7 @@ export const ServiceRequestsDashboard = () => {
   const [grouping, setGrouping] = useState<GroupingType>(urlParams.getGrouping());
   const [timeRange, setTimeRange] = useState<TimeRangeType>(urlParams.getTimeRange());
   const [customDateRange, setCustomDateRange] = useState<DateRange>(urlParams.getCustomDateRange());
+  const [hourlyData, setHourlyData] = useState(false);
   
   const chartRefs = useRef<{ [key: string]: any }>({});
   
@@ -50,6 +51,15 @@ export const ServiceRequestsDashboard = () => {
     }
     return false;
   };
+
+  // Effect to enable/disable hourly data based on time range
+  useEffect(() => {
+    if (timeRange === '3-day' || isCustomDateRangeShort()) {
+      setHourlyData(true);
+    } else {
+      setHourlyData(false);
+    }
+  }, [timeRange, customDateRange]);
 
   // Effect to update viewType when timeRange changes to 3-day or short custom range
   useEffect(() => {
@@ -152,7 +162,8 @@ export const ServiceRequestsDashboard = () => {
     selectedMonth, 
     grouping, 
     timeRange,
-    timeRange === 'custom' ? customDateRange : undefined
+    timeRange === 'custom' ? customDateRange : undefined,
+    hourlyData
   );
 
   if (!serviceData) return null;
@@ -164,7 +175,7 @@ export const ServiceRequestsDashboard = () => {
   const maxValue = calculateMaxValue(sortedGroups, viewType);
   
   // Get data for all environments chart
-  const allEnvironmentsData = getAllEnvironmentsData(grouping, serviceData, timeRange, sortedGroups);
+  const allEnvironmentsData = getAllEnvironmentsData(grouping, serviceData, timeRange, sortedGroups, hourlyData);
 
   return (
     <div className="min-h-screen bg-background p-6">
@@ -206,6 +217,7 @@ export const ServiceRequestsDashboard = () => {
           timeRange={timeRange}
           threshold={0}
           customDateRange={customDateRange}
+          isHourlyData={hourlyData}
         />
       </div>
     </div>

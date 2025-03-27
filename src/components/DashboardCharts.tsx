@@ -29,6 +29,7 @@ interface DashboardChartsProps {
   disableViewTypeToggle?: boolean;
   timeRange?: string;
   customDateRange?: DateRange;
+  isHourlyData?: boolean;
 }
 
 export const DashboardCharts = ({
@@ -48,7 +49,8 @@ export const DashboardCharts = ({
   onViewTypeChange,
   disableViewTypeToggle = false,
   timeRange = 'month-to-date',
-  customDateRange
+  customDateRange,
+  isHourlyData = false
 }: DashboardChartsProps) => {
   const { theme } = useTheme();
   const location = useLocation();
@@ -162,10 +164,18 @@ export const DashboardCharts = ({
     effectiveChartType = 'line';
   }
 
+  // Use special unit label for hourly data
+  const displayUnitLabel = isHourlyData ? `hourly ${unitLabel}` : unitLabel;
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         {renderViewTypeToggle()}
+        {isHourlyData && (
+          <div className="text-sm text-muted-foreground">
+            Showing hourly data
+          </div>
+        )}
       </div>
       
       {/* Total Chart Section */}
@@ -178,7 +188,7 @@ export const DashboardCharts = ({
           chartRef={chartRefs.current.total}
           onExportChart={onExportChart}
           useViewDetailsButton={useViewDetailsButton}
-          unitLabel={unitLabel}
+          unitLabel={displayUnitLabel}
           showThreshold={showThreshold}
           threshold={threshold}
           timeRange={timeRange}
@@ -199,7 +209,7 @@ export const DashboardCharts = ({
           formatValue={formatValue}
           onViewDetails={handleViewDetails}
           useViewDetailsButton={useViewDetailsButton}
-          unitLabel={unitLabel}
+          unitLabel={displayUnitLabel}
           individualMaxValues={useIndividualMaxValues()}
           showThreshold={showThreshold}
           threshold={threshold}

@@ -64,7 +64,8 @@ export const getAllEnvironmentsData = (
   grouping: 'all' | 'environment' | 'relayId' | 'userAgent',
   serviceData: any,
   timeRange: TimeRangeType,
-  sortedGroups: ChartGroup[]
+  sortedGroups: ChartGroup[],
+  hourlyData?: boolean
 ) => {
   if (grouping === 'all') {
     // Make sure we're properly accessing the data array
@@ -79,8 +80,8 @@ export const getAllEnvironmentsData = (
     }
     
     return currentData[firstKey].map((dataPoint, index: number) => {
-      // For rolling-30-day or custom timeframe, use the exact same day format from the data
-      const day = timeRange === 'rolling-30-day' || timeRange === 'custom'
+      // For rolling-30-day, custom timeframe, or hourly data, use the exact same day format from the data
+      const day = timeRange === 'rolling-30-day' || timeRange === 'custom' || hourlyData
         ? dataPoint.day  // Use the exact day as in the original data
         : timeRange === 'last-12-months' 
           ? currentData[firstKey][index].day
