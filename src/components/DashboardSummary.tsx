@@ -10,17 +10,21 @@ interface DashboardSummaryProps {
   }>;
   totalConnections?: number;
   totalPercentChange?: number;
+  showOnlyTotal?: boolean;
 }
 
 export const DashboardSummary = ({ 
   groups, 
   totalConnections, 
-  totalPercentChange = 0 
+  totalPercentChange = 0,
+  showOnlyTotal = false
 }: DashboardSummaryProps) => {
   return (
     <>
-      <h3 className="text-sm font-semibold text-muted-foreground mb-4 text-left">Top 5</h3>
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+      {!showOnlyTotal && (
+        <h3 className="text-sm font-semibold text-muted-foreground mb-4 text-left">Top 5</h3>
+      )}
+      <div className={`grid grid-cols-1 ${!showOnlyTotal ? 'md:grid-cols-3 lg:grid-cols-6' : ''} gap-4 mb-6`}>
         {/* Total card - always displayed first */}
         <SummaryCard
           key="total"
@@ -31,8 +35,8 @@ export const DashboardSummary = ({
           percentChange={totalPercentChange}
         />
         
-        {/* Display top 5 groups */}
-        {groups.slice(0, 5).map(group => (
+        {/* Display top 5 groups if not in showOnlyTotal mode */}
+        {!showOnlyTotal && groups.slice(0, 5).map(group => (
           <SummaryCard
             key={group.id}
             title={group.title}

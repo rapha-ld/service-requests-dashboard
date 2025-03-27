@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
@@ -16,7 +15,6 @@ const PeakServerConnections = () => {
   const urlParams = useUrlParams();
   const location = useLocation();
   
-  // State hooks with values from URL parameters
   const [selectedMonth, setSelectedMonth] = useState(urlParams.getSelectedMonth());
   const [sortDirection, setSortDirection] = useState<'desc' | 'asc'>(urlParams.getSortDirection());
   const [viewType, setViewType] = useState<ViewType>(urlParams.getViewType());
@@ -28,9 +26,7 @@ const PeakServerConnections = () => {
   
   const chartRefs = useRef<{ [key: string]: any }>({});
   
-  // Effect to update chart type based on view type
   useEffect(() => {
-    // For net-new view, use bar charts; for cumulative, use area charts; for rolling-30d, use line charts
     if (viewType === 'net-new') {
       setChartType('bar');
       urlParams.setChartType('bar');
@@ -43,7 +39,6 @@ const PeakServerConnections = () => {
     }
   }, [viewType]);
   
-  // Effect to determine if hourly data should be used
   useEffect(() => {
     if (timeRange === '3-day' || isCustomDateRangeShort(timeRange, customDateRange)) {
       setHourlyData(true);
@@ -52,24 +47,20 @@ const PeakServerConnections = () => {
     }
   }, [timeRange, customDateRange]);
   
-  // Handle time range change
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
     setTimeRange(newTimeRange);
     urlParams.setTimeRange(newTimeRange);
   };
   
-  // Handle custom date range change
   const handleCustomDateRangeChange = (dateRange: DateRange) => {
     setCustomDateRange(dateRange);
     urlParams.setCustomDateRange(dateRange);
   };
   
-  // Handle view type change
   const handleViewTypeChange = (newViewType: ViewType) => {
     setViewType(newViewType);
     urlParams.setViewType(newViewType);
     
-    // Update chart type based on view type
     if (newViewType === 'net-new') {
       setChartType('bar');
       urlParams.setChartType('bar');
@@ -82,27 +73,23 @@ const PeakServerConnections = () => {
     }
   };
   
-  // Handle grouping change
   const handleGroupingChange = (newGrouping: GroupingType) => {
     setGrouping(newGrouping);
     urlParams.setGrouping(newGrouping);
   };
   
-  // Handle sort direction change
   const handleSortDirectionChange = () => {
     const newSortDirection = sortDirection === 'desc' ? 'asc' : 'desc';
     setSortDirection(newSortDirection);
     urlParams.setSortDirection(newSortDirection);
   };
   
-  // Handle month change
   const handleMonthChange = (value: string) => {
     const newMonth = parseInt(value);
     setSelectedMonth(newMonth);
     urlParams.setSelectedMonth(newMonth);
   };
   
-  // Fetch data using custom hook, now with hourlyData parameter
   const { data: serviceData } = useServiceData(
     selectedMonth, 
     grouping, 
@@ -120,22 +107,17 @@ const PeakServerConnections = () => {
     </div>
   );
   
-  // Process data for display
   const { sortedGroups } = processServiceData(serviceData, sortDirection);
   
-  // Calculate total connections and percent change
   const totalConnections = Object.values(serviceData.currentTotals).reduce((sum, val) => sum + (val || 0), 0);
   const totalPreviousConnections = Object.values(serviceData.previousTotals).reduce((sum, val) => sum + (val || 0), 0);
   const totalPercentChange = totalPreviousConnections ? ((totalConnections - totalPreviousConnections) / totalPreviousConnections) * 100 : 0;
   
-  // Calculate maxValue
   const maxValue = calculateMaxValue(sortedGroups, viewType);
   
-  // Get data for all environments chart
   const allEnvironmentsData = getAllEnvironmentsData(grouping, serviceData, timeRange, sortedGroups, hourlyData);
 
-  // Get the appropriate unit label based on the current route
-  const unitLabel = getUnitLabel(location.pathname.substring(1)); // Remove leading slash
+  const unitLabel = getUnitLabel(location.pathname.substring(1));
 
   return (
     <div className="min-h-screen bg-background p-6">
@@ -153,18 +135,17 @@ const PeakServerConnections = () => {
           onMonthChange={handleMonthChange}
           timeRange={timeRange}
           onTimeRangeChange={handleTimeRangeChange}
-          showViewTypeToggle={false} // Remove toggle from header
+          showViewTypeToggle={false}
           customDateRange={customDateRange}
           onCustomDateRangeChange={handleCustomDateRangeChange}
         />
         
-        {grouping !== 'all' && (
-          <DashboardSummary 
-            groups={sortedGroups} 
-            totalConnections={totalConnections}
-            totalPercentChange={totalPercentChange}
-          />
-        )}
+        <DashboardSummary 
+          groups={sortedGroups} 
+          totalConnections={totalConnections}
+          totalPercentChange={totalPercentChange}
+          showOnlyTotal={grouping === 'all'}
+        />
         
         <DashboardCharts
           allEnvironmentsData={allEnvironmentsData}
@@ -178,7 +159,7 @@ const PeakServerConnections = () => {
           useViewDetailsButton={false}
           showOnlyTotal={grouping === 'all'}
           onViewTypeChange={handleViewTypeChange}
-          disableViewTypeToggle={false} // Always allow toggle
+          disableViewTypeToggle={false}
           timeRange={timeRange}
           unitLabel={unitLabel || "connections"}
           isHourlyData={hourlyData}

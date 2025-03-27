@@ -186,13 +186,13 @@ export const ServiceRequestsDashboard = () => {
           onCustomDateRangeChange={handleCustomDateRangeChange}
         />
         
-        {grouping !== 'all' && (
-          <DashboardSummary 
-            groups={sortedGroups} 
-            totalConnections={totalConnections}
-            totalPercentChange={totalPercentChange}
-          />
-        )}
+        {/* Show the Total card for all grouping types */}
+        <DashboardSummary 
+          groups={sortedGroups} 
+          totalConnections={totalConnections}
+          totalPercentChange={totalPercentChange}
+          showOnlyTotal={grouping === 'all'}
+        />
         
         <DashboardCharts
           allEnvironmentsData={allEnvironmentsData}
