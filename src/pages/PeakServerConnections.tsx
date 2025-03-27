@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { DashboardSummary } from "@/components/DashboardSummary";
 import { DashboardCharts } from "@/components/DashboardCharts";
@@ -157,6 +158,8 @@ const PeakServerConnections = () => {
           onViewTypeChange={handleViewTypeChange}
           disableViewTypeToggle={false}
           timeRange={timeRange}
+          showThreshold={false}
+          threshold={undefined}
         />
       </div>
     </div>

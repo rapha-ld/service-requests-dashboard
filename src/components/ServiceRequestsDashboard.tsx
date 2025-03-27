@@ -163,6 +163,8 @@ export const ServiceRequestsDashboard = () => {
           onViewTypeChange={handleViewTypeChange}
           disableViewTypeToggle={timeRange === 'last-12-months'} // Disable toggle for 12M view
           timeRange={timeRange}
+          showThreshold={false}
+          threshold={undefined}
         />
       </div>
     </div>
