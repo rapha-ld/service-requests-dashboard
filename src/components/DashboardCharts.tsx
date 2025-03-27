@@ -25,6 +25,8 @@ interface DashboardChartsProps {
   isHourlyData?: boolean;
   showThreshold?: boolean;
   individualMaxValues?: boolean;
+  totalConnections?: number;
+  totalPercentChange?: number;
 }
 
 export const DashboardCharts = ({
@@ -47,6 +49,8 @@ export const DashboardCharts = ({
   isHourlyData = false,
   showThreshold = true, // Default to true so threshold always shows in Total chart
   individualMaxValues = false,
+  totalConnections,
+  totalPercentChange,
 }: DashboardChartsProps) => {
   const formatValue = (value: number) => {
     return value.toLocaleString();
@@ -82,6 +86,9 @@ export const DashboardCharts = ({
         threshold={threshold}
         timeRange={timeRange}
         grouping={grouping}
+        totalConnections={totalConnections}
+        totalPercentChange={totalPercentChange}
+        groups={sortedGroups}
       />
 
       {!showOnlyTotal && (

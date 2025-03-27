@@ -11,13 +11,15 @@ interface DashboardSummaryProps {
   totalConnections?: number;
   totalPercentChange?: number;
   showOnlyTotal?: boolean;
+  plainStyle?: boolean;
 }
 
 export const DashboardSummary = ({ 
   groups, 
   totalConnections, 
   totalPercentChange = 0,
-  showOnlyTotal = false
+  showOnlyTotal = false,
+  plainStyle = false
 }: DashboardSummaryProps) => {
   return (
     <>
@@ -33,6 +35,7 @@ export const DashboardSummary = ({
           unit=""
           status="good"
           percentChange={totalPercentChange}
+          className={plainStyle ? "bg-transparent p-0 shadow-none" : ""}
         />
         
         {/* Display top 5 groups if not in showOnlyTotal mode */}

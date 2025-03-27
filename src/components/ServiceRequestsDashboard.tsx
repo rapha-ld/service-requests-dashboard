@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { DashboardSummary } from "@/components/DashboardSummary";
@@ -186,13 +185,15 @@ export const ServiceRequestsDashboard = () => {
           onCustomDateRangeChange={handleCustomDateRangeChange}
         />
         
-        {/* Show the Total card for all grouping types */}
-        <DashboardSummary 
-          groups={sortedGroups} 
-          totalConnections={totalConnections}
-          totalPercentChange={totalPercentChange}
-          showOnlyTotal={grouping === 'all'}
-        />
+        {/* Show the Total card for all grouping types except 'all' */}
+        {grouping !== 'all' && (
+          <DashboardSummary 
+            groups={sortedGroups} 
+            totalConnections={totalConnections}
+            totalPercentChange={totalPercentChange}
+            showOnlyTotal={false}
+          />
+        )}
         
         <DashboardCharts
           allEnvironmentsData={allEnvironmentsData}
@@ -214,6 +215,8 @@ export const ServiceRequestsDashboard = () => {
           isHourlyData={hourlyData}
           showThreshold={true} // Always show threshold in total chart
           individualMaxValues={useIndividualMaxValues}
+          totalConnections={totalConnections}
+          totalPercentChange={totalPercentChange}
         />
       </div>
     </div>

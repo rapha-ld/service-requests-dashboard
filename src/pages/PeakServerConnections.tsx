@@ -140,12 +140,14 @@ const PeakServerConnections = () => {
           onCustomDateRangeChange={handleCustomDateRangeChange}
         />
         
-        <DashboardSummary 
-          groups={sortedGroups} 
-          totalConnections={totalConnections}
-          totalPercentChange={totalPercentChange}
-          showOnlyTotal={grouping === 'all'}
-        />
+        {grouping !== 'all' && (
+          <DashboardSummary 
+            groups={sortedGroups} 
+            totalConnections={totalConnections}
+            totalPercentChange={totalPercentChange}
+            showOnlyTotal={false}
+          />
+        )}
         
         <DashboardCharts
           allEnvironmentsData={allEnvironmentsData}
@@ -164,6 +166,8 @@ const PeakServerConnections = () => {
           unitLabel={unitLabel || "connections"}
           isHourlyData={hourlyData}
           customDateRange={customDateRange}
+          totalConnections={totalConnections}
+          totalPercentChange={totalPercentChange}
         />
       </div>
     </div>

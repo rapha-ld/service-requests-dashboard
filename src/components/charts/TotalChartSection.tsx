@@ -1,6 +1,7 @@
 
 import { TotalChart } from "@/components/charts/TotalChart";
 import { ViewType, ChartType } from "@/types/serviceData";
+import { DashboardSummary } from "@/components/DashboardSummary";
 
 interface TotalChartSectionProps {
   allEnvironmentsData: Array<{ day: string, value: number }>;
@@ -14,6 +15,9 @@ interface TotalChartSectionProps {
   threshold?: number;
   timeRange?: string;
   grouping?: string;
+  totalConnections?: number;
+  totalPercentChange?: number;
+  groups?: any[];
 }
 
 export const TotalChartSection = ({
@@ -27,14 +31,29 @@ export const TotalChartSection = ({
   showThreshold = true, // Default to true to always show threshold
   threshold,
   timeRange = 'month-to-date',
-  grouping = 'environment'
+  grouping = 'environment',
+  totalConnections,
+  totalPercentChange,
+  groups = []
 }: TotalChartSectionProps) => {
   if (!allEnvironmentsData) {
     return null;
   }
 
+  const isAllGrouping = grouping === 'all';
+
   return (
     <div className="mb-6">
+      {isAllGrouping && totalConnections !== undefined && (
+        <DashboardSummary 
+          groups={groups}
+          totalConnections={totalConnections}
+          totalPercentChange={totalPercentChange}
+          showOnlyTotal={true}
+          plainStyle={true}
+        />
+      )}
+      
       <TotalChart
         title="Total"
         data={allEnvironmentsData}
@@ -48,6 +67,7 @@ export const TotalChartSection = ({
         threshold={threshold}
         timeRange={timeRange}
         grouping={grouping}
+        showTitle={!isAllGrouping} // Hide title when showing all dimensions
       />
     </div>
   );
