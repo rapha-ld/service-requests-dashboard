@@ -37,6 +37,14 @@ export const ServiceRequestsDashboard = () => {
       urlParams.setChartType('area');
     }
   }, [viewType]);
+
+  // Effect to update viewType when timeRange changes to 3-day
+  useEffect(() => {
+    if (timeRange === '3-day' && viewType === 'rolling-30d') {
+      setViewType('net-new');
+      urlParams.setViewType('net-new');
+    }
+  }, [timeRange]);
   
   // Handle time range change
   const handleTimeRangeChange = (newTimeRange: TimeRangeType) => {
@@ -70,6 +78,11 @@ export const ServiceRequestsDashboard = () => {
   const handleViewTypeChange = (newViewType: ViewType) => {
     // Only allow changing if not in 12M view
     if (timeRange !== 'last-12-months') {
+      // Check if timeRange is 3-day and attempting to set rolling-30d
+      if (timeRange === '3-day' && newViewType === 'rolling-30d') {
+        return; // Prevent setting to rolling-30d when in 3-day view
+      }
+      
       setViewType(newViewType);
       urlParams.setViewType(newViewType);
       // Update chart type based on view type

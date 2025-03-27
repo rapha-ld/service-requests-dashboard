@@ -107,6 +107,7 @@ export const DashboardCharts = ({
         viewType={viewType}
         onViewTypeChange={onViewTypeChange}
         visible={true}
+        timeRange={timeRange}
       />
     );
   };
