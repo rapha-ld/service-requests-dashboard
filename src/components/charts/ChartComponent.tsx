@@ -150,7 +150,7 @@ export const ChartComponent = ({
           vertical={false} 
           strokeDasharray="3 3" 
           stroke="#888888" 
-          strokeOpacity={0.5} 
+          strokeOpacity={0.35} 
         />
         <XAxis 
           dataKey="day" 
