@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { SummaryCard } from "@/components/SummaryCard";
@@ -66,10 +65,10 @@ const DiagnosticsOverview = () => {
       <div className="max-w-7xl mx-auto">
         <MAUHeader title="Diagnostics Overview" />
         
-        {/* New Monthly Accumulated Usage Section */}
+        {/* Updated Monthly Accumulated Usage Section */}
         <div className="mb-4 px-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-xl font-semibold text-foreground">
+            <h3 className="text-2xl font-semibold text-foreground mb-6 text-left pl-0">
               Monthly Accumulated Usage
             </h3>
             <p className="text-muted-foreground text-lg">
@@ -100,4 +99,3 @@ const DiagnosticsOverview = () => {
 };
 
 export default DiagnosticsOverview;
-
