@@ -46,7 +46,12 @@ export const CardMiniChart: React.FC<CardMiniChartProps> = ({
   
   // Calculate max value based on data and limit
   const dataMaxValue = Math.max(...transformedChartData.map(d => (d.value !== null ? d.value : 0)), 1);
-  const maxValue = limit ? Math.max(dataMaxValue, limit * 1.1) : dataMaxValue * 1.1; // Add 10% margin
+  
+  // For diagnostics overview, use a tighter y-axis scale to better fit the data
+  const yAxisMargin = isDiagnosticPage ? 1.1 : 1.1; // Use 10% margin for both, but we can adjust later if needed
+  
+  // If we have a limit, make sure the y-axis includes it with some margin
+  const maxValue = limit ? Math.max(dataMaxValue, limit * yAxisMargin) : dataMaxValue * yAxisMargin;
   
   // Determine chart type based on page
   const isBarChart = isDiagnosticPage;
