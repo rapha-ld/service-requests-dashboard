@@ -1,18 +1,14 @@
 
-import React, { useRef, useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { SummaryCard } from "@/components/SummaryCard";
 import { generateDailyData } from "@/utils/chartDataGenerator";
 import { useServiceData } from "@/hooks/useServiceData";
 import { MAUHeader } from "@/components/mau/MAUHeader";
 import { GroupingType } from "@/types/serviceData";
-import { TotalChart } from "@/components/charts/TotalChart";
-import { ViewTypeToggle } from "@/components/mau/ViewTypeToggle";
 
 const DiagnosticsOverview = () => {
   const navigate = useNavigate();
-  const chartRef = useRef(null);
-  const [viewType, setViewType] = useState<'net-new' | 'cumulative' | 'rolling-30d'>('net-new');
   
   // Use service data hook with 'all' dimension
   const { data: serviceData } = useServiceData(
@@ -27,48 +23,44 @@ const DiagnosticsOverview = () => {
       title: "Client Connections",
       value: 56821,
       unit: "",
-      detailsLink: "/client-connections",
-      chartData: generateDailyData(56821, 'steady')
+      limit: 100000,
+      percentUsed: 56.8, // 56821/100000 * 100
+      status: "good" as const,
+      chartData: generateDailyData(56821, 'steady'),
+      detailsLink: "/client-connections"
     },
     {
       title: "Server MAU",
       value: 12450,
       unit: "", 
-      detailsLink: "/server-mau",
-      chartData: generateDailyData(12450, 'exponential')
+      limit: 20000,
+      percentUsed: 62.3, // 12450/20000 * 100
+      status: "moderate" as const,
+      chartData: generateDailyData(12450, 'exponential'),
+      detailsLink: "/server-mau"
     },
     {
       title: "Peak Server SDK Connections",
       value: 8765,
       unit: "",
-      detailsLink: "/peak-server-connections",
-      chartData: generateDailyData(8765, 'stepwise')
+      limit: 10000,
+      percentUsed: 87.7, // 8765/10000 * 100
+      status: "poor" as const,
+      chartData: generateDailyData(8765, 'stepwise'),
+      detailsLink: "/peak-server-connections"
     }
   ];
   
   // If we have real data from the service, update the card values
   if (serviceData) {
+    // In a real implementation, we would map the service data to the cards
     console.log("Service data available:", serviceData);
   }
-
-  // Handle exporting chart
-  const handleExportChart = (title: string) => {
-    console.log(`Exporting ${title} chart...`);
-  };
 
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto">
         <MAUHeader title="Diagnostics Overview" />
-        
-        <div className="mb-6">
-          <ViewTypeToggle
-            viewType={viewType}
-            onViewTypeChange={setViewType}
-            timeRange="month-to-date"
-            visible={true}
-          />
-        </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           {metricsData.map((metric, index) => (
@@ -77,31 +69,13 @@ const DiagnosticsOverview = () => {
               title={metric.title}
               value={metric.value}
               unit={metric.unit}
-              status="good"
+              status={metric.status}
+              limit={metric.limit}
+              percentUsed={metric.percentUsed}
+              chartData={metric.chartData}
               detailsLink={metric.detailsLink}
+              showProgressBar={false}
             />
-          ))}
-        </div>
-        
-        <div className="grid grid-cols-1 gap-6 mb-6">
-          {metricsData.map((metric, index) => (
-            <div key={`chart-${index}`} className="bg-card rounded-lg shadow-sm p-4">
-              <h3 className="text-lg font-medium mb-4">{metric.title}</h3>
-              <div className="h-[250px]">
-                <TotalChart
-                  title={metric.title}
-                  data={metric.chartData}
-                  viewType={viewType}
-                  chartType={viewType === 'net-new' ? 'bar' : 'area'}
-                  chartRef={chartRef}
-                  onExportChart={handleExportChart}
-                  useViewDetailsButton={true}
-                  unitLabel={metric.unit}
-                  showThreshold={false}
-                  timeRange="month-to-date"
-                />
-              </div>
-            </div>
           ))}
         </div>
       </div>
