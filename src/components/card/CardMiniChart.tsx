@@ -40,8 +40,8 @@ export const CardMiniChart: React.FC<CardMiniChartProps> = ({
               horizontal={true} 
               vertical={false} 
               strokeDasharray="3 3" 
-              stroke="hsl(var(--border))" 
-              strokeOpacity={0.5} 
+              stroke="#888888" 
+              strokeOpacity={0.7} 
             />
             <XAxis 
               dataKey="day" 
