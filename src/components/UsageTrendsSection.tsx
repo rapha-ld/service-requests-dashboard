@@ -46,8 +46,9 @@ export const UsageTrendsSection: React.FC<UsageTrendsSectionProps> = ({ chartDat
       metricsInfo.dataExportEvents.limit
     ];
     
-    // Return the highest value among all charts and limits
-    return Math.max(...cumulativeMaxValues, ...limits, 0);
+    // Find the highest value among all charts and limits, then add a 10% margin
+    const highestValue = Math.max(...cumulativeMaxValues, ...limits, 0);
+    return highestValue * 1.1;
   };
   
   // Get shared maximum value for consistent y-axis scaling
@@ -60,7 +61,7 @@ export const UsageTrendsSection: React.FC<UsageTrendsSectionProps> = ({ chartDat
   
   // Only show thresholds in cumulative view (which is the only view used in this component)
   const viewType = 'cumulative';
-  const showThreshold = viewType === 'cumulative';
+  const showThreshold = true;
   
   return (
     <>
