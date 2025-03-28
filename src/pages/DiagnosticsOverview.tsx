@@ -1,17 +1,16 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SummaryCard } from "@/components/SummaryCard";
-import { PlanUsageSection } from "@/components/PlanUsageSection";
 import { generateDailyData } from "@/utils/chartDataGenerator";
 import { useServiceData } from "@/hooks/useServiceData";
 import { MAUHeader } from "@/components/mau/MAUHeader";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { GroupingType } from "@/types/serviceData";
+import { ViewTypeToggle } from "@/components/mau/ViewTypeToggle";
+import { GroupingType, ViewType } from "@/types/serviceData";
 
 const DiagnosticsOverview = () => {
   const navigate = useNavigate();
+  const [viewType, setViewType] = useState<ViewType>('net-new');
   
   // Use service data hook with 'all' dimension
   const { data: serviceData } = useServiceData(
@@ -65,6 +64,15 @@ const DiagnosticsOverview = () => {
       <div className="max-w-7xl mx-auto">
         <MAUHeader title="Diagnostics Overview" />
         
+        <div className="mb-4">
+          <ViewTypeToggle
+            viewType={viewType}
+            onViewTypeChange={(type) => setViewType(type)}
+            timeRange="month-to-date"
+            visible={true}
+          />
+        </div>
+        
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           {metricsData.map((metric, index) => (
             <SummaryCard
@@ -77,16 +85,7 @@ const DiagnosticsOverview = () => {
               percentUsed={metric.percentUsed}
               chartData={metric.chartData}
               detailsLink={metric.detailsLink}
-              action={
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="h-7 px-2 text-xs"
-                  onClick={() => navigate(metric.detailsLink || '/')}
-                >
-                  View details
-                </Button>
-              }
+              showProgressBar={false}
             />
           ))}
         </div>
