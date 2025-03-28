@@ -50,7 +50,7 @@ export const TotalChartSection = ({
           totalConnections={totalConnections}
           totalPercentChange={totalPercentChange}
           showOnlyTotal={true}
-          plainStyle={true}
+          plainStyle={false} // Changed from true to false to match specific dimension style
           timeRange={timeRange}
         />
       )}
