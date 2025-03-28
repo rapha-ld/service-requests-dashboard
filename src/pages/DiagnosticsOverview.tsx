@@ -66,11 +66,11 @@ const DiagnosticsOverview = () => {
         <MAUHeader title="Diagnostics Overview" />
         
         {/* Updated Monthly Accumulated Usage Section */}
+        <h3 className="text-sm font-semibold text-muted-foreground mb-4 text-left">
+          Monthly accumulated usage as of today
+        </h3>
         <div className="mb-4 px-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-2xl font-semibold text-foreground mb-6 text-left pl-0">
-              Monthly Accumulated Usage
-            </h3>
             <p className="text-muted-foreground text-lg">
               {formatNumberWithCommas(totalMonthlyUsage)}
             </p>
