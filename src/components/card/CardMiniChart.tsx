@@ -4,6 +4,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveCont
 import { CustomTooltip } from '../charts/CustomTooltip';
 import { formatYAxisTick } from '../charts/formatters';
 import { transformData } from '../charts/dataTransformers';
+import { useLocation } from 'react-router-dom';
 
 interface CardMiniChartProps {
   chartData: Array<{ day: string; value: number | null }>;
@@ -18,8 +19,19 @@ export const CardMiniChart: React.FC<CardMiniChartProps> = ({
   unit, 
   limit 
 }) => {
-  // Changed from 'cumulative' to 'net-new' to display incremental charts
-  const transformedChartData = chartData ? transformData(chartData, 'net-new') : [];
+  const location = useLocation();
+  
+  // Check if we're on a diagnostics page or overview page
+  const isDiagnosticsPage = location.pathname === '/diagnostics-overview' || 
+                           location.pathname === '/client-connections' || 
+                           location.pathname === '/server-mau' || 
+                           location.pathname === '/peak-server-connections';
+  
+  // Use 'net-new' for diagnostics pages, 'cumulative' for plan usage/overview pages
+  const dataTransformType = isDiagnosticsPage ? 'net-new' : 'cumulative';
+  
+  // Transform data based on the page context
+  const transformedChartData = chartData ? transformData(chartData, dataTransformType) : [];
   
   // Calculate max value based on the data itself
   const maxValue = Math.max(...transformedChartData.map(d => (d.value !== null ? d.value : 0)), 1);
