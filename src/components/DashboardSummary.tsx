@@ -39,6 +39,14 @@ export const DashboardSummary = ({
     }
   };
 
+  // Generate dynamic title for the Total card when in "all" dimensions view
+  const getTotalCardTitle = () => {
+    if (showOnlyTotal) {
+      return `${getTimeframeText()} accumulated usage as of today`;
+    }
+    return "Total";
+  };
+
   return <>
       {!showOnlyTotal && (
         <h3 className="text-sm font-semibold text-muted-foreground mb-4 text-left">
@@ -47,7 +55,15 @@ export const DashboardSummary = ({
       )}
       <div className={`grid grid-cols-1 ${!showOnlyTotal ? 'md:grid-cols-3 lg:grid-cols-6' : ''} gap-4 mb-6`}>
         {/* Total card - always displayed first */}
-        <SummaryCard key="total" title="Total" value={totalConnections || groups.reduce((sum, group) => sum + group.value, 0)} unit="" status="good" percentChange={totalPercentChange} className={plainStyle ? "bg-transparent p-0 shadow-none" : ""} />
+        <SummaryCard 
+          key="total" 
+          title={getTotalCardTitle()} 
+          value={totalConnections || groups.reduce((sum, group) => sum + group.value, 0)} 
+          unit="" 
+          status="good" 
+          percentChange={totalPercentChange} 
+          className={plainStyle ? "bg-transparent p-0 shadow-none" : ""} 
+        />
         
         {/* Display top 5 groups if not in showOnlyTotal mode */}
         {!showOnlyTotal && groups.slice(0, 5).map(group => <SummaryCard key={group.id} title={group.title} value={group.value} unit="" status={group.value <= 200 ? 'good' : group.value <= 400 ? 'moderate' : 'poor'} percentChange={group.percentChange} />)}
