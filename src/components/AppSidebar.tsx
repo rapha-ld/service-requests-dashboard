@@ -15,7 +15,7 @@ const sidebarItems = [{
 }, {
   title: "Diagnostic Usage",
   icon: Stethoscope,
-  route: "/diagnostics"
+  route: "/diagnostics-overview"
 }];
 
 export function AppSidebar() {
@@ -35,7 +35,8 @@ export function AppSidebar() {
     }
 
     // Check if we're on a Diagnostics route
-    if (route === "/diagnostics" && (
+    if (route === "/diagnostics-overview" && (
+      location.pathname === "/diagnostics-overview" || 
       location.pathname === "/diagnostics" || 
       location.pathname === "/client-connections" || 
       location.pathname === "/server-mau" || 

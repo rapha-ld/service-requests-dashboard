@@ -18,6 +18,7 @@ import ServerMAU from "./pages/ServerMAU";
 import PeakServerConnections from "./pages/PeakServerConnections";
 import Details from "./pages/Details";
 import Diagnostics from "./pages/Diagnostics";
+import DiagnosticsOverview from "./pages/DiagnosticsOverview";
 import { ServiceRequestsDashboard } from "./components/ServiceRequestsDashboard";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ function AppContent() {
   ].includes(location.pathname);
 
   const isDiagnosticsPath = [
+    "/diagnostics-overview",
     "/client-connections", 
     "/server-mau", 
     "/peak-server-connections"
@@ -74,6 +76,7 @@ function AppContent() {
                 <Route path="/peak-server-connections" element={<PeakServerConnections />} />
                 <Route path="/details" element={<Details />} />
                 <Route path="/diagnostics" element={<Diagnostics />} />
+                <Route path="/diagnostics-overview" element={<DiagnosticsOverview />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </div>

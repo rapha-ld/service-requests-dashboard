@@ -14,6 +14,7 @@ const USAGE_TABS = [
 ];
 
 const DIAGNOSTICS_TABS = [
+  { id: "diagnostics-overview", label: "Overview", path: "/diagnostics-overview" },
   { id: "client-connections", label: "Client Connections", path: "/client-connections" },
   { id: "server-mau", label: "Server MAU", path: "/server-mau" },
   { id: "peak-server-connections", label: "Peak Server SDK Connections", path: "/peak-server-connections" },
