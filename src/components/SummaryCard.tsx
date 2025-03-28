@@ -1,4 +1,3 @@
-
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
@@ -21,7 +20,6 @@ interface SummaryCardProps {
   detailsLink?: string;
   heightClass?: string;
   plainStyle?: boolean;
-  showProgressBar?: boolean;
 }
 
 export const SummaryCard = ({ 
@@ -37,8 +35,7 @@ export const SummaryCard = ({
   chartData,
   detailsLink,
   heightClass,
-  plainStyle = false,
-  showProgressBar = true
+  plainStyle = false
 }: SummaryCardProps) => {
   const isMaxedOut = percentUsed !== undefined && percentUsed >= 95;
   const isDataExportEvents = title === "Data Export Events";
@@ -84,7 +81,7 @@ export const SummaryCard = ({
         )}
       </div>
       
-      {(percentUsed !== undefined && limit !== undefined && showProgressBar) && (
+      {(percentUsed !== undefined && limit !== undefined) && (
         <UsageProgressBar 
           percentUsed={percentUsed} 
           limit={limit} 
