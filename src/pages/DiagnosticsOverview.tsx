@@ -69,13 +69,6 @@ const DiagnosticsOverview = () => {
         <h3 className="text-sm font-semibold text-muted-foreground mb-4 text-left">
           Monthly accumulated usage as of today
         </h3>
-        <div className="mb-4 px-4">
-          <div className="flex items-center justify-between">
-            <p className="text-muted-foreground text-lg">
-              {formatNumberWithCommas(totalMonthlyUsage)}
-            </p>
-          </div>
-        </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           {metricsData.map((metric, index) => (
