@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, ReferenceLine, CartesianGrid } from 'recharts';
 import { CustomTooltip } from '../charts/CustomTooltip';
@@ -18,8 +17,7 @@ export const CardMiniChart: React.FC<CardMiniChartProps> = ({
   unit, 
   limit 
 }) => {
-  // Changed from 'cumulative' to 'net-new' to display incremental charts
-  const transformedChartData = chartData ? transformData(chartData, 'net-new') : [];
+  const transformedChartData = chartData ? transformData(chartData, 'cumulative') : [];
   
   // Calculate max value based on the data itself
   const maxValue = Math.max(...transformedChartData.map(d => (d.value !== null ? d.value : 0)), 1);

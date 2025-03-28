@@ -1,14 +1,16 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SummaryCard } from "@/components/SummaryCard";
 import { generateDailyData } from "@/utils/chartDataGenerator";
 import { useServiceData } from "@/hooks/useServiceData";
 import { MAUHeader } from "@/components/mau/MAUHeader";
-import { GroupingType } from "@/types/serviceData";
+import { ViewTypeToggle } from "@/components/mau/ViewTypeToggle";
+import { GroupingType, ViewType } from "@/types/serviceData";
 
 const DiagnosticsOverview = () => {
   const navigate = useNavigate();
+  const [viewType, setViewType] = useState<ViewType>('net-new');
   
   // Use service data hook with 'all' dimension
   const { data: serviceData } = useServiceData(
@@ -61,6 +63,15 @@ const DiagnosticsOverview = () => {
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto">
         <MAUHeader title="Diagnostics Overview" />
+        
+        <div className="mb-4">
+          <ViewTypeToggle
+            viewType={viewType}
+            onViewTypeChange={(type) => setViewType(type)}
+            timeRange="month-to-date"
+            visible={true}
+          />
+        </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           {metricsData.map((metric, index) => (
