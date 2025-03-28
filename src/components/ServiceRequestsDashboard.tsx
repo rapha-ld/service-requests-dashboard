@@ -221,6 +221,7 @@ export const ServiceRequestsDashboard = () => {
           individualMaxValues={useIndividualMaxValues}
           totalConnections={totalConnections}
           totalPercentChange={totalPercentChange}
+          itemsPerPage={30} // Add this to limit charts per page
         />
       </div>
     </div>

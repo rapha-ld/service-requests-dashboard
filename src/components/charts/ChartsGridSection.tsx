@@ -19,6 +19,7 @@ interface ChartsGridSectionProps {
   threshold?: number;
   timeRange?: string;
   individualMaxValues?: boolean;
+  itemsPerPage?: number; // Add this property
 }
 
 export const ChartsGridSection = ({
@@ -38,6 +39,7 @@ export const ChartsGridSection = ({
   threshold,
   timeRange = 'month-to-date',
   individualMaxValues = false,
+  itemsPerPage = 60, // Default to 60 items per page
 }: ChartsGridSectionProps) => {
   if (!sortedGroups) {
     return null;
@@ -61,7 +63,7 @@ export const ChartsGridSection = ({
       showThreshold={showThreshold}
       threshold={threshold}
       timeRange={timeRange}
-      itemsPerPage={60}
+      itemsPerPage={itemsPerPage} // Pass the itemsPerPage prop
     />
   );
 };

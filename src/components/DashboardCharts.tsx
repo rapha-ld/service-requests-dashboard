@@ -27,6 +27,7 @@ interface DashboardChartsProps {
   individualMaxValues?: boolean;
   totalConnections?: number;
   totalPercentChange?: number;
+  itemsPerPage?: number; // Add this property
 }
 
 export const DashboardCharts = ({
@@ -51,6 +52,7 @@ export const DashboardCharts = ({
   individualMaxValues = false,
   totalConnections,
   totalPercentChange,
+  itemsPerPage = 60, // Default to 60 items per page, but allow overriding
 }: DashboardChartsProps) => {
   const formatValue = (value: number) => {
     return value.toLocaleString();
@@ -109,6 +111,7 @@ export const DashboardCharts = ({
           threshold={threshold}
           timeRange={timeRange}
           individualMaxValues={individualMaxValues}
+          itemsPerPage={itemsPerPage} // Pass the itemsPerPage prop
         />
       )}
     </div>
