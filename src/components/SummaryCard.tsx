@@ -1,4 +1,3 @@
-
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
@@ -47,8 +46,8 @@ export const SummaryCard = ({
 
   return (
     <div className={cn(
-      "bg-background p-4 rounded-lg shadow-sm", // Changed from bg-card to bg-background
-      "dark:bg-background dark:border dark:border-border", // Updated dark mode background
+      !plainStyle && "bg-card p-4 rounded-lg shadow-sm",
+      !plainStyle && "dark:bg-secondary dark:border dark:border-border",
       plainStyle && "bg-transparent border-0 p-0 shadow-none !bg-transparent dark:!bg-black dark:border-0",
       heightClass,
       className,
@@ -101,4 +100,3 @@ export const SummaryCard = ({
     </div>
   );
 };
-
