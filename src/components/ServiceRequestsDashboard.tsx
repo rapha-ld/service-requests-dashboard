@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { DashboardSummary } from "@/components/DashboardSummary";
@@ -8,7 +9,8 @@ import { processServiceData, calculateMaxValue, getAllEnvironmentsData } from "@
 import { DateRange } from "@/types/mauTypes";
 import { useUrlParams } from "@/hooks/useUrlParams";
 
-const SERVICE_CONNECTIONS_THRESHOLD = 15000;
+// Update the base threshold value
+const SERVICE_CONNECTIONS_BASE_THRESHOLD = 15000;
 
 export const ServiceRequestsDashboard = () => {
   const urlParams = useUrlParams();
@@ -161,6 +163,10 @@ export const ServiceRequestsDashboard = () => {
   const allEnvironmentsData = getAllEnvironmentsData(grouping, serviceData, timeRange, sortedGroups, hourlyData);
 
   const useIndividualMaxValues = viewType === 'cumulative';
+  
+  // Calculate dynamic threshold that's always higher than current usage
+  const dynamicThreshold = Math.ceil(totalConnections * 1.2); // 20% above current usage
+  const SERVICE_CONNECTIONS_THRESHOLD = Math.max(SERVICE_CONNECTIONS_BASE_THRESHOLD, dynamicThreshold);
 
   return (
     <div className="min-h-screen bg-background p-6">
