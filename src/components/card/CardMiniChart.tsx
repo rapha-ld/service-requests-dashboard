@@ -1,6 +1,6 @@
 
 import React from "react";
-import { AreaChart, Area, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, ReferenceLine, CartesianGrid } from 'recharts';
 import { CustomTooltip } from '../charts/CustomTooltip';
 import { formatYAxisTick } from '../charts/formatters';
 import { transformData } from '../charts/dataTransformers';
@@ -36,6 +36,13 @@ export const CardMiniChart: React.FC<CardMiniChartProps> = ({
                 <stop offset="100%" stopColor="#30459B" stopOpacity={0} />
               </linearGradient>
             </defs>
+            <CartesianGrid 
+              horizontal={true} 
+              vertical={false} 
+              strokeDasharray="3 3" 
+              stroke="hsl(var(--border))" 
+              strokeOpacity={0.5} 
+            />
             <XAxis 
               dataKey="day" 
               tick={{ fontSize: 10 }}

@@ -1,6 +1,6 @@
 
 import { useRef } from 'react';
-import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, Label } from 'recharts';
+import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, Label, CartesianGrid } from 'recharts';
 import { CustomTooltip } from './CustomTooltip';
 import { formatYAxisTick } from './formatters';
 import { transformData, calculateAverage, formatTooltipDate } from './dataTransformers';
@@ -165,6 +165,13 @@ export const ChartComponent = ({
             <stop offset="100%" stopColor="#30459B" stopOpacity={0} />
           </linearGradient>
         </defs>
+        <CartesianGrid 
+          horizontal={true} 
+          vertical={false} 
+          strokeDasharray="3 3" 
+          stroke="hsl(var(--border))" 
+          strokeOpacity={0.5} 
+        />
         <XAxis 
           dataKey="day" 
           tick={{ fontSize: 10 }}
