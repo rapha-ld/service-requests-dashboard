@@ -8,6 +8,7 @@ import { useUrlParams } from "@/hooks/useUrlParams";
 import { processServiceData, getAllEnvironmentsData } from "@/utils/serviceDataUtils";
 import { ViewTypeToggle } from "@/components/dashboard/ViewTypeToggle";
 import { DashboardHeader } from "@/components/DashboardHeader";
+import { GroupingType } from "@/types/serviceData";
 
 export default function DiagnosticsOverview() {
   const urlParams = useUrlParams();
@@ -16,7 +17,7 @@ export default function DiagnosticsOverview() {
   const [sortDirection, setSortDirection] = React.useState<'desc' | 'asc'>(urlParams.getSortDirection());
   const [viewType, setViewType] = React.useState(urlParams.getViewType());
   const [chartType, setChartType] = React.useState(urlParams.getChartType());
-  const [grouping, setGrouping] = React.useState('all');
+  const [grouping, setGrouping] = React.useState<GroupingType>('all');
   const [timeRange, setTimeRange] = React.useState(urlParams.getTimeRange());
   const [customDateRange, setCustomDateRange] = React.useState(urlParams.getCustomDateRange());
   
