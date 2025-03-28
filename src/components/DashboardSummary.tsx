@@ -1,5 +1,5 @@
-
 import { SummaryCard } from "@/components/SummaryCard";
+
 interface DashboardSummaryProps {
   groups: Array<{
     id: string;
@@ -13,6 +13,7 @@ interface DashboardSummaryProps {
   plainStyle?: boolean;
   timeRange?: string;
 }
+
 export const DashboardSummary = ({
   groups,
   totalConnections,
@@ -29,13 +30,13 @@ export const DashboardSummary = ({
       case 'rolling-30-day':
         return '30-day';
       case 'month-to-date':
-        return 'monthly';
+        return 'Monthly';
       case 'last-12-months':
         return '12-month';
       case 'custom':
         return 'custom period';
       default:
-        return 'monthly';
+        return 'Monthly';
     }
   };
 
