@@ -55,7 +55,7 @@ export const DashboardSummary = ({
           Total / Top 5 breakdown of {getTimeframeText()} accumulated usage as of today
         </h3>
       )}
-      <div className={`grid ${showOnlyTotal ? 'w-auto' : 'grid-cols-1 md:grid-cols-3 lg:grid-cols-6'} gap-4 mb-6`}>
+      <div className={`grid ${showOnlyTotal ? 'w-auto justify-start' : 'grid-cols-1 md:grid-cols-3 lg:grid-cols-6'} gap-4 mb-6`}>
         {/* Total card - always displayed first */}
         <SummaryCard 
           key="total" 
