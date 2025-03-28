@@ -112,7 +112,8 @@ export const ChartComponent = ({
     return tick;
   };
   
-  const shouldShowResetLines = viewType !== 'rolling-30d';
+  const shouldShowResetLines = viewType !== 'rolling-30d' && 
+    !['/server-mau', '/peak-server-connections'].includes(location.pathname);
 
   const getXAxisTicks = () => {
     if (!transformedData.length) return [];
