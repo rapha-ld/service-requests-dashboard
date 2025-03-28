@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { AreaChart, Area, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, ReferenceLine, CartesianGrid } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, ReferenceLine, CartesianGrid } from 'recharts';
 import { CustomTooltip } from '../charts/CustomTooltip';
 import { formatYAxisTick } from '../charts/formatters';
 import { transformData } from '../charts/dataTransformers';
@@ -30,19 +30,13 @@ export const CardMiniChart: React.FC<CardMiniChartProps> = ({
       
       <div className="h-[152px]">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={transformedChartData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
-            <defs>
-              <linearGradient id={`colorGradient-${title.replace(/\s+/g, '')}`} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#30459B" stopOpacity={0.5} />
-                <stop offset="100%" stopColor="#30459B" stopOpacity={0} />
-              </linearGradient>
-            </defs>
+          <BarChart data={transformedChartData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
             <CartesianGrid 
               horizontal={true} 
               vertical={false} 
               strokeDasharray="3 3" 
               stroke="#888888" 
-              strokeOpacity={0.35}  // Updated opacity
+              strokeOpacity={0.35}
             />
             <XAxis 
               dataKey="day" 
@@ -63,13 +57,10 @@ export const CardMiniChart: React.FC<CardMiniChartProps> = ({
               tickFormatter={formatYAxisTick}
             />
             <RechartsTooltip content={<CustomTooltip unit={unit} />} />
-            <Area
-              type="monotone"
+            <Bar
               dataKey="value"
-              stroke="#30459B"
-              fill={`url(#colorGradient-${title.replace(/\s+/g, '')})`}
-              strokeWidth={2}
-              connectNulls={true}
+              fill="#30459B"
+              radius={[1.5, 1.5, 0, 0]}
             />
             {limit && (
               <ReferenceLine 
@@ -86,7 +77,7 @@ export const CardMiniChart: React.FC<CardMiniChartProps> = ({
                 }}
               />
             )}
-          </AreaChart>
+          </BarChart>
         </ResponsiveContainer>
       </div>
     </>
