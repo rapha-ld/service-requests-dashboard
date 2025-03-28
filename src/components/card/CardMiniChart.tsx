@@ -1,5 +1,4 @@
-
-import React from "react";
+import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, ReferenceLine, CartesianGrid } from 'recharts';
 import { CustomTooltip } from '../charts/CustomTooltip';
 import { formatYAxisTick } from '../charts/formatters';
@@ -41,7 +40,7 @@ export const CardMiniChart: React.FC<CardMiniChartProps> = ({
               vertical={false} 
               strokeDasharray="3 3" 
               stroke="#888888" 
-              strokeOpacity={0.7} 
+              strokeOpacity={0.5}  // Updated opacity
             />
             <XAxis 
               dataKey="day" 
