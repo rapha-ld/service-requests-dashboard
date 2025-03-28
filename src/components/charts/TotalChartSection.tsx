@@ -51,6 +51,7 @@ export const TotalChartSection = ({
           totalPercentChange={totalPercentChange}
           showOnlyTotal={true}
           plainStyle={true}
+          timeRange={timeRange}
         />
       )}
       

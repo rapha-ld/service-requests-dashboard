@@ -152,14 +152,12 @@ export const ServiceRequestsDashboard = () => {
   
   const { sortedGroups } = processServiceData(serviceData, sortDirection);
   
-  // Calculate total connections and percent change
   const totalConnections = Object.values(serviceData.currentTotals).reduce((sum, val) => sum + (val || 0), 0);
   const totalPreviousConnections = Object.values(serviceData.previousTotals).reduce((sum, val) => sum + (val || 0), 0);
   const totalPercentChange = totalPreviousConnections ? ((totalConnections - totalPreviousConnections) / totalPreviousConnections) * 100 : 0;
   
   const maxValue = calculateMaxValue(sortedGroups, viewType);
   
-  // Always get combined data across all dimensions, regardless of current grouping
   const allEnvironmentsData = getAllEnvironmentsData(grouping, serviceData, timeRange, sortedGroups, hourlyData);
 
   const useIndividualMaxValues = viewType === 'cumulative';
@@ -185,13 +183,13 @@ export const ServiceRequestsDashboard = () => {
           onCustomDateRangeChange={handleCustomDateRangeChange}
         />
         
-        {/* Show the Total card for all grouping types except 'all' */}
         {grouping !== 'all' && (
           <DashboardSummary 
             groups={sortedGroups} 
             totalConnections={totalConnections}
             totalPercentChange={totalPercentChange}
             showOnlyTotal={false}
+            timeRange={timeRange}
           />
         )}
         
@@ -213,7 +211,7 @@ export const ServiceRequestsDashboard = () => {
           threshold={SERVICE_CONNECTIONS_THRESHOLD}
           customDateRange={customDateRange}
           isHourlyData={hourlyData}
-          showThreshold={true} // Always show threshold in total chart
+          showThreshold={true}
           individualMaxValues={useIndividualMaxValues}
           totalConnections={totalConnections}
           totalPercentChange={totalPercentChange}
