@@ -1,4 +1,3 @@
-
 import { TotalChart } from "@/components/charts/TotalChart";
 import { ViewType, ChartType } from "@/types/serviceData";
 import { DashboardSummary } from "@/components/DashboardSummary";
@@ -28,7 +27,7 @@ export const TotalChartSection = ({
   onExportChart,
   useViewDetailsButton,
   unitLabel,
-  showThreshold = true, // Default to true to always show threshold
+  showThreshold = true,
   threshold,
   timeRange = 'month-to-date',
   grouping = 'environment',
@@ -45,17 +44,15 @@ export const TotalChartSection = ({
   return (
     <div className="mb-6">
       {isAllGrouping && totalConnections !== undefined && (
-        <div className="flex justify-center">
-          <div className="inline-block">
-            <DashboardSummary 
-              groups={groups}
-              totalConnections={totalConnections}
-              totalPercentChange={totalPercentChange}
-              showOnlyTotal={true}
-              plainStyle={false} // Keep standard card styling for All dimensions view
-              timeRange={timeRange}
-            />
-          </div>
+        <div className="w-full text-left">
+          <DashboardSummary 
+            groups={groups}
+            totalConnections={totalConnections}
+            totalPercentChange={totalPercentChange}
+            showOnlyTotal={true}
+            plainStyle={false}
+            timeRange={timeRange}
+          />
         </div>
       )}
       
@@ -72,7 +69,7 @@ export const TotalChartSection = ({
         threshold={threshold}
         timeRange={timeRange}
         grouping={grouping}
-        showTitle={!isAllGrouping} // Hide title when showing all dimensions
+        showTitle={!isAllGrouping}
       />
     </div>
   );
