@@ -6,7 +6,7 @@ import { generateDailyData } from "@/utils/chartDataGenerator";
 import { useServiceData } from "@/hooks/useServiceData";
 import { MAUHeader } from "@/components/mau/MAUHeader";
 import { GroupingType } from "@/types/serviceData";
-import { formatNumberWithCommas } from "@/utils/formatters"; // Assuming this utility exists, otherwise we'll create it
+import { formatNumberWithCommas } from "@/utils/formatters";
 
 const DiagnosticsOverview = () => {
   const navigate = useNavigate();
@@ -69,9 +69,9 @@ const DiagnosticsOverview = () => {
         {/* New Monthly Accumulated Usage Section */}
         <div className="mb-4 px-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-foreground">
+            <h3 className="text-xl font-semibold text-foreground">
               Monthly Accumulated Usage
-            </h2>
+            </h3>
             <p className="text-muted-foreground text-lg">
               {formatNumberWithCommas(totalMonthlyUsage)}
             </p>
@@ -100,3 +100,4 @@ const DiagnosticsOverview = () => {
 };
 
 export default DiagnosticsOverview;
+
