@@ -37,11 +37,12 @@ export const CardMiniChart: React.FC<CardMiniChartProps> = ({
     "/data-export"
   ].includes(location.pathname);
   
-  // Type of data to use based on page type
-  const dataType = isDiagnosticPage ? 'incremental' : 'cumulative';
+  // Map the internal dataType to the expected transformData viewType parameter
+  // Use 'net-new' instead of 'incremental' to match the expected type
+  const viewType = isDiagnosticPage ? 'net-new' : 'cumulative';
   
   // Transform chart data based on page type
-  const transformedChartData = chartData ? transformData(chartData, dataType) : [];
+  const transformedChartData = chartData ? transformData(chartData, viewType) : [];
   
   // Calculate max value based on data and limit
   const dataMaxValue = Math.max(...transformedChartData.map(d => (d.value !== null ? d.value : 0)), 1);
