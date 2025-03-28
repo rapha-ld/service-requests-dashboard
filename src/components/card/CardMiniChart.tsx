@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, ReferenceLine, CartesianGrid, BarChart, Bar } from 'recharts';
 import { CustomTooltip } from '../charts/CustomTooltip';
@@ -47,11 +46,12 @@ export const CardMiniChart: React.FC<CardMiniChartProps> = ({
   // Calculate max value based on data and limit
   const dataMaxValue = Math.max(...transformedChartData.map(d => (d.value !== null ? d.value : 0)), 1);
   
-  // For diagnostics pages, use a tighter y-axis scale to better fit the data
-  // Use a smaller margin for diagnostic pages to make the chart more readable
-  const yAxisMargin = isDiagnosticPage ? 1.25 : 1.5; 
+  // Use a much tighter y-axis scale for diagnostics pages
+  // This significantly reduces the gap between data and axis max
+  const yAxisMargin = isDiagnosticPage ? 1.1 : 1.5; 
   
   // If we have a limit, make sure the y-axis includes it with some margin
+  // Otherwise use a tight margin for diagnostic pages
   const maxValue = limit ? Math.max(dataMaxValue, limit * 1.1) : dataMaxValue * yAxisMargin;
   
   // Determine chart type based on page
