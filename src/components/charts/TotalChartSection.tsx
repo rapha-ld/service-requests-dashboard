@@ -45,14 +45,18 @@ export const TotalChartSection = ({
   return (
     <div className="mb-6">
       {isAllGrouping && totalConnections !== undefined && (
-        <DashboardSummary 
-          groups={groups}
-          totalConnections={totalConnections}
-          totalPercentChange={totalPercentChange}
-          showOnlyTotal={true}
-          plainStyle={false} // Changed from true to false to match specific dimension style
-          timeRange={timeRange}
-        />
+        <div className="flex justify-center">
+          <div className="inline-block">
+            <DashboardSummary 
+              groups={groups}
+              totalConnections={totalConnections}
+              totalPercentChange={totalPercentChange}
+              showOnlyTotal={true}
+              plainStyle={false} // Keep standard card styling for All dimensions view
+              timeRange={timeRange}
+            />
+          </div>
+        </div>
       )}
       
       <TotalChart
