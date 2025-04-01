@@ -52,7 +52,7 @@ export const DashboardSummary = ({
   return <>
       {!showOnlyTotal && (
         <h3 className="text-sm font-semibold text-muted-foreground mb-4 text-left">
-          Total / Top 5 breakdown of {getTimeframeText()} accumulated usage as of today
+          Total & Top 5 breakdown of {getTimeframeText()} accumulated usage as of today
         </h3>
       )}
       <div className={`grid ${showOnlyTotal ? 'w-auto justify-start' : 'grid-cols-1 md:grid-cols-3 lg:grid-cols-6'} gap-4 mb-6`}>
@@ -72,3 +72,4 @@ export const DashboardSummary = ({
       </div>
     </>;
 };
+
