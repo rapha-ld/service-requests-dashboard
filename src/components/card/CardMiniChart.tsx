@@ -20,7 +20,6 @@ export const CardMiniChart: React.FC<CardMiniChartProps> = ({
 }) => {
   const location = useLocation();
   
-  // Check if we're on a diagnostics page
   const isDiagnosticPage = [
     "/client-connections",
     "/server-mau",
@@ -36,25 +35,16 @@ export const CardMiniChart: React.FC<CardMiniChartProps> = ({
     "/data-export"
   ].includes(location.pathname);
   
-  // Map the internal dataType to the expected transformData viewType parameter
-  // Use 'net-new' instead of 'incremental' to match the expected type
   const viewType = isDiagnosticPage ? 'net-new' : 'cumulative';
   
-  // Transform chart data based on page type
   const transformedChartData = chartData ? transformData(chartData, viewType) : [];
   
-  // Calculate max value based on data and limit
   const dataMaxValue = Math.max(...transformedChartData.map(d => (d.value !== null ? d.value : 0)), 1);
   
-  // Use a much tighter y-axis scale for diagnostics pages
-  // This significantly reduces the gap between data and axis max
   const yAxisMargin = isDiagnosticPage ? 1.1 : 1.5; 
   
-  // If we have a limit, make sure the y-axis includes it with some margin
-  // Otherwise use a tight margin for diagnostic pages
   const maxValue = limit ? Math.max(dataMaxValue, limit * 1.1) : dataMaxValue * yAxisMargin;
   
-  // Determine chart type based on page
   const isBarChart = isDiagnosticPage;
   const showThreshold = isPlanUsagePage && limit !== undefined;
 
@@ -94,7 +84,7 @@ export const CardMiniChart: React.FC<CardMiniChartProps> = ({
               <RechartsTooltip content={<CustomTooltip unit={unit} />} />
               <Bar
                 dataKey="value"
-                fill="#30459B"
+                fill="#8960C2"
                 radius={[2, 2, 0, 0]}
               />
               {showThreshold && limit && (
@@ -117,8 +107,8 @@ export const CardMiniChart: React.FC<CardMiniChartProps> = ({
             <AreaChart data={transformedChartData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
               <defs>
                 <linearGradient id={`colorGradient-${title.replace(/\s+/g, '')}`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#30459B" stopOpacity={0.5} />
-                  <stop offset="100%" stopColor="#30459B" stopOpacity={0} />
+                  <stop offset="0%" stopColor="#8960C2" stopOpacity={0.5} />
+                  <stop offset="100%" stopColor="#8960C2" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid 
@@ -150,7 +140,7 @@ export const CardMiniChart: React.FC<CardMiniChartProps> = ({
               <Area
                 type="monotone"
                 dataKey="value"
-                stroke="#30459B"
+                stroke="#8960C2"
                 fill={`url(#colorGradient-${title.replace(/\s+/g, '')})`}
                 strokeWidth={2}
                 connectNulls={true}
