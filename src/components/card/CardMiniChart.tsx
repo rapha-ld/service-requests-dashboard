@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, ReferenceLine, CartesianGrid, BarChart, Bar } from 'recharts';
 import { CustomTooltip } from '../charts/CustomTooltip';
@@ -84,7 +85,7 @@ export const CardMiniChart: React.FC<CardMiniChartProps> = ({
               <RechartsTooltip content={<CustomTooltip unit={unit} />} />
               <Bar
                 dataKey="value"
-                fill="#8960C2"
+                fill="#7861C6"
                 radius={[2, 2, 0, 0]}
               />
               {showThreshold && limit && (
@@ -107,8 +108,8 @@ export const CardMiniChart: React.FC<CardMiniChartProps> = ({
             <AreaChart data={transformedChartData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
               <defs>
                 <linearGradient id={`colorGradient-${title.replace(/\s+/g, '')}`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#8960C2" stopOpacity={0.5} />
-                  <stop offset="100%" stopColor="#8960C2" stopOpacity={0} />
+                  <stop offset="0%" stopColor="#7861C6" stopOpacity={0.5} />
+                  <stop offset="100%" stopColor="#7861C6" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid 
@@ -140,7 +141,7 @@ export const CardMiniChart: React.FC<CardMiniChartProps> = ({
               <Area
                 type="monotone"
                 dataKey="value"
-                stroke="#8960C2"
+                stroke="#7861C6"
                 fill={`url(#colorGradient-${title.replace(/\s+/g, '')})`}
                 strokeWidth={2}
                 connectNulls={true}

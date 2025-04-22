@@ -1,4 +1,3 @@
-
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, Label, CartesianGrid } from 'recharts';
 import { CustomTooltip } from './CustomTooltip';
 import { formatYAxisTick } from './formatters';
@@ -142,8 +141,8 @@ export const ChartComponent = ({
       <ChartComp ref={chartRef} data={transformedData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
         <defs>
           <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#8960C2" stopOpacity={0.5} />
-            <stop offset="100%" stopColor="#8960C2" stopOpacity={0} />
+            <stop offset="0%" stopColor="#7861C6" stopOpacity={0.5} />
+            <stop offset="100%" stopColor="#7861C6" stopOpacity={0} />
           </linearGradient>
         </defs>
         <CartesianGrid 
@@ -178,7 +177,7 @@ export const ChartComponent = ({
           <Area
             type="monotone"
             dataKey="value"
-            stroke="#8960C2"
+            stroke="#7861C6"
             fill="url(#colorGradient)"
             strokeWidth={2}
             connectNulls={true}
@@ -187,7 +186,7 @@ export const ChartComponent = ({
         {chartType === 'bar' && (
           <Bar
             dataKey="value"
-            fill="#8960C2"
+            fill="#7861C6"
             radius={[1.5, 1.5, 0, 0]}
           />
         )}
@@ -195,7 +194,7 @@ export const ChartComponent = ({
           <Line
             type="monotone"
             dataKey="value"
-            stroke="#8960C2"
+            stroke="#7861C6"
             strokeWidth={2}
             dot={false}
             connectNulls={true}
@@ -258,4 +257,3 @@ export const ChartComponent = ({
     </ResponsiveContainer>
   );
 };
-
